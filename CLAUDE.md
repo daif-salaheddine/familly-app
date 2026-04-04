@@ -430,11 +430,11 @@ Each feature is vertical — finish the API + UI together before moving to the n
 
 ### Feature 1 — Goals
 
-- [ ] lib/goals.ts
-- [ ] Goals API
-- [ ] Profile page (my goals)
-- [ ] Create goal page
-- [ ] Goal detail page
+- [x] lib/goals.ts — done 2026-04-05
+- [x] Goals API — done 2026-04-05
+- [x] Profile page (my goals) — done 2026-04-05
+- [x] Create goal page — done 2026-04-05
+- [x] Goal detail page — done 2026-04-05
 
 ### Feature 2 — Nominations
 
