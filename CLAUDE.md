@@ -15,6 +15,7 @@ A private family accountability app. Family members living separately hold each 
 ## Core rules — memorize these
 
 ### Goals
+
 - Every person has **maximum 2 active goals** at a time
 - **Slot 1** — always self-chosen. Mandatory.
 - **Slot 2** — chosen from nominations sent by family members. Optional until a nomination is accepted.
@@ -23,6 +24,7 @@ A private family accountability app. Family members living separately hold each 
 - Goals are **not deleted** — they are `active`, `paused`, or `completed`.
 
 ### Nominations (for slot 2)
+
 - Any family member can nominate a goal for any other member.
 - **One nomination per nominator per target** at a time.
 - Multiple family members can nominate the same person simultaneously.
@@ -32,6 +34,7 @@ A private family accountability app. Family members living separately hold each 
 - The family can see which nomination was chosen and the reason.
 
 ### Weekly cycle
+
 - Goals **reset every week** (Monday start, Sunday end).
 - Each week is independent — missing last week has no effect on this week's counter except for the consecutive miss rule.
 - At end of each week (Sunday night cron job):
@@ -39,10 +42,12 @@ A private family accountability app. Family members living separately hold each 
   - Did not meet frequency? ❌ → penalty added to pot, `consecutive_misses` += 1
 
 ### Consecutive miss rule
+
 - Miss **2 weeks in a row** → penalty added to pot **AND** a Challenge is triggered.
 - One good week → `consecutive_misses` resets to 0 completely.
 
 ### Challenges (triggered by 2 consecutive misses)
+
 - Same nomination logic as goals:
   - Family members each suggest a real-life action
   - The person picks one suggestion freely
@@ -51,6 +56,7 @@ A private family accountability app. Family members living separately hold each 
 - After completing the challenge → `consecutive_misses` resets to 0.
 
 ### Group pot
+
 - Accumulates from all penalties.
 - Group votes on what to spend it on via proposals.
 - Any member can propose a reward.
@@ -60,24 +66,26 @@ A private family accountability app. Family members living separately hold each 
 
 ## Tech stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 14 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Database ORM | Prisma |
-| Database | PostgreSQL (via Supabase) |
-| Auth | NextAuth.js |
-| File storage | Supabase Storage |
-| Validation | Zod |
-| Deployment | Vercel |
+| Layer        | Technology                |
+| ------------ | ------------------------- |
+| Framework    | Next.js 14 (App Router)   |
+| Language     | TypeScript                |
+| Styling      | Tailwind CSS              |
+| Database ORM | Prisma                    |
+| Database     | PostgreSQL (via Supabase) |
+| Auth         | NextAuth.js               |
+| File storage | Supabase Storage          |
+| Validation   | Zod                       |
+| Deployment   | Vercel                    |
 
 ---
 
 ## Database — 13 tables
 
 ### USER
+
 Stores each family member.
+
 - `id` uuid PK
 - `name` string
 - `email` string unique
@@ -86,14 +94,18 @@ Stores each family member.
 - `created_at` timestamp
 
 ### GROUP
+
 The family circle.
+
 - `id` uuid PK
 - `name` string
 - `created_by` uuid FK → USER
 - `created_at` timestamp
 
 ### GROUP_MEMBER
+
 Bridge table — users to groups.
+
 - `id` uuid PK
 - `group_id` uuid FK → GROUP
 - `user_id` uuid FK → USER
@@ -101,7 +113,9 @@ Bridge table — users to groups.
 - `joined_at` timestamp
 
 ### GOAL
+
 Every active commitment. Core table.
+
 - `id` uuid PK
 - `user_id` uuid FK → USER
 - `group_id` uuid FK → GROUP
@@ -118,12 +132,15 @@ Every active commitment. Core table.
 - `paused_at` timestamp nullable
 
 **Constraints:**
+
 - A user cannot have more than 2 active goals (`status = active`) per group.
 - A user cannot have more than 1 goal with `slot = self` per group.
 - A user cannot have more than 1 goal with `slot = nominated` per group.
 
 ### NOMINATION
+
 A pending goal suggestion — not yet accepted.
+
 - `id` uuid PK
 - `from_user_id` uuid FK → USER
 - `to_user_id` uuid FK → USER
@@ -140,10 +157,13 @@ A pending goal suggestion — not yet accepted.
 - `responded_at` timestamp nullable
 
 **Constraints:**
+
 - One nomination per `from_user_id` + `to_user_id` pair with `status = pending`.
 
 ### CHECKIN
+
 One proof upload per goal per completion.
+
 - `id` uuid PK
 - `goal_id` uuid FK → GOAL
 - `user_id` uuid FK → USER
@@ -155,7 +175,9 @@ One proof upload per goal per completion.
 - `created_at` timestamp
 
 ### REACTION
+
 Emoji reactions to checkins.
+
 - `id` uuid PK
 - `checkin_id` uuid FK → CHECKIN
 - `user_id` uuid FK → USER
@@ -163,7 +185,9 @@ Emoji reactions to checkins.
 - `created_at` timestamp
 
 ### CHALLENGE
+
 Triggered when `consecutive_misses` = 2.
+
 - `id` uuid PK
 - `user_id` uuid FK → USER (person who must complete it)
 - `goal_id` uuid FK → GOAL (the goal that was missed)
@@ -176,7 +200,9 @@ Triggered when `consecutive_misses` = 2.
 - `completed_at` timestamp nullable
 
 ### CHALLENGE_SUGGESTION
+
 Family members suggest actions for a challenge.
+
 - `id` uuid PK
 - `challenge_id` uuid FK → CHALLENGE
 - `from_user_id` uuid FK → USER
@@ -185,10 +211,13 @@ Family members suggest actions for a challenge.
 - `created_at` timestamp
 
 **Constraints:**
+
 - One suggestion per `from_user_id` + `challenge_id` pair.
 
 ### PENALTY
+
 Created automatically every Sunday by cron job.
+
 - `id` uuid PK
 - `user_id` uuid FK → USER
 - `goal_id` uuid FK → GOAL
@@ -199,14 +228,18 @@ Created automatically every Sunday by cron job.
 - `created_at` timestamp
 
 ### POT
+
 One row per group. Running total.
+
 - `id` uuid PK
 - `group_id` uuid FK → GROUP unique
 - `total_amount` decimal default 0
 - `updated_at` timestamp
 
 ### POT_PROPOSAL
+
 A reward suggestion for the pot.
+
 - `id` uuid PK
 - `pot_id` uuid FK → POT
 - `proposed_by` uuid FK → USER
@@ -218,7 +251,9 @@ A reward suggestion for the pot.
 - `created_at` timestamp
 
 ### NOTIFICATION
+
 All in-app notifications.
+
 - `id` uuid PK
 - `user_id` uuid FK → USER
 - `type` enum: `goal_missed` | `nomination_received` | `challenge_triggered` | `challenge_suggestion` | `reaction_received` | `pot_updated` | `proposal_created`
@@ -315,11 +350,13 @@ Work in this order. Do not skip ahead.
 Each feature is vertical — finish the API + UI together before moving to the next.
 
 ### Foundation (no UI yet)
+
 1. **Prisma schema** — all 13 tables, all constraints
 2. **Auth** — login page, session, middleware protecting all routes
 3. **Seed script** — 6 hardcoded family member accounts with realistic data
 
 ### Feature 1 — Goals
+
 4. `lib/goals.ts` — slot validation, 2-goal rule enforcement
 5. `api/goals/route.ts` — GET all goals, POST create goal
 6. `api/goals/[id]/route.ts` — GET one, PATCH edit/pause, DELETE
@@ -328,6 +365,7 @@ Each feature is vertical — finish the API + UI together before moving to the n
 9. `app/(app)/profile/goals/[id]/page.tsx` — goal detail page
 
 ### Feature 2 — Nominations
+
 10. `api/nominations/route.ts` — GET pending nominations, POST create
 11. `api/nominations/[id]/respond/route.ts` — POST accept or decline
 12. `app/(app)/nominations/page.tsx` — inbox: all nominations I received
@@ -335,6 +373,7 @@ Each feature is vertical — finish the API + UI together before moving to the n
 14. `app/(app)/members/[userId]/nominate/page.tsx` — nominate a goal form
 
 ### Feature 3 — Checkins (proof uploads)
+
 15. `lib/storage.ts` — file upload to Supabase Storage
 16. `api/upload/route.ts` — POST media file, return URL
 17. `api/goals/[id]/checkin/route.ts` — POST checkin with media URL
@@ -342,11 +381,13 @@ Each feature is vertical — finish the API + UI together before moving to the n
 19. Proof gallery inside `app/(app)/profile/goals/[id]/page.tsx`
 
 ### Feature 4 — Weekly penalties
+
 20. `lib/penalties.ts` — calculate missed goals, update consecutive_misses
 21. `api/penalties/weekly/route.ts` — cron job endpoint (called every Sunday)
 22. Vercel cron job config in `vercel.json`
 
 ### Feature 5 — Challenges
+
 23. `lib/challenges.ts` — detect consecutive_misses = 2, trigger challenge
 24. `api/challenges/route.ts` — GET active challenges
 25. `api/challenges/[id]/suggest/route.ts` — POST suggestion
@@ -356,17 +397,20 @@ Each feature is vertical — finish the API + UI together before moving to the n
 29. `app/(app)/challenges/[userId]/suggest/page.tsx` — suggest an action
 
 ### Feature 6 — Group feed
+
 30. `api/feed/route.ts` — GET recent group activity (checkins, misses, nominations, challenges)
 31. `app/(app)/feed/page.tsx` — home feed with all activity cards
 32. Reactions: `api/goals/[id]/checkin/[checkinId]/react/route.ts`
 
 ### Feature 7 — Pot
+
 33. `api/pot/route.ts` — GET pot total + penalty history
 34. `api/pot/proposals/route.ts` — GET proposals, POST new proposal
 35. `api/pot/proposals/[id]/vote/route.ts` — POST vote
 36. `app/(app)/pot/page.tsx` — pot total, history, proposals, voting
 
 ### Feature 8 — Leaderboard & Notifications
+
 37. `app/(app)/leaderboard/page.tsx` — streaks, completion rates, rankings
 38. `lib/notifications.ts` — create notification records
 39. Notification triggers wired into all relevant API routes
@@ -379,11 +423,13 @@ Each feature is vertical — finish the API + UI together before moving to the n
 > Update this section at the end of every session.
 
 ### Foundation
+
 - [x] Prisma schema — done 2026-04-04
-- [ ] Auth
+- [x] Auth — done 2026-04-05
 - [ ] Seed script
 
 ### Feature 1 — Goals
+
 - [ ] lib/goals.ts
 - [ ] Goals API
 - [ ] Profile page (my goals)
@@ -391,12 +437,14 @@ Each feature is vertical — finish the API + UI together before moving to the n
 - [ ] Goal detail page
 
 ### Feature 2 — Nominations
+
 - [ ] Nominations API
 - [ ] Nominations inbox page
 - [ ] Member card page
 - [ ] Nominate page
 
 ### Feature 3 — Checkins
+
 - [ ] lib/storage.ts
 - [ ] Upload API
 - [ ] Checkin API
@@ -404,28 +452,40 @@ Each feature is vertical — finish the API + UI together before moving to the n
 - [ ] Proof gallery
 
 ### Feature 4 — Weekly penalties
+
 - [ ] lib/penalties.ts
 - [ ] Penalties cron API
 - [ ] Vercel cron config
 
 ### Feature 5 — Challenges
+
 - [ ] lib/challenges.ts
 - [ ] Challenges API
 - [ ] Challenge page
 - [ ] Suggest page
 
 ### Feature 6 — Feed
+
 - [ ] Feed API
 - [ ] Feed page
 - [ ] Reactions
 
 ### Feature 7 — Pot
+
 - [ ] Pot API
 - [ ] Proposals API
 - [ ] Pot page
 
 ### Feature 8 — Leaderboard & Notifications
+
 - [ ] Leaderboard page
 - [ ] lib/notifications.ts
 - [ ] Notification triggers
 - [ ] Notification bell
+
+## End of session routine
+
+At the end of every session always:
+
+1. Update the Current status section checkboxes
+2. Run: git add . && git commit -m "descriptive message" && git push
