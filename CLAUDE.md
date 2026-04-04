@@ -426,7 +426,7 @@ Each feature is vertical — finish the API + UI together before moving to the n
 
 - [x] Prisma schema — done 2026-04-04
 - [x] Auth — done 2026-04-05
-- [ ] Seed script
+- [x] Seed script — done 2026-04-05
 
 ### Feature 1 — Goals
 
