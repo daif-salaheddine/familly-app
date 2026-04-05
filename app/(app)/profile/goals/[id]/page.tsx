@@ -40,7 +40,6 @@ export default async function GoalDetailPage({
       nominator: { select: { id: true, name: true } },
       checkins: {
         orderBy: { created_at: "desc" },
-        take: 10,
       },
     },
   });
@@ -54,6 +53,11 @@ export default async function GoalDetailPage({
   if (!membership) notFound();
 
   const isOwner = goal.user_id === session.user.id;
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const checkedInToday = goal.checkins.some(
+    (c) => new Date(c.checkin_date).toISOString().slice(0, 10) === todayStr
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -129,34 +133,78 @@ export default async function GoalDetailPage({
 
       {/* Proof uploads */}
       <div>
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
-          Proof uploads
-        </h2>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+            Proof uploads
+          </h2>
+          {isOwner && goal.status === "active" && !checkedInToday && (
+            <Link
+              href={`/profile/goals/${goal.id}/checkin`}
+              className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
+            >
+              + Add proof
+            </Link>
+          )}
+          {isOwner && checkedInToday && (
+            <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+              Done today ✓
+            </span>
+          )}
+        </div>
+
         {goal.checkins.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-gray-200 p-8 text-center">
             <p className="text-sm text-gray-400">No check-ins yet.</p>
-            {isOwner && (
+            {isOwner && goal.status === "active" && (
               <Link
                 href={`/profile/goals/${goal.id}/checkin`}
                 className="mt-3 inline-block rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
               >
-                Upload proof
+                Upload first proof
               </Link>
             )}
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            {goal.checkins.map((c) => (
-              <div
-                key={c.id}
-                className="rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-600"
-              >
-                <p className="font-medium text-gray-800">{c.caption ?? "Check-in"}</p>
-                <p className="mt-1 text-xs text-gray-400">
-                  Week {c.week_number} · {c.year}
-                </p>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 gap-3">
+            {goal.checkins.map((c) => {
+              const isVideo = /\.(mp4|mov|webm)$/i.test(c.media_url);
+              return (
+                <div
+                  key={c.id}
+                  className="rounded-xl border border-gray-200 bg-white overflow-hidden"
+                >
+                  {isVideo ? (
+                    <video
+                      src={c.media_url}
+                      controls
+                      className="w-full aspect-square object-cover bg-black"
+                    />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={c.media_url}
+                      alt={c.caption ?? "Check-in"}
+                      className="w-full aspect-square object-cover"
+                    />
+                  )}
+                  <div className="p-2">
+                    {c.caption && (
+                      <p className="text-xs font-medium text-gray-800 truncate">
+                        {c.caption}
+                      </p>
+                    )}
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {new Date(c.checkin_date).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                      {" · "}W{c.week_number}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

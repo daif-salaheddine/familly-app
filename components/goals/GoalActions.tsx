@@ -46,8 +46,7 @@ export default function GoalActions({ goalId, status }: Props) {
         setError(json.error ?? "Something went wrong");
         setConfirmDelete(false);
       } else {
-        router.push("/profile");
-        router.refresh();
+        window.location.href = "/profile";
       }
     } catch {
       setError("Network error");

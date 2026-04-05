@@ -448,11 +448,11 @@ Each feature is vertical — finish the API + UI together before moving to the n
 
 ### Feature 3 — Checkins
 
-- [ ] lib/storage.ts
-- [ ] Upload API
-- [ ] Checkin API
-- [ ] Upload proof page
-- [ ] Proof gallery
+- [x] lib/storage.ts — done 2026-04-05
+- [x] Upload API — done 2026-04-05
+- [x] Checkin API — done 2026-04-05
+- [x] Upload proof page — done 2026-04-05
+- [x] Proof gallery — done 2026-04-05
 
 ### Feature 4 — Weekly penalties
 
