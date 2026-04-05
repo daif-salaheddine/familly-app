@@ -441,10 +441,10 @@ Each feature is vertical — finish the API + UI together before moving to the n
 
 ### Feature 2 — Nominations
 
-- [ ] Nominations API
-- [ ] Nominations inbox page
-- [ ] Member card page
-- [ ] Nominate page
+- [x] Nominations API — done 2026-04-05
+- [x] Nominations inbox page — done 2026-04-05
+- [x] Member card page — done 2026-04-05
+- [x] Nominate page — done 2026-04-05
 
 ### Feature 3 — Checkins
 
@@ -463,15 +463,15 @@ Each feature is vertical — finish the API + UI together before moving to the n
 ### Feature 5 — Challenges
 
 - [x] lib/challenges.ts — done 2026-04-05
-- [ ] Challenges API
-- [ ] Challenge page
-- [ ] Suggest page
+- [x] Challenges API — done 2026-04-05
+- [x] Challenge page — done 2026-04-05
+- [x] Suggest page — done 2026-04-05
 
 ### Feature 6 — Feed
 
-- [ ] Feed API
-- [ ] Feed page
-- [ ] Reactions
+- [x] Feed API — done 2026-04-05
+- [x] Feed page — done 2026-04-05
+- [x] Reactions — done 2026-04-05
 
 ### Feature 7 — Pot
 

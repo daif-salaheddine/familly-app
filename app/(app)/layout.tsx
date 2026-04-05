@@ -49,8 +49,10 @@ export default async function AppLayout({
       {/* Bottom navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
         <div className="max-w-2xl mx-auto flex">
+          <NavLink href="/feed" label="Feed" />
           <NavLink href="/profile" label="Profile" />
           <NavLink href="/nominations" label="Nominations" />
+          <NavLink href="/challenges" label="Challenges" />
           <NavLink href="/members" label="Family" />
         </div>
       </nav>
