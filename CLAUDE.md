@@ -456,13 +456,13 @@ Each feature is vertical — finish the API + UI together before moving to the n
 
 ### Feature 4 — Weekly penalties
 
-- [ ] lib/penalties.ts
-- [ ] Penalties cron API
-- [ ] Vercel cron config
+- [x] lib/penalties.ts — done 2026-04-05
+- [x] Penalties cron API — done 2026-04-05
+- [x] Vercel cron config — done 2026-04-05
 
 ### Feature 5 — Challenges
 
-- [ ] lib/challenges.ts
+- [x] lib/challenges.ts — done 2026-04-05
 - [ ] Challenges API
 - [ ] Challenge page
 - [ ] Suggest page
