@@ -475,9 +475,9 @@ Each feature is vertical — finish the API + UI together before moving to the n
 
 ### Feature 7 — Pot
 
-- [ ] Pot API
-- [ ] Proposals API
-- [ ] Pot page
+- [x] Pot API — done 2026-04-05
+- [x] Proposals API — done 2026-04-05
+- [x] Pot page — done 2026-04-05
 
 ### Feature 8 — Leaderboard & Notifications
 
