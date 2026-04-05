@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { signIn } from "../../auth";
 import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -26,14 +27,14 @@ export async function loginAction(
     await signIn("credentials", {
       email: parsed.data.email,
       password: parsed.data.password,
-      redirectTo: "/feed",
+      redirect: false,
     });
   } catch (error) {
     if (error instanceof AuthError) {
       return { error: "Invalid email or password" };
     }
-    throw error; // rethrow redirect
+    throw error;
   }
 
-  return { error: null };
+  redirect("/profile");
 }

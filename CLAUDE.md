@@ -425,8 +425,10 @@ Each feature is vertical — finish the API + UI together before moving to the n
 ### Foundation
 
 - [x] Prisma schema — done 2026-04-04
-- [x] Auth — done 2026-04-05
+- [x] Auth — done 2026-04-05, login fixed 2026-04-05
 - [x] Seed script — done 2026-04-05
+
+> Auth notes: DATABASE_URL must use Supabase connection pooler (port 6543), not direct connection (port 5432). Login redirects to /profile.
 
 ### Feature 1 — Goals
 
@@ -487,5 +489,8 @@ Each feature is vertical — finish the API + UI together before moving to the n
 
 At the end of every session always:
 
-1. Update the Current status section checkboxes
-2. Run: git add . && git commit -m "descriptive message" && git push
+1. Summarize what you built this session — file by file, one sentence each
+2. Update the Current status section checkboxes
+3. Run: git add . && git commit -m "descriptive message" && git push
+
+Never auto-commit. Always explain first, wait for permission, then commit.
