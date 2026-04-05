@@ -14,3 +14,5 @@ export type NominationWithUsers = Nomination & {
   fromUser: Pick<User, "id" | "name">;
   toUser: Pick<User, "id" | "name">;
 };
+
+export type { SuggestionWithUser, ChallengeWithDetails } from "../lib/challenges";

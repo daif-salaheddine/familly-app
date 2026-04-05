@@ -37,26 +37,41 @@ export default async function MemberPage({
 
   const groupId = membership.group_id;
 
-  const [targetUser, activeGoals, pendingNomination] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true, name: true, email: true },
-    }),
-    prisma.goal.findMany({
-      where: { user_id: userId, group_id: groupId, status: "active" },
-      include: { nominator: { select: { id: true, name: true } } },
-      orderBy: { created_at: "asc" },
-    }),
-    // Check if current user already has a pending nomination to this person
-    prisma.nomination.findFirst({
-      where: {
-        from_user_id: currentUserId,
-        to_user_id: userId,
-        status: "pending",
-      },
-      select: { id: true },
-    }),
-  ]);
+  const [targetUser, activeGoals, pendingNomination, activeChallenge] =
+    await Promise.all([
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, name: true, email: true },
+      }),
+      prisma.goal.findMany({
+        where: { user_id: userId, group_id: groupId, status: "active" },
+        include: { nominator: { select: { id: true, name: true } } },
+        orderBy: { created_at: "asc" },
+      }),
+      // Check if current user already has a pending nomination to this person
+      prisma.nomination.findFirst({
+        where: {
+          from_user_id: currentUserId,
+          to_user_id: userId,
+          status: "pending",
+        },
+        select: { id: true },
+      }),
+      // Check if this member has an active challenge we can suggest for
+      prisma.challenge.findFirst({
+        where: {
+          user_id: userId,
+          group_id: groupId,
+          status: { in: ["pending_suggestions", "pending_choice"] },
+        },
+        include: {
+          suggestions: {
+            where: { from_user_id: currentUserId },
+            select: { id: true },
+          },
+        },
+      }),
+    ]);
 
   if (!targetUser) notFound();
 
@@ -68,6 +83,10 @@ export default async function MemberPage({
   );
   const isOwnProfile = userId === currentUserId;
   const canNominate = !isOwnProfile && !pendingNomination;
+  const canSuggestChallenge =
+    !isOwnProfile &&
+    activeChallenge !== null &&
+    activeChallenge.suggestions.length === 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -178,6 +197,16 @@ export default async function MemberPage({
             </div>
           )}
         </div>
+      )}
+
+      {/* Suggest challenge action button */}
+      {canSuggestChallenge && (
+        <Link
+          href={`/challenges/${userId}/suggest`}
+          className="block w-full rounded-lg border border-orange-300 bg-orange-50 px-4 py-3 text-center text-sm font-semibold text-orange-700 hover:bg-orange-100 transition-colors"
+        >
+          Suggest a challenge action
+        </Link>
       )}
     </div>
   );

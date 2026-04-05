@@ -1,0 +1,111 @@
+import { notFound, redirect } from "next/navigation";
+import { auth } from "../../../../../auth";
+import { prisma } from "../../../../../lib/db";
+import SuggestForm from "../../../../../components/challenges/SuggestForm";
+
+export default async function SuggestPage({
+  params,
+}: {
+  params: Promise<{ userId: string }>;
+}) {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/login");
+
+  const { userId } = await params;
+  const currentUserId = session.user.id;
+
+  if (userId === currentUserId) notFound();
+
+  const membership = await prisma.groupMember.findFirst({
+    where: { user_id: currentUserId },
+    select: { group_id: true },
+  });
+  if (!membership) redirect("/login");
+
+  const [targetUser, activeChallenge] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true },
+    }),
+    prisma.challenge.findFirst({
+      where: {
+        user_id: userId,
+        group_id: membership.group_id,
+        status: { in: ["pending_suggestions", "pending_choice"] },
+      },
+      include: {
+        goal: { select: { title: true, category: true } },
+        suggestions: {
+          where: { from_user_id: currentUserId },
+          select: { id: true },
+        },
+      },
+      orderBy: { created_at: "desc" },
+    }),
+  ]);
+
+  if (!targetUser) notFound();
+
+  if (!activeChallenge) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">
+            Suggest a challenge action
+          </h1>
+          <p className="text-sm text-gray-500">For {targetUser.name}</p>
+        </div>
+        <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
+          <p className="text-sm font-medium text-gray-500">
+            {targetUser.name} doesn&apos;t have an active challenge right now
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const alreadySuggested = activeChallenge.suggestions.length > 0;
+
+  if (alreadySuggested) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">
+            Suggest a challenge action
+          </h1>
+          <p className="text-sm text-gray-500">For {targetUser.name}</p>
+        </div>
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-center">
+          <p className="text-sm font-medium text-amber-800">
+            You already submitted a suggestion for {targetUser.name}&apos;s challenge
+          </p>
+          <p className="text-xs text-amber-600 mt-1">
+            Only one suggestion per person is allowed
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-xl font-bold text-gray-900">
+          Suggest a challenge action
+        </h1>
+        <p className="text-sm text-gray-500">For {targetUser.name}</p>
+      </div>
+
+      <div className="rounded-xl border border-gray-200 bg-white p-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">
+          Their missed goal
+        </p>
+        <p className="text-sm font-medium text-gray-900">
+          {activeChallenge.goal.title}
+        </p>
+      </div>
+
+      <SuggestForm challengeId={activeChallenge.id} />
+    </div>
+  );
+}
