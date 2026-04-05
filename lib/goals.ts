@@ -211,7 +211,36 @@ export async function deleteGoal(
   userId: string
 ): Promise<void> {
   await assertOwnership(goalId, userId);
-  await prisma.goal.delete({ where: { id: goalId } });
+
+  await prisma.$transaction(async (tx) => {
+    // Delete reactions on all checkins for this goal
+    const checkins = await tx.checkin.findMany({
+      where: { goal_id: goalId },
+      select: { id: true },
+    });
+    if (checkins.length > 0) {
+      await tx.reaction.deleteMany({
+        where: { checkin_id: { in: checkins.map((c) => c.id) } },
+      });
+    }
+    await tx.checkin.deleteMany({ where: { goal_id: goalId } });
+
+    // Delete challenge suggestions for challenges tied to this goal
+    const challenges = await tx.challenge.findMany({
+      where: { goal_id: goalId },
+      select: { id: true },
+    });
+    if (challenges.length > 0) {
+      await tx.challengeSuggestion.deleteMany({
+        where: { challenge_id: { in: challenges.map((c) => c.id) } },
+      });
+    }
+    await tx.challenge.deleteMany({ where: { goal_id: goalId } });
+
+    await tx.penalty.deleteMany({ where: { goal_id: goalId } });
+
+    await tx.goal.delete({ where: { id: goalId } });
+  });
 }
 
 // ─── Internal ────────────────────────────────────────────────────────────────
