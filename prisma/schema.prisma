@@ -66,6 +66,11 @@ enum ProposalStatus {
   rejected
 }
 
+enum VoteDirection {
+  for
+  against
+}
+
 enum NotificationType {
   goal_missed
   nomination_received
@@ -96,6 +101,7 @@ model User {
   challengeSuggestions ChallengeSuggestion[]
   penalties            Penalty[]
   potProposals         PotProposal[]
+  potVotes             PotVote[]
   notifications        Notification[]
 
   @@map("users")
@@ -287,10 +293,25 @@ model PotProposal {
   closes_at     DateTime
   created_at    DateTime       @default(now())
 
-  pot      Pot  @relation(fields: [pot_id], references: [id])
-  proposer User @relation(fields: [proposed_by], references: [id])
+  pot      Pot       @relation(fields: [pot_id], references: [id])
+  proposer User      @relation(fields: [proposed_by], references: [id])
+  votes    PotVote[]
 
   @@map("pot_proposals")
+}
+
+model PotVote {
+  id          String        @id @default(uuid())
+  proposal_id String
+  user_id     String
+  vote        VoteDirection
+  created_at  DateTime      @default(now())
+
+  proposal PotProposal @relation(fields: [proposal_id], references: [id])
+  user     User        @relation(fields: [user_id], references: [id])
+
+  @@unique([proposal_id, user_id])
+  @@map("pot_votes")
 }
 
 model Notification {

@@ -53,6 +53,7 @@ export default async function AppLayout({
           <NavLink href="/profile" label="Profile" />
           <NavLink href="/nominations" label="Nominations" />
           <NavLink href="/challenges" label="Challenges" />
+          <NavLink href="/pot" label="Pot" />
           <NavLink href="/members" label="Family" />
         </div>
       </nav>
