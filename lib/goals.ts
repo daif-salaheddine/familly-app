@@ -206,6 +206,14 @@ export async function completeGoal(
   });
 }
 
+export async function deleteGoal(
+  goalId: string,
+  userId: string
+): Promise<void> {
+  await assertOwnership(goalId, userId);
+  await prisma.goal.delete({ where: { id: goalId } });
+}
+
 // ─── Internal ────────────────────────────────────────────────────────────────
 
 async function assertOwnership(goalId: string, userId: string) {

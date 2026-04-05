@@ -21,7 +21,8 @@ A private family accountability app. Family members living separately hold each 
 - **Slot 2** — chosen from nominations sent by family members. Optional until a nomination is accepted.
 - If no nomination has been received, the person may optionally fill slot 2 themselves.
 - A paused goal frees up its slot.
-- Goals are **not deleted** — they are `active`, `paused`, or `completed`.
+- Goals are normally `active`, `paused`, or `completed`.
+- **Goals can be deleted** by their owner. Deletion frees the slot immediately. Deleted goals do not appear anywhere in the UI. The goal detail page shows a delete button with a confirmation step before executing.
 
 ### Nominations (for slot 2)
 
@@ -432,11 +433,11 @@ Each feature is vertical — finish the API + UI together before moving to the n
 
 ### Feature 1 — Goals
 
-- [x] lib/goals.ts — done 2026-04-05
-- [x] Goals API — done 2026-04-05
+- [x] lib/goals.ts — done 2026-04-05, deleteGoal() added 2026-04-05
+- [x] Goals API — done 2026-04-05, DELETE added 2026-04-05
 - [x] Profile page (my goals) — done 2026-04-05
 - [x] Create goal page — done 2026-04-05
-- [x] Goal detail page — done 2026-04-05
+- [x] Goal detail page — done 2026-04-05, delete button with confirmation added 2026-04-05
 
 ### Feature 2 — Nominations
 
