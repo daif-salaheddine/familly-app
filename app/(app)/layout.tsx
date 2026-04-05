@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "../../auth";
+import { auth, signOut } from "../../auth";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/db";
 
@@ -23,7 +23,22 @@ export default async function AppLayout({
         <span className="font-semibold text-gray-900">
           {membership?.group.name ?? "Family App"}
         </span>
-        <span className="text-sm text-gray-500">{session.user.name}</span>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-500">{session.user.name}</span>
+          <form
+            action={async () => {
+              "use server";
+              await signOut({ redirectTo: "/login" });
+            }}
+          >
+            <button
+              type="submit"
+              className="text-sm text-gray-400 hover:text-red-500 transition-colors"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
       </header>
 
       {/* Page content — pad bottom so it clears the nav */}
