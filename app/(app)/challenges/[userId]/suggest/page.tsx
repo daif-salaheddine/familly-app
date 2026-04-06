@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "../../../../../auth";
 import { prisma } from "../../../../../lib/db";
 import SuggestForm from "../../../../../components/challenges/SuggestForm";
+import { getTranslations } from "next-intl/server";
 
 export default async function SuggestPage({
   params,
@@ -16,10 +17,13 @@ export default async function SuggestPage({
 
   if (userId === currentUserId) notFound();
 
-  const membership = await prisma.groupMember.findFirst({
-    where: { user_id: currentUserId },
-    select: { group_id: true },
-  });
+  const [membership, t] = await Promise.all([
+    prisma.groupMember.findFirst({
+      where: { user_id: currentUserId },
+      select: { group_id: true },
+    }),
+    getTranslations("challenges"),
+  ]);
   if (!membership) redirect("/login");
 
   const [targetUser, activeChallenge] = await Promise.all([
@@ -46,41 +50,35 @@ export default async function SuggestPage({
 
   if (!targetUser) notFound();
 
+  const header = (
+    <div>
+      <h1 className="text-xl font-bold text-gray-900">{t("suggest")}</h1>
+      <p className="text-sm text-gray-500">
+        {t("suggestSubtitle")} {targetUser.name}
+      </p>
+    </div>
+  );
+
   if (!activeChallenge) {
     return (
       <div className="flex flex-col gap-6">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">
-            Suggest a challenge action
-          </h1>
-          <p className="text-sm text-gray-500">For {targetUser.name}</p>
-        </div>
+        {header}
         <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
           <p className="text-sm font-medium text-gray-500">
-            {targetUser.name} doesn&apos;t have an active challenge right now
+            {targetUser.name} — {t("noChallenge").toLowerCase()}
           </p>
         </div>
       </div>
     );
   }
 
-  const alreadySuggested = activeChallenge.suggestions.length > 0;
-
-  if (alreadySuggested) {
+  if (activeChallenge.suggestions.length > 0) {
     return (
       <div className="flex flex-col gap-6">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">
-            Suggest a challenge action
-          </h1>
-          <p className="text-sm text-gray-500">For {targetUser.name}</p>
-        </div>
+        {header}
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-center">
           <p className="text-sm font-medium text-amber-800">
-            You already submitted a suggestion for {targetUser.name}&apos;s challenge
-          </p>
-          <p className="text-xs text-amber-600 mt-1">
-            Only one suggestion per person is allowed
+            {t("alreadySuggested")}
           </p>
         </div>
       </div>
@@ -89,16 +87,11 @@ export default async function SuggestPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-bold text-gray-900">
-          Suggest a challenge action
-        </h1>
-        <p className="text-sm text-gray-500">For {targetUser.name}</p>
-      </div>
+      {header}
 
       <div className="rounded-xl border border-gray-200 bg-white p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">
-          Their missed goal
+          {t("myChallenge")}
         </p>
         <p className="text-sm font-medium text-gray-900">
           {activeChallenge.goal.title}

@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function SuggestForm({ challengeId }: { challengeId: string }) {
+  const t = useTranslations("challenges");
   const router = useRouter();
   const [description, setDescription] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -35,14 +37,14 @@ export default function SuggestForm({ challengeId }: { challengeId: string }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700">
-          Describe the challenge action
+          {t("describeAction")}
         </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           maxLength={500}
           rows={4}
-          placeholder="e.g. Run 5km without stopping this weekend"
+          placeholder={t("exampleAction")}
           className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
           required
         />
@@ -56,7 +58,7 @@ export default function SuggestForm({ challengeId }: { challengeId: string }) {
         disabled={description.trim().length === 0 || isPending}
         className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
       >
-        {isPending ? "Submitting…" : "Submit suggestion"}
+        {isPending ? t("sending") : t("sendSuggestion")}
       </button>
     </form>
   );

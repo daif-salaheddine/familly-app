@@ -2,8 +2,10 @@ import Link from "next/link";
 import { auth } from "../../../auth";
 import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/db";
-import AvatarUpload from "../../../components/ui/AvatarUpload";
 import type { GoalWithNominator } from "../../../types";
+import AvatarUpload from "../../../components/ui/AvatarUpload";
+import LanguageSelector from "../../../components/ui/LanguageSelector";
+import { getTranslations } from "next-intl/server";
 
 const CATEGORY_COLORS: Record<string, string> = {
   body: "bg-orange-100 text-orange-700",
@@ -13,92 +15,21 @@ const CATEGORY_COLORS: Record<string, string> = {
   relationships: "bg-pink-100 text-pink-700",
 };
 
-function frequencyLabel(goal: GoalWithNominator) {
-  if (goal.frequency === "times_per_week") {
-    return `${goal.frequency_count}× per week`;
-  }
-  if (goal.frequency === "daily") return "Every day";
-  return "Once a week";
-}
-
-function GoalCard({ goal }: { goal: GoalWithNominator }) {
-  return (
-    <Link
-      href={`/profile/goals/${goal.id}`}
-      className="block rounded-xl border border-gray-200 bg-white p-4 hover:border-indigo-300 transition-colors"
-    >
-      <div className="flex items-start justify-between gap-2">
-        <p className="font-medium text-gray-900 leading-snug">{goal.title}</p>
-        <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_COLORS[goal.category] ?? "bg-gray-100 text-gray-600"}`}
-        >
-          {goal.category}
-        </span>
-      </div>
-      <p className="mt-1 text-sm text-gray-500">{frequencyLabel(goal)}</p>
-      <p className="mt-1 text-sm text-gray-500">
-        €{Number(goal.penalty_amount).toFixed(2)} / week penalty
-      </p>
-      {goal.nominator && (
-        <p className="mt-2 text-xs text-indigo-500">
-          Nominated by {goal.nominator.name}
-        </p>
-      )}
-    </Link>
-  );
-}
-
-function EmptySlot({
-  slot,
-  hasPendingNomination,
-}: {
-  slot: "self" | "nominated";
-  hasPendingNomination: boolean;
-}) {
-  if (slot === "self") {
-    return (
-      <Link
-        href="/profile/goals/new?slot=self"
-        className="flex items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-white p-6 text-sm font-medium text-gray-400 hover:border-indigo-400 hover:text-indigo-500 transition-colors"
-      >
-        + Add your goal
-      </Link>
-    );
-  }
-  if (hasPendingNomination) {
-    return (
-      <Link
-        href="/nominations"
-        className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-6 text-center hover:border-amber-400 transition-colors"
-      >
-        <p className="text-sm font-medium text-amber-700">Nomination waiting</p>
-        <p className="mt-1 text-xs text-amber-500">Tap to review →</p>
-      </Link>
-    );
-  }
-  return (
-    <Link
-      href="/profile/goals/new?slot=nominated"
-      className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-white p-6 text-center hover:border-indigo-400 transition-colors"
-    >
-      <p className="text-sm font-medium text-gray-400">Slot 2 empty</p>
-      <p className="mt-1 text-xs text-gray-400 hover:text-indigo-500">
-        + Fill it yourself
-      </p>
-    </Link>
-  );
-}
-
 export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
   const userId = session.user.id;
 
-  const membership = await prisma.groupMember.findFirst({
-    where: { user_id: userId },
-    select: { group_id: true },
-  });
+  const [membership, tProfile, tGoals, tCommon] = await Promise.all([
+    prisma.groupMember.findFirst({
+      where: { user_id: userId },
+      select: { group_id: true },
+    }),
+    getTranslations("profile"),
+    getTranslations("goals"),
+    getTranslations("common"),
+  ]);
   if (!membership) redirect("/login");
 
   const groupId = membership.group_id;
@@ -106,7 +37,7 @@ export default async function ProfilePage() {
   const [currentUser, goals, pendingNomination] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
-      select: { avatar_url: true },
+      select: { avatar_url: true, language: true },
     }),
     prisma.goal.findMany({
       where: { user_id: userId, group_id: groupId },
@@ -126,6 +57,92 @@ export default async function ProfilePage() {
   const slot1 = activeGoals.find((g) => g.slot === "self") ?? null;
   const slot2 = activeGoals.find((g) => g.slot === "nominated") ?? null;
 
+  const categoryLabels: Record<string, string> = {
+    body: tGoals("categoryBody"),
+    mind: tGoals("categoryMind"),
+    soul: tGoals("categorySoul"),
+    work: tGoals("categoryWork"),
+    relationships: tGoals("categoryRelationships"),
+  };
+
+  function frequencyLabel(goal: GoalWithNominator) {
+    if (goal.frequency === "times_per_week") {
+      return `${goal.frequency_count}${tCommon("times")} ${tCommon("perWeek")}`;
+    }
+    if (goal.frequency === "daily") return tCommon("everyDay");
+    return tCommon("onceAWeek");
+  }
+
+  function GoalCard({ goal }: { goal: GoalWithNominator }) {
+    return (
+      <Link
+        href={`/profile/goals/${goal.id}`}
+        className="block rounded-xl border border-gray-200 bg-white p-4 hover:border-indigo-300 transition-colors"
+      >
+        <div className="flex items-start justify-between gap-2">
+          <p className="font-medium text-gray-900 leading-snug">{goal.title}</p>
+          <span
+            className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_COLORS[goal.category] ?? "bg-gray-100 text-gray-600"}`}
+          >
+            {categoryLabels[goal.category] ?? goal.category}
+          </span>
+        </div>
+        <p className="mt-1 text-sm text-gray-500">{frequencyLabel(goal)}</p>
+        <p className="mt-1 text-sm text-gray-500">
+          €{Number(goal.penalty_amount).toFixed(2)} {tProfile("penaltyPerWeek")}
+        </p>
+        {goal.nominator && (
+          <p className="mt-2 text-xs text-indigo-500">
+            {tGoals("nominatedBy")} {goal.nominator.name}
+          </p>
+        )}
+      </Link>
+    );
+  }
+
+  function EmptySlot({
+    slot,
+    hasPendingNomination,
+  }: {
+    slot: "self" | "nominated";
+    hasPendingNomination: boolean;
+  }) {
+    if (slot === "self") {
+      return (
+        <Link
+          href="/profile/goals/new?slot=self"
+          className="flex items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-white p-6 text-sm font-medium text-gray-400 hover:border-indigo-400 hover:text-indigo-500 transition-colors"
+        >
+          {tGoals("addGoal")}
+        </Link>
+      );
+    }
+    if (hasPendingNomination) {
+      return (
+        <Link
+          href="/nominations"
+          className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-6 text-center hover:border-amber-400 transition-colors"
+        >
+          <p className="text-sm font-medium text-amber-700">
+            {tGoals("nominationWaiting")}
+          </p>
+          <p className="mt-1 text-xs text-amber-500">{tGoals("tapToReview")}</p>
+        </Link>
+      );
+    }
+    return (
+      <Link
+        href="/profile/goals/new?slot=nominated"
+        className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-white p-6 text-center hover:border-indigo-400 transition-colors"
+      >
+        <p className="text-sm font-medium text-gray-400">{tGoals("slot2Empty")}</p>
+        <p className="mt-1 text-xs text-gray-400 hover:text-indigo-500">
+          {tGoals("fillYourself")}
+        </p>
+      </Link>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
@@ -140,14 +157,17 @@ export default async function ProfilePage() {
         </div>
       </div>
 
+      {/* Language selector */}
+      <LanguageSelector current={currentUser?.language ?? "EN"} />
+
       {/* Active slots */}
       <div>
         <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
-          Active goals
+          {tProfile("activeGoals")}
         </h2>
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1">
-            <p className="text-xs font-medium text-gray-500">Slot 1 — self</p>
+            <p className="text-xs font-medium text-gray-500">{tProfile("slot1Label")}</p>
             {slot1 ? (
               <GoalCard goal={slot1 as GoalWithNominator} />
             ) : (
@@ -155,7 +175,7 @@ export default async function ProfilePage() {
             )}
           </div>
           <div className="flex flex-col gap-1">
-            <p className="text-xs font-medium text-gray-500">Slot 2 — nominated</p>
+            <p className="text-xs font-medium text-gray-500">{tProfile("slot2Label")}</p>
             {slot2 ? (
               <GoalCard goal={slot2 as GoalWithNominator} />
             ) : (
@@ -169,7 +189,7 @@ export default async function ProfilePage() {
       {pausedGoals.length > 0 && (
         <div>
           <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
-            Paused
+            {tProfile("paused")}
           </h2>
           <div className="flex flex-col gap-2">
             {pausedGoals.map((g) => (
@@ -183,7 +203,7 @@ export default async function ProfilePage() {
       {completedGoals.length > 0 && (
         <div>
           <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
-            Completed
+            {tProfile("completed")}
           </h2>
           <div className="flex flex-col gap-2">
             {completedGoals.map((g) => (

@@ -486,6 +486,16 @@ Each feature is vertical — finish the API + UI together before moving to the n
 - [x] Notification triggers — done 2026-04-06
 - [x] Notification bell — done 2026-04-06
 
+### i18n — Multilingual support (EN / FR / AR)
+
+- [x] next-intl setup (cookie-based, no URL routing) — done 2026-04-06
+- [x] messages/en.json, messages/fr.json, messages/ar.json — done 2026-04-06
+- [x] All pages translated (server components) — done 2026-04-06
+- [x] All client components translated — done 2026-04-06
+- [x] Arabic RTL: dir="rtl" on html, system-ui font fallback — done 2026-04-06
+- [x] Language selector on profile page, persisted to DB + cookie — done 2026-04-06
+- [x] Avatar upload with crop/zoom modal (react-easy-crop) — done 2026-04-06
+
 ## End of session routine
 
 At the end of every session always:

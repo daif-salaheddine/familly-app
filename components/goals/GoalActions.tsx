@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   goalId: string;
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export default function GoalActions({ goalId, status }: Props) {
+  const t = useTranslations("goals");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +62,9 @@ export default function GoalActions({ goalId, status }: Props) {
     return (
       <div className="flex flex-col gap-2">
         {confirmDelete ? (
-          <ConfirmDelete
+          <ConfirmDeleteBox
+            t={t}
+            tCommon={tCommon}
             loading={loading}
             onConfirm={handleDelete}
             onCancel={() => setConfirmDelete(false)}
@@ -70,7 +75,7 @@ export default function GoalActions({ goalId, status }: Props) {
             disabled={loading}
             className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
           >
-            Delete goal
+            {t("deleteGoal")}
           </button>
         )}
         {error && <p className="text-sm text-red-600">{error}</p>}
@@ -86,7 +91,7 @@ export default function GoalActions({ goalId, status }: Props) {
           disabled={loading}
           className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
         >
-          {loading ? "Saving…" : "Pause goal"}
+          {loading ? t("pausing") : t("pauseGoal")}
         </button>
       )}
       {status === "paused" && (
@@ -95,7 +100,7 @@ export default function GoalActions({ goalId, status }: Props) {
           disabled={loading}
           className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
         >
-          {loading ? "Saving…" : "Resume goal"}
+          {loading ? t("resuming") : t("resumeGoal")}
         </button>
       )}
       <button
@@ -103,11 +108,13 @@ export default function GoalActions({ goalId, status }: Props) {
         disabled={loading}
         className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
       >
-        {loading ? "Saving…" : "Mark as completed"}
+        {loading ? t("completing") : t("completeGoal")}
       </button>
 
       {confirmDelete ? (
-        <ConfirmDelete
+        <ConfirmDeleteBox
+          t={t}
+          tCommon={tCommon}
           loading={loading}
           onConfirm={handleDelete}
           onCancel={() => setConfirmDelete(false)}
@@ -118,7 +125,7 @@ export default function GoalActions({ goalId, status }: Props) {
           disabled={loading}
           className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
         >
-          Delete goal
+          {t("deleteGoal")}
         </button>
       )}
 
@@ -127,34 +134,36 @@ export default function GoalActions({ goalId, status }: Props) {
   );
 }
 
-function ConfirmDelete({
+function ConfirmDeleteBox({
+  t,
+  tCommon,
   loading,
   onConfirm,
   onCancel,
 }: {
+  t: ReturnType<typeof useTranslations>;
+  tCommon: ReturnType<typeof useTranslations>;
   loading: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }) {
   return (
     <div className="rounded-lg border border-red-200 bg-red-50 p-3 flex flex-col gap-2">
-      <p className="text-sm font-medium text-red-700">
-        Delete this goal permanently?
-      </p>
+      <p className="text-sm font-medium text-red-700">{t("confirmDelete")}</p>
       <div className="flex gap-2">
         <button
           onClick={onConfirm}
           disabled={loading}
           className="flex-1 rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
         >
-          {loading ? "Deleting…" : "Yes, delete"}
+          {loading ? t("deleting") : t("deleteGoal")}
         </button>
         <button
           onClick={onCancel}
           disabled={loading}
           className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
         >
-          Cancel
+          {tCommon("cancel")}
         </button>
       </div>
     </div>

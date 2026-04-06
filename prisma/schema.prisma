@@ -81,12 +81,19 @@ enum NotificationType {
   proposal_created
 }
 
+enum Language {
+  EN
+  FR
+  AR
+}
+
 model User {
   id            String   @id @default(uuid())
   name          String
   email         String   @unique
   password_hash String
   avatar_url    String?
+  language      Language @default(EN)
   created_at    DateTime @default(now())
 
   createdGroups        Group[]               @relation("GroupCreator")

@@ -4,6 +4,7 @@ import { prisma } from "../../../lib/db";
 import { getGroupChallenges } from "../../../lib/challenges";
 import MyChallengeCard from "../../../components/challenges/MyChallengeCard";
 import OtherChallengeCard from "../../../components/challenges/OtherChallengeCard";
+import { getTranslations } from "next-intl/server";
 
 export default async function ChallengesPage() {
   const session = await auth();
@@ -11,10 +12,13 @@ export default async function ChallengesPage() {
 
   const userId = session.user.id;
 
-  const membership = await prisma.groupMember.findFirst({
-    where: { user_id: userId },
-    select: { group_id: true },
-  });
+  const [membership, t] = await Promise.all([
+    prisma.groupMember.findFirst({
+      where: { user_id: userId },
+      select: { group_id: true },
+    }),
+    getTranslations("challenges"),
+  ]);
   if (!membership) redirect("/login");
 
   const challenges = await getGroupChallenges(membership.group_id);
@@ -25,25 +29,21 @@ export default async function ChallengesPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Challenges</h1>
-        <p className="text-sm text-gray-500">
-          Triggered after 2 consecutive missed weeks
-        </p>
+        <h1 className="text-xl font-bold text-gray-900">{t("title")}</h1>
+        <p className="text-sm text-gray-500">{t("subtitle")}</p>
       </div>
 
       {/* My challenge */}
       <section className="flex flex-col gap-3">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-          My challenge
+          {t("myChallenge")}
         </h2>
         {myChallenge ? (
           <MyChallengeCard challenge={myChallenge} />
         ) : (
           <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-            <p className="text-sm font-medium text-gray-500">No active challenge</p>
-            <p className="text-xs text-gray-400 mt-1">
-              Keep your streak going and you won&apos;t get one
-            </p>
+            <p className="text-sm font-medium text-gray-500">{t("noChallenge")}</p>
+            <p className="text-xs text-gray-400 mt-1">{t("keepStreak")}</p>
           </div>
         )}
       </section>
@@ -52,7 +52,7 @@ export default async function ChallengesPage() {
       {otherChallenges.length > 0 && (
         <section className="flex flex-col gap-3">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-            Family challenges
+            {t("familyChallenges")}
           </h2>
           <div className="flex flex-col gap-3">
             {otherChallenges.map((c) => (

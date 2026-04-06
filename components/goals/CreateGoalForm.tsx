@@ -2,14 +2,7 @@
 
 import { useActionState } from "react";
 import { createGoalAction } from "../../app/actions/goals";
-
-const CATEGORIES = [
-  { value: "body", label: "Body" },
-  { value: "mind", label: "Mind" },
-  { value: "soul", label: "Soul" },
-  { value: "work", label: "Work" },
-  { value: "relationships", label: "Relationships" },
-];
+import { useTranslations } from "next-intl";
 
 interface Props {
   slot: "self" | "nominated";
@@ -18,10 +11,20 @@ interface Props {
 const initialState = { error: null };
 
 export default function CreateGoalForm({ slot }: Props) {
+  const t = useTranslations("goals");
+  const tCommon = useTranslations("common");
   const [state, formAction, isPending] = useActionState(
     createGoalAction,
     initialState
   );
+
+  const categories = [
+    { value: "body",          label: t("categoryBody") },
+    { value: "mind",          label: t("categoryMind") },
+    { value: "soul",          label: t("categorySoul") },
+    { value: "work",          label: t("categoryWork") },
+    { value: "relationships", label: t("categoryRelationships") },
+  ];
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
@@ -30,7 +33,7 @@ export default function CreateGoalForm({ slot }: Props) {
       {/* Title */}
       <div className="flex flex-col gap-1">
         <label htmlFor="title" className="text-sm font-medium text-gray-700">
-          Goal title
+          {t("title")}
         </label>
         <input
           id="title"
@@ -38,7 +41,7 @@ export default function CreateGoalForm({ slot }: Props) {
           type="text"
           required
           maxLength={100}
-          placeholder="e.g. Run 3 times a week"
+          placeholder={t("titlePlaceholder")}
           className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
       </div>
@@ -46,7 +49,7 @@ export default function CreateGoalForm({ slot }: Props) {
       {/* Category */}
       <div className="flex flex-col gap-1">
         <label htmlFor="category" className="text-sm font-medium text-gray-700">
-          Category
+          {t("category")}
         </label>
         <select
           id="category"
@@ -54,7 +57,7 @@ export default function CreateGoalForm({ slot }: Props) {
           required
           className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         >
-          {CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <option key={c.value} value={c.value}>
               {c.label}
             </option>
@@ -65,7 +68,7 @@ export default function CreateGoalForm({ slot }: Props) {
       {/* Frequency */}
       <div className="flex flex-col gap-1">
         <label htmlFor="frequency" className="text-sm font-medium text-gray-700">
-          Frequency
+          {t("frequency")}
         </label>
         <select
           id="frequency"
@@ -81,9 +84,9 @@ export default function CreateGoalForm({ slot }: Props) {
             }
           }}
         >
-          <option value="daily">Every day</option>
-          <option value="times_per_week">X times per week</option>
-          <option value="weekly">Once a week</option>
+          <option value="daily">{tCommon("everyDay")}</option>
+          <option value="times_per_week">{t("frequencyTimesPerWeek")}</option>
+          <option value="weekly">{tCommon("onceAWeek")}</option>
         </select>
       </div>
 
@@ -93,7 +96,7 @@ export default function CreateGoalForm({ slot }: Props) {
           htmlFor="frequency_count"
           className="text-sm font-medium text-gray-700"
         >
-          Times per week
+          {t("frequencyCount")}
         </label>
         <input
           id="frequency_count"
@@ -112,7 +115,7 @@ export default function CreateGoalForm({ slot }: Props) {
           htmlFor="penalty_amount"
           className="text-sm font-medium text-gray-700"
         >
-          Weekly penalty (€)
+          {t("penaltyAmount")}
         </label>
         <input
           id="penalty_amount"
@@ -121,12 +124,9 @@ export default function CreateGoalForm({ slot }: Props) {
           min={1}
           step={0.5}
           required
-          placeholder="10"
+          placeholder={t("penaltyPlaceholder")}
           className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
-        <p className="text-xs text-gray-400">
-          Added to the group pot each week you miss this goal.
-        </p>
       </div>
 
       {state.error && (
@@ -138,7 +138,7 @@ export default function CreateGoalForm({ slot }: Props) {
         disabled={isPending}
         className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
       >
-        {isPending ? "Saving…" : "Create goal"}
+        {isPending ? t("creating") : t("createGoal")}
       </button>
     </form>
   );

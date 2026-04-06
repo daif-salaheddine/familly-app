@@ -2,10 +2,10 @@ import { redirect } from "next/navigation";
 import { auth } from "../../../auth";
 import { prisma } from "../../../lib/db";
 import Avatar from "../../../components/ui/Avatar";
+import { getTranslations } from "next-intl/server";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Returns the Monday of the current week (UTC). */
 function getCurrentMonday(): Date {
   const now = new Date();
   const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
@@ -14,7 +14,6 @@ function getCurrentMonday(): Date {
   return d;
 }
 
-/** Returns ISO week number and year for a given Monday. */
 function getWeekKey(monday: Date): string {
   const d = new Date(monday);
   const dayNum = d.getUTCDay() || 7;
@@ -24,9 +23,6 @@ function getWeekKey(monday: Date): string {
   return `${d.getUTCFullYear()}-${week}`;
 }
 
-/**
- * Returns the Monday of the week containing the given date (UTC).
- */
 function getMondayOf(date: Date): Date {
   const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
   const day = d.getUTCDay();
@@ -34,11 +30,6 @@ function getMondayOf(date: Date): Date {
   return d;
 }
 
-/**
- * Count consecutive penalty-free complete weeks ending at (currentMonday - 1 week).
- * Only counts weeks that fall on or after the week the user created their first goal.
- * Returns 0 if the user has no goals or no completed weeks yet.
- */
 function calcStreak(
   penaltyWeekKeys: Set<string>,
   currentMonday: Date,
@@ -48,14 +39,12 @@ function calcStreak(
 
   const firstGoalMonday = getMondayOf(firstGoalDate);
   const cursor = new Date(currentMonday);
-  cursor.setUTCDate(cursor.getUTCDate() - 7); // last fully completed week
+  cursor.setUTCDate(cursor.getUTCDate() - 7);
 
-  // No completed weeks yet since first goal was created
   if (cursor.getTime() < firstGoalMonday.getTime()) return 0;
 
   let streak = 0;
   for (let i = 0; i < 52; i++) {
-    // Don't count weeks before the user's first goal existed
     if (cursor.getTime() < firstGoalMonday.getTime()) break;
     if (penaltyWeekKeys.has(getWeekKey(cursor))) break;
     streak++;
@@ -72,15 +61,17 @@ export default async function LeaderboardPage() {
 
   const userId = session.user.id;
 
-  const membership = await prisma.groupMember.findFirst({
-    where: { user_id: userId },
-    select: { group_id: true },
-  });
+  const [membership, t] = await Promise.all([
+    prisma.groupMember.findFirst({
+      where: { user_id: userId },
+      select: { group_id: true },
+    }),
+    getTranslations("leaderboard"),
+  ]);
   if (!membership) redirect("/login");
 
   const groupId = membership.group_id;
 
-  // Fetch everything in parallel
   const [members, allGoals, allPenalties] = await Promise.all([
     prisma.groupMember.findMany({
       where: { group_id: groupId },
@@ -97,7 +88,6 @@ export default async function LeaderboardPage() {
     }),
   ]);
 
-  // Group by user
   const goalsByUser = new Map<string, typeof allGoals>();
   const penaltiesByUser = new Map<string, typeof allPenalties>();
   for (const g of allGoals) {
@@ -111,25 +101,18 @@ export default async function LeaderboardPage() {
 
   const currentMonday = getCurrentMonday();
 
-  // Compute stats per member
   const ranked = members
     .map(({ user }) => {
       const goals = goalsByUser.get(user.id) ?? [];
       const penalties = penaltiesByUser.get(user.id) ?? [];
 
       const goalsCompleted = goals.filter((g) => g.status === "completed").length;
+      const totalPaid = penalties.reduce((sum, p) => sum + Number(p.amount), 0);
 
-      const totalPaid = penalties.reduce(
-        (sum, p) => sum + Number(p.amount),
-        0
-      );
-
-      // Earliest goal — used for both streak and completion rate
       const firstGoal = goals.length
         ? goals.reduce((a, b) => (a.created_at < b.created_at ? a : b))
         : null;
 
-      // Penalty week keys for streak calculation — derived from period_start
       const penaltyWeekKeys = new Set(
         penalties.map((p) => getWeekKey(new Date(p.period_start)))
       );
@@ -143,24 +126,21 @@ export default async function LeaderboardPage() {
           1,
           Math.floor((currentMonday.getTime() - firstGoal.created_at.getTime()) / msPerWeek)
         );
-        const penaltyWeeks = penaltyWeekKeys.size;
-        completionRate = Math.max(0, (weeksActive - penaltyWeeks) / weeksActive);
+        completionRate = Math.max(0, (weeksActive - penaltyWeekKeys.size) / weeksActive);
       }
 
       return { user, streak, completionRate, goalsCompleted, totalPaid };
     })
     .sort((a, b) => {
       if (b.streak !== a.streak) return b.streak - a.streak;
-      const rateA = a.completionRate ?? 0;
-      const rateB = b.completionRate ?? 0;
-      return rateB - rateA;
+      return (b.completionRate ?? 0) - (a.completionRate ?? 0);
     });
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Leaderboard</h1>
-        <p className="text-sm text-gray-500">Family accountability rankings</p>
+        <h1 className="text-xl font-bold text-gray-900">{t("title")}</h1>
+        <p className="text-sm text-gray-500">{t("subtitle")}</p>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -204,12 +184,12 @@ export default async function LeaderboardPage() {
                   </p>
                   {isMe && (
                     <span className="rounded-full bg-indigo-100 px-1.5 py-0.5 text-xs font-medium text-indigo-600">
-                      you
+                      {t("youBadge")}
                     </span>
                   )}
                 </div>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  {entry.goalsCompleted} completed · €{entry.totalPaid.toFixed(2)} paid
+                  {entry.goalsCompleted} {t("completed")} · €{entry.totalPaid.toFixed(2)} {t("paid")}
                 </p>
               </div>
 
@@ -217,10 +197,10 @@ export default async function LeaderboardPage() {
               <div className="shrink-0 text-right">
                 <p className="text-lg font-bold text-gray-900">
                   {entry.streak}
-                  <span className="text-sm font-normal text-gray-400">w</span>
+                  <span className="text-sm font-normal text-gray-400">{t("streakSuffix")}</span>
                 </p>
                 <p className="text-xs text-gray-400">
-                  {`${Math.round((entry.completionRate ?? 0) * 100)}% rate`}
+                  {`${Math.round((entry.completionRate ?? 0) * 100)}${t("rateSuffix")}`}
                 </p>
               </div>
             </div>
@@ -228,9 +208,7 @@ export default async function LeaderboardPage() {
         })}
       </div>
 
-      <p className="text-center text-xs text-gray-400">
-        Streak = consecutive penalty-free weeks
-      </p>
+      <p className="text-center text-xs text-gray-400">{t("footer")}</p>
     </div>
   );
 }

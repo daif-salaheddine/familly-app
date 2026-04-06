@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "../../../../../../auth";
 import { prisma } from "../../../../../../lib/db";
 import CheckinForm from "../../../../../../components/goals/CheckinForm";
+import { getTranslations } from "next-intl/server";
 
 export default async function CheckinPage({
   params,
@@ -13,10 +14,13 @@ export default async function CheckinPage({
 
   const { id } = await params;
 
-  const goal = await prisma.goal.findUnique({
-    where: { id },
-    select: { id: true, title: true, user_id: true, status: true },
-  });
+  const [goal, t] = await Promise.all([
+    prisma.goal.findUnique({
+      where: { id },
+      select: { id: true, title: true, user_id: true, status: true },
+    }),
+    getTranslations("goals"),
+  ]);
 
   if (!goal) notFound();
   if (goal.user_id !== session.user.id) notFound();
@@ -25,7 +29,7 @@ export default async function CheckinPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Upload proof</h1>
+        <h1 className="text-xl font-bold text-gray-900">{t("checkinTitle")}</h1>
         <p className="text-sm text-gray-500 mt-0.5">{goal.title}</p>
       </div>
       <CheckinForm goalId={id} />

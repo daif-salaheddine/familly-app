@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import type { ProposalWithVotes } from "../../lib/pot";
 
 function formatDate(d: Date) {
-  return new Date(d).toLocaleDateString("en-GB", {
+  return new Date(d).toLocaleDateString(undefined, {
     day: "numeric",
     month: "short",
     hour: "2-digit",
@@ -13,13 +14,16 @@ function formatDate(d: Date) {
   });
 }
 
-function timeUntil(d: Date) {
+function timeUntil(
+  d: Date,
+  t: ReturnType<typeof useTranslations>
+): string {
   const ms = new Date(d).getTime() - Date.now();
-  if (ms <= 0) return "Closed";
+  if (ms <= 0) return t("closedStatus");
   const h = Math.floor(ms / 3_600_000);
-  if (h < 1) return "< 1h left";
-  if (h < 24) return `${h}h left`;
-  return `${Math.floor(h / 24)}d left`;
+  if (h < 1) return t("lessThan1h");
+  if (h < 24) return `${h}h ${t("timeLeft")}`;
+  return `${Math.floor(h / 24)}d ${t("timeLeft")}`;
 }
 
 export default function ProposalCard({
@@ -29,6 +33,7 @@ export default function ProposalCard({
   proposal: ProposalWithVotes;
   currentUserId: string;
 }) {
+  const t = useTranslations("pot");
   const router = useRouter();
 
   const myVote = proposal.votes.find((v) => v.user_id === currentUserId)?.vote ?? null;
@@ -120,24 +125,24 @@ export default function ProposalCard({
         </p>
         {proposal.status === "approved" && (
           <span className="shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">
-            Approved
+            {t("approved")}
           </span>
         )}
         {proposal.status === "rejected" && (
           <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">
-            Rejected
+            {t("rejected")}
           </span>
         )}
         {proposal.status === "open" && (
           <span className="shrink-0 text-xs text-gray-400">
-            {timeUntil(proposal.closes_at)}
+            {timeUntil(proposal.closes_at, t)}
           </span>
         )}
       </div>
 
       {/* Proposer + date */}
       <p className="text-xs text-gray-400">
-        Proposed by{" "}
+        {t("proposedBy")}{" "}
         <span className="font-medium text-gray-600">{proposal.proposer.name}</span>
         {" · "}
         {formatDate(proposal.created_at)}
@@ -172,7 +177,7 @@ export default function ProposalCard({
                 : "border border-gray-300 text-gray-700 hover:bg-gray-50"
             }`}
           >
-            👍 For{votesFor > 0 ? ` (${votesFor})` : ""}
+            {t("voteFor")} {t("voteForLabel")}{votesFor > 0 ? ` (${votesFor})` : ""}
           </button>
           <button
             onClick={() => handleVote("against")}
@@ -183,7 +188,7 @@ export default function ProposalCard({
                 : "border border-gray-300 text-gray-700 hover:bg-gray-50"
             }`}
           >
-            👎 Against{votesAgainst > 0 ? ` (${votesAgainst})` : ""}
+            {t("voteAgainst")} {t("voteAgainstLabel")}{votesAgainst > 0 ? ` (${votesAgainst})` : ""}
           </button>
         </div>
       )}

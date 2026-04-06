@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import type { FeedItem as FeedItemType, ReactionData } from "../../lib/feed";
 import ReactionBar from "./ReactionBar";
 import Avatar from "../ui/Avatar";
@@ -10,16 +11,16 @@ const CATEGORY_COLORS: Record<string, string> = {
   relationships: "bg-pink-100 text-pink-700",
 };
 
-function timeAgo(date: Date): string {
+function timeAgo(date: Date, t: Awaited<ReturnType<typeof getTranslations>>): string {
   const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
-  if (seconds < 60) return "just now";
+  if (seconds < 60) return t("justNow");
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return `${minutes}${t("minutesAgo")}`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return `${hours}${t("hoursAgo")}`;
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
-  return new Date(date).toLocaleDateString("en-GB", {
+  if (days < 7) return `${days}${t("daysAgo")}`;
+  return new Date(date).toLocaleDateString(undefined, {
     day: "numeric",
     month: "short",
   });
@@ -29,15 +30,17 @@ function isVideo(url: string) {
   return /\.(mp4|mov|webm)(\?|$)/i.test(url);
 }
 
-export default function FeedItem({
+export default async function FeedItem({
   item,
   currentUserId,
 }: {
   item: FeedItemType;
   currentUserId: string;
 }) {
+  const t = await getTranslations("feed");
+
   const ts = (
-    <span className="text-xs text-gray-400">{timeAgo(item.created_at)}</span>
+    <span className="text-xs text-gray-400">{timeAgo(item.created_at, t)}</span>
   );
 
   // ── Checkin ──────────────────────────────────────────────────────────────
@@ -59,7 +62,7 @@ export default function FeedItem({
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={data.media_url}
-              alt="Check-in proof"
+              alt={t("checkinAlt")}
               className="w-full max-h-80 object-contain"
             />
           )}
@@ -105,7 +108,7 @@ export default function FeedItem({
           <Avatar name={data.user.name} url={data.user.avatar_url} size="sm" />
           <p className="text-sm text-gray-700 min-w-0">
             <span className="font-semibold text-gray-900">{data.user.name}</span>
-            {" started a new goal: "}
+            {" "}{t("startedGoal")}{" "}
             <span className="font-medium text-gray-900">{data.title}</span>
           </p>
         </div>
@@ -132,11 +135,11 @@ export default function FeedItem({
             <span className="font-semibold text-gray-900">
               {data.recipient.name}
             </span>
-            {" accepted "}
+            {" "}{t("acceptedNomination")}{" "}
             <span className="font-semibold text-gray-900">
               {data.nominator.name}
             </span>
-            {"'s nomination: "}
+            {t("nominationSuffix")}{" "}
             <span className="font-medium text-gray-900">{data.title}</span>
           </p>
         </div>
@@ -154,9 +157,9 @@ export default function FeedItem({
           <Avatar name={data.user.name} url={data.user.avatar_url} size="sm" />
           <p className="text-sm text-orange-800 min-w-0">
             <span className="font-semibold">{data.user.name}</span>
-            {" has a new challenge for missing "}
+            {" "}{t("newChallenge")}{" "}
             <span className="font-medium">{data.goal.title}</span>
-            {"!"}
+            {t("challengeSuffix")}
           </p>
         </div>
         {ts}
@@ -173,9 +176,9 @@ export default function FeedItem({
           <Avatar name={data.user.name} url={data.user.avatar_url} size="sm" />
           <p className="text-sm text-red-800 min-w-0">
             <span className="font-semibold">{data.user.name}</span>
-            {" missed "}
+            {" "}{t("missed")}{" "}
             <span className="font-medium">{data.goal.title}</span>
-            {` this week — €${Number(data.amount).toFixed(2)} added to pot`}
+            {" "}{t("missedSuffix")}{" "}€{Number(data.amount).toFixed(2)} {t("addedToPot")}
           </p>
         </div>
         {ts}

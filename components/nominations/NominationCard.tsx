@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import type { NominationWithUsers } from "../../types";
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -12,10 +13,14 @@ const CATEGORY_COLORS: Record<string, string> = {
   relationships: "bg-pink-100 text-pink-700",
 };
 
-function frequencyLabel(n: NominationWithUsers) {
-  if (n.frequency === "times_per_week") return `${n.frequency_count}× per week`;
-  if (n.frequency === "daily") return "Every day";
-  return "Once a week";
+function frequencyLabel(
+  n: NominationWithUsers,
+  tCommon: ReturnType<typeof useTranslations>
+) {
+  if (n.frequency === "times_per_week")
+    return `${n.frequency_count}× ${tCommon("perWeek")}`;
+  if (n.frequency === "daily") return tCommon("everyDay");
+  return tCommon("onceAWeek");
 }
 
 export default function NominationCard({
@@ -23,6 +28,8 @@ export default function NominationCard({
 }: {
   nomination: NominationWithUsers;
 }) {
+  const t = useTranslations("nominations");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const [isFetching, setIsFetching] = useState(false);
   const [showAccept, setShowAccept] = useState(false);
@@ -59,7 +66,7 @@ export default function NominationCard({
         <div>
           <p className="font-medium text-gray-900">{nomination.title}</p>
           <p className="text-xs text-gray-500 mt-0.5">
-            From <span className="font-medium">{nomination.fromUser.name}</span>
+            {t("from")} <span className="font-medium">{nomination.fromUser.name}</span>
           </p>
         </div>
         <span
@@ -71,9 +78,9 @@ export default function NominationCard({
 
       {/* Details */}
       <div className="flex gap-3 text-sm text-gray-500">
-        <span>{frequencyLabel(nomination)}</span>
+        <span>{frequencyLabel(nomination, tCommon)}</span>
         <span>·</span>
-        <span>€{Number(nomination.penalty_amount).toFixed(2)} / week</span>
+        <span>€{Number(nomination.penalty_amount).toFixed(2)} / {tCommon("perWeek")}</span>
       </div>
 
       {/* Message */}
@@ -89,7 +96,7 @@ export default function NominationCard({
           <textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            placeholder="Why did you choose this? (optional)"
+            placeholder={t("reasonPlaceholder")}
             rows={2}
             className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
           />
@@ -107,14 +114,14 @@ export default function NominationCard({
               disabled={isFetching}
               className="flex-1 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
             >
-              {isFetching ? "Accepting…" : "Confirm accept"}
+              {isFetching ? t("accepting") : t("confirmAccept")}
             </button>
             <button
               onClick={() => setShowAccept(false)}
               disabled={isFetching}
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
             >
-              Cancel
+              {tCommon("cancel")}
             </button>
           </>
         ) : (
@@ -124,14 +131,14 @@ export default function NominationCard({
               disabled={isFetching}
               className="flex-1 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
             >
-              Accept
+              {t("accept")}
             </button>
             <button
               onClick={() => respond("decline")}
               disabled={isFetching}
               className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
             >
-              {isFetching ? "Declining…" : "Decline"}
+              {isFetching ? t("declining") : t("decline")}
             </button>
           </>
         )}

@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import type { ChallengeWithDetails } from "../../types";
 
 const ALLOWED_TYPES = [
@@ -16,12 +17,18 @@ const ALLOWED_TYPES = [
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
-function StatusBadge({ status }: { status: ChallengeWithDetails["status"] }) {
+function StatusBadge({
+  status,
+  t,
+}: {
+  status: ChallengeWithDetails["status"];
+  t: ReturnType<typeof useTranslations>;
+}) {
   if (status === "pending_suggestions") {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
         <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-        Waiting for suggestions
+        {t("waitingForSuggestions")}
       </span>
     );
   }
@@ -29,14 +36,14 @@ function StatusBadge({ status }: { status: ChallengeWithDetails["status"] }) {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-        Choose your challenge
+        {t("chooseYourChallenge")}
       </span>
     );
   }
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
       <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-      Prove it!
+      {t("proveIt")}
     </span>
   );
 }
@@ -44,6 +51,7 @@ function StatusBadge({ status }: { status: ChallengeWithDetails["status"] }) {
 // ─── Proof upload form ────────────────────────────────────────────────────────
 
 function ProofUploadForm({ challengeId }: { challengeId: string }) {
+  const t = useTranslations("challenges");
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -58,11 +66,11 @@ function ProofUploadForm({ challengeId }: { challengeId: string }) {
     const selected = e.target.files?.[0] ?? null;
     if (!selected) return;
     if (!ALLOWED_TYPES.includes(selected.type)) {
-      setError("File type not allowed. Use images or video.");
+      setError(t("fileTypeError"));
       return;
     }
     if (selected.size > 50 * 1024 * 1024) {
-      setError("File exceeds 50 MB limit.");
+      setError(t("fileSizeError"));
       return;
     }
     setError(null);
@@ -124,7 +132,7 @@ function ProofUploadForm({ challengeId }: { challengeId: string }) {
         onClick={() => inputRef.current?.click()}
         className="rounded-lg border-2 border-dashed border-gray-300 px-4 py-5 text-sm font-medium text-gray-500 hover:border-green-400 hover:text-green-600 transition-colors text-center"
       >
-        {file ? "Change file" : "Choose photo or video"}
+        {file ? t("changeFile") : t("chooseMedia")}
       </button>
       <input
         ref={inputRef}
@@ -143,7 +151,7 @@ function ProofUploadForm({ challengeId }: { challengeId: string }) {
         onChange={(e) => setCaption(e.target.value)}
         maxLength={300}
         rows={2}
-        placeholder="Describe what you did (optional)"
+        placeholder={t("captionPlaceholderProof")}
         className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 resize-none"
       />
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -152,7 +160,7 @@ function ProofUploadForm({ challengeId }: { challengeId: string }) {
         disabled={!file || isPending}
         className="rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
       >
-        {isPending ? "Uploading…" : "Submit proof"}
+        {isPending ? t("uploading") : t("submitProof")}
       </button>
     </form>
   );
@@ -165,6 +173,7 @@ export default function MyChallengeCard({
 }: {
   challenge: ChallengeWithDetails;
 }) {
+  const t = useTranslations("challenges");
   const router = useRouter();
   const [choosing, setChoosing] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -199,11 +208,11 @@ export default function MyChallengeCard({
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">
-            Your challenge
+            {t("myChallenge")}
           </p>
           <p className="font-semibold text-gray-900">{challenge.goal.title}</p>
         </div>
-        <StatusBadge status={challenge.status} />
+        <StatusBadge status={challenge.status} t={t} />
       </div>
 
       {/* ── pending_suggestions ── */}
@@ -211,14 +220,13 @@ export default function MyChallengeCard({
         <div className="flex flex-col gap-3">
           <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
             <p className="text-sm text-amber-800">
-              Family members are suggesting challenge actions. You&apos;ll be able to
-              choose once the first suggestion arrives.
+              {t("familySuggestionsHint")}
             </p>
           </div>
           {challenge.suggestions.length > 0 && (
             <div className="flex flex-col gap-2">
               <p className="text-xs font-medium text-gray-500">
-                Suggestions so far ({challenge.suggestions.length})
+                {t("suggestionsSoFar")} ({challenge.suggestions.length})
               </p>
               {challenge.suggestions.map((s) => (
                 <div
@@ -240,11 +248,11 @@ export default function MyChallengeCard({
       {challenge.status === "pending_choice" && (
         <div className="flex flex-col gap-3">
           <p className="text-sm text-gray-600">
-            Pick the action you want to complete:
+            {t("pickAction")}
           </p>
           {error && <p className="text-sm text-red-600">{error}</p>}
           {pendingSuggestions.length === 0 ? (
-            <p className="text-sm text-gray-400">No suggestions yet.</p>
+            <p className="text-sm text-gray-400">{t("noSuggestionsYet")}</p>
           ) : (
             pendingSuggestions.map((s) => (
               <div
@@ -260,7 +268,7 @@ export default function MyChallengeCard({
                   disabled={choosing !== null}
                   className="shrink-0 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {choosing === s.id ? "Choosing…" : "Choose"}
+                  {choosing === s.id ? t("choosing") : t("choose")}
                 </button>
               </div>
             ))
@@ -273,17 +281,17 @@ export default function MyChallengeCard({
         <div className="flex flex-col gap-3">
           <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-green-600 mb-1">
-              Your challenge action
+              {t("yourChallengeAction")}
             </p>
             <p className="text-sm font-medium text-gray-900">
               {challenge.chosenSuggestion.description}
             </p>
             <p className="text-xs text-gray-500 mt-1">
-              — suggested by {challenge.chosenSuggestion.fromUser.name}
+              — {t("suggestedBy")} {challenge.chosenSuggestion.fromUser.name}
             </p>
           </div>
           <p className="text-sm text-gray-600">
-            Upload a photo or video as proof you completed it.
+            {t("uploadProofInstructions")}
           </p>
           <ProofUploadForm challengeId={challenge.id} />
         </div>

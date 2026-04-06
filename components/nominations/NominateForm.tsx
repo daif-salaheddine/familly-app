@@ -2,13 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const CATEGORIES = ["body", "mind", "soul", "work", "relationships"] as const;
-const FREQUENCIES = [
-  { value: "daily", label: "Every day" },
-  { value: "times_per_week", label: "Times per week" },
-  { value: "weekly", label: "Once a week" },
-] as const;
 
 export default function NominateForm({
   toUserId,
@@ -17,6 +13,9 @@ export default function NominateForm({
   toUserId: string;
   toUserName: string;
 }) {
+  const t = useTranslations("nominations");
+  const tGoals = useTranslations("goals");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,25 +58,39 @@ export default function NominateForm({
     router.refresh();
   }
 
+  const categoryLabels: Record<string, string> = {
+    body: tGoals("categoryBody"),
+    mind: tGoals("categoryMind"),
+    soul: tGoals("categorySoul"),
+    work: tGoals("categoryWork"),
+    relationships: tGoals("categoryRelationships"),
+  };
+
+  const frequencies = [
+    { value: "daily", label: tCommon("everyDay") },
+    { value: "times_per_week", label: tGoals("frequencyCount") },
+    { value: "weekly", label: tCommon("onceAWeek") },
+  ];
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {/* Title */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Goal title</label>
+        <label className="text-sm font-medium text-gray-700">{t("goalTitle")}</label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
           maxLength={100}
-          placeholder={`A goal for ${toUserName}…`}
+          placeholder={t("nominatePlaceholder", { name: toUserName })}
           className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
       </div>
 
       {/* Category */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Category</label>
+        <label className="text-sm font-medium text-gray-700">{tGoals("category")}</label>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
@@ -85,7 +98,7 @@ export default function NominateForm({
         >
           {CATEGORIES.map((c) => (
             <option key={c} value={c}>
-              {c.charAt(0).toUpperCase() + c.slice(1)}
+              {categoryLabels[c]}
             </option>
           ))}
         </select>
@@ -93,13 +106,13 @@ export default function NominateForm({
 
       {/* Frequency */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Frequency</label>
+        <label className="text-sm font-medium text-gray-700">{tGoals("frequency")}</label>
         <select
           value={frequency}
           onChange={(e) => setFrequency(e.target.value)}
           className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         >
-          {FREQUENCIES.map((f) => (
+          {frequencies.map((f) => (
             <option key={f.value} value={f.value}>
               {f.label}
             </option>
@@ -111,7 +124,7 @@ export default function NominateForm({
       {frequency === "times_per_week" && (
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">
-            Times per week
+            {tGoals("frequencyCount")}
           </label>
           <input
             type="number"
@@ -127,7 +140,7 @@ export default function NominateForm({
       {/* Penalty */}
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700">
-          Weekly penalty (€)
+          {t("weeklyPenalty")}
         </label>
         <input
           type="number"
@@ -144,15 +157,14 @@ export default function NominateForm({
       {/* Message */}
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700">
-          Message{" "}
-          <span className="font-normal text-gray-400">(optional)</span>
+          {t("personalNote")}
         </label>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           maxLength={300}
           rows={3}
-          placeholder="Why are you nominating this goal?"
+          placeholder={t("personalNotePlaceholder")}
           className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
         />
       </div>
@@ -164,7 +176,7 @@ export default function NominateForm({
         disabled={isPending}
         className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
       >
-        {isPending ? "Sending…" : `Nominate for ${toUserName}`}
+        {isPending ? t("sending") : t("nominateFor", { name: toUserName })}
       </button>
     </form>
   );
