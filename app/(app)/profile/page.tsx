@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth } from "../../../auth";
 import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/db";
+import AvatarUpload from "../../../components/ui/AvatarUpload";
 import type { GoalWithNominator } from "../../../types";
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -102,7 +103,11 @@ export default async function ProfilePage() {
 
   const groupId = membership.group_id;
 
-  const [goals, pendingNomination] = await Promise.all([
+  const [currentUser, goals, pendingNomination] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { avatar_url: true },
+    }),
     prisma.goal.findMany({
       where: { user_id: userId, group_id: groupId },
       include: { nominator: { select: { id: true, name: true } } },
@@ -124,9 +129,15 @@ export default async function ProfilePage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold text-gray-900">{session.user.name}</h1>
-        <p className="text-sm text-gray-500">{session.user.email}</p>
+      <div className="flex items-center gap-4">
+        <AvatarUpload
+          name={session.user.name!}
+          initialUrl={currentUser?.avatar_url ?? null}
+        />
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">{session.user.name}</h1>
+          <p className="text-sm text-gray-500">{session.user.email}</p>
+        </div>
       </div>
 
       {/* Active slots */}

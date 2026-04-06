@@ -1,5 +1,6 @@
 import type { FeedItem as FeedItemType, ReactionData } from "../../lib/feed";
 import ReactionBar from "./ReactionBar";
+import Avatar from "../ui/Avatar";
 
 const CATEGORY_COLORS: Record<string, string> = {
   body: "bg-orange-100 text-orange-700",
@@ -67,11 +68,14 @@ export default function FeedItem({
         <div className="p-4 flex flex-col gap-3">
           {/* Header */}
           <div className="flex items-start justify-between gap-2">
-            <div>
-              <p className="font-semibold text-gray-900 text-sm">
-                {data.user.name}
-              </p>
-              <p className="text-xs text-gray-500 mt-0.5">{data.goal.title}</p>
+            <div className="flex items-center gap-2">
+              <Avatar name={data.user.name} url={data.user.avatar_url} size="sm" />
+              <div>
+                <p className="font-semibold text-gray-900 text-sm">
+                  {data.user.name}
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">{data.goal.title}</p>
+              </div>
             </div>
             {ts}
           </div>
@@ -98,9 +102,7 @@ export default function FeedItem({
     return (
       <div className="rounded-xl border border-gray-200 bg-white px-4 py-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="h-8 w-8 shrink-0 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-sm">
-            {data.user.name[0]}
-          </div>
+          <Avatar name={data.user.name} url={data.user.avatar_url} size="sm" />
           <p className="text-sm text-gray-700 min-w-0">
             <span className="font-semibold text-gray-900">{data.user.name}</span>
             {" started a new goal: "}
@@ -125,9 +127,7 @@ export default function FeedItem({
     return (
       <div className="rounded-xl border border-gray-200 bg-white px-4 py-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="h-8 w-8 shrink-0 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-semibold text-sm">
-            {data.recipient.name[0]}
-          </div>
+          <Avatar name={data.recipient.name} url={data.recipient.avatar_url} size="sm" />
           <p className="text-sm text-gray-700 min-w-0">
             <span className="font-semibold text-gray-900">
               {data.recipient.name}
@@ -151,9 +151,7 @@ export default function FeedItem({
     return (
       <div className="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="h-8 w-8 shrink-0 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm">
-            {data.user.name[0]}
-          </div>
+          <Avatar name={data.user.name} url={data.user.avatar_url} size="sm" />
           <p className="text-sm text-orange-800 min-w-0">
             <span className="font-semibold">{data.user.name}</span>
             {" has a new challenge for missing "}
@@ -172,9 +170,7 @@ export default function FeedItem({
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="h-8 w-8 shrink-0 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-semibold text-sm">
-            {data.user.name[0]}
-          </div>
+          <Avatar name={data.user.name} url={data.user.avatar_url} size="sm" />
           <p className="text-sm text-red-800 min-w-0">
             <span className="font-semibold">{data.user.name}</span>
             {" missed "}

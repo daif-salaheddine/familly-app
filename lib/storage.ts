@@ -11,16 +11,17 @@ const BUCKET = "checkins";
 export async function uploadFile(
   buffer: ArrayBuffer,
   contentType: string,
-  storagePath: string
+  storagePath: string,
+  bucket = BUCKET
 ): Promise<string> {
-  const url = `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${storagePath}`;
+  const url = `${SUPABASE_URL}/storage/v1/object/${bucket}/${storagePath}`;
 
   const res = await fetch(url, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${SERVICE_KEY}`,
       "Content-Type": contentType,
-      "x-upsert": "false",
+      "x-upsert": "true",
     },
     body: buffer,
   });
@@ -30,7 +31,7 @@ export async function uploadFile(
     throw new Error(`Storage upload failed: ${res.status} ${body}`);
   }
 
-  return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${storagePath}`;
+  return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${storagePath}`;
 }
 
 /** Derives a file extension from a MIME type. */

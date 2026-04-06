@@ -3,6 +3,7 @@ import { auth, signOut } from "../../auth";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/db";
 import { getUnreadCount } from "../../lib/notifications";
+import Avatar from "../../components/ui/Avatar";
 
 export default async function AppLayout({
   children,
@@ -12,12 +13,16 @@ export default async function AppLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [membership, unreadCount] = await Promise.all([
+  const [membership, unreadCount, currentUser] = await Promise.all([
     prisma.groupMember.findFirst({
       where: { user_id: session.user.id },
       select: { group_id: true, group: { select: { name: true } } },
     }),
     getUnreadCount(session.user.id!),
+    prisma.user.findUnique({
+      where: { id: session.user.id! },
+      select: { avatar_url: true },
+    }),
   ]);
 
   return (
@@ -28,7 +33,14 @@ export default async function AppLayout({
           {membership?.group.name ?? "Family App"}
         </span>
         <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-500">{session.user.name}</span>
+          <Link href="/profile" className="flex items-center gap-2">
+            <Avatar
+              name={session.user.name!}
+              url={currentUser?.avatar_url}
+              size="sm"
+            />
+            <span className="text-sm text-gray-500">{session.user.name}</span>
+          </Link>
 
           {/* Notification bell */}
           <Link href="/notifications" className="relative">

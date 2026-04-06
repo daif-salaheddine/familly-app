@@ -8,6 +8,12 @@ export interface ReactionData {
   emoji: string;
 }
 
+export interface FeedUser {
+  id: string;
+  name: string;
+  avatar_url: string | null;
+}
+
 export interface CheckinFeedItem {
   type: "checkin";
   created_at: Date;
@@ -15,7 +21,7 @@ export interface CheckinFeedItem {
     id: string;
     media_url: string;
     caption: string | null;
-    user: { id: string; name: string };
+    user: FeedUser;
     goal: { id: string; title: string };
     reactions: ReactionData[];
   };
@@ -28,7 +34,7 @@ export interface GoalFeedItem {
     id: string;
     title: string;
     category: string;
-    user: { id: string; name: string };
+    user: FeedUser;
   };
 }
 
@@ -38,8 +44,8 @@ export interface NominationFeedItem {
   data: {
     id: string;
     title: string;
-    recipient: { id: string; name: string };
-    nominator: { id: string; name: string };
+    recipient: FeedUser;
+    nominator: FeedUser;
   };
 }
 
@@ -48,7 +54,7 @@ export interface ChallengeFeedItem {
   created_at: Date;
   data: {
     id: string;
-    user: { id: string; name: string };
+    user: FeedUser;
     goal: { id: string; title: string };
   };
 }
@@ -59,7 +65,7 @@ export interface PenaltyFeedItem {
   data: {
     id: string;
     amount: string;
-    user: { id: string; name: string };
+    user: FeedUser;
     goal: { id: string; title: string };
   };
 }
@@ -79,7 +85,7 @@ export async function getGroupFeed(groupId: string): Promise<FeedItem[]> {
       prisma.checkin.findMany({
         where: { goal: { group_id: groupId } },
         include: {
-          user: { select: { id: true, name: true } },
+          user: { select: { id: true, name: true, avatar_url: true } },
           goal: { select: { id: true, title: true } },
           reactions: { select: { id: true, user_id: true, emoji: true } },
         },
@@ -89,7 +95,7 @@ export async function getGroupFeed(groupId: string): Promise<FeedItem[]> {
 
       prisma.goal.findMany({
         where: { group_id: groupId },
-        include: { user: { select: { id: true, name: true } } },
+        include: { user: { select: { id: true, name: true, avatar_url: true } } },
         orderBy: { created_at: "desc" },
         take: 50,
       }),
@@ -97,8 +103,8 @@ export async function getGroupFeed(groupId: string): Promise<FeedItem[]> {
       prisma.nomination.findMany({
         where: { group_id: groupId, status: "accepted" },
         include: {
-          toUser: { select: { id: true, name: true } },
-          fromUser: { select: { id: true, name: true } },
+          toUser: { select: { id: true, name: true, avatar_url: true } },
+          fromUser: { select: { id: true, name: true, avatar_url: true } },
         },
         orderBy: { responded_at: "desc" },
         take: 50,
@@ -107,7 +113,7 @@ export async function getGroupFeed(groupId: string): Promise<FeedItem[]> {
       prisma.challenge.findMany({
         where: { group_id: groupId },
         include: {
-          user: { select: { id: true, name: true } },
+          user: { select: { id: true, name: true, avatar_url: true } },
           goal: { select: { id: true, title: true } },
         },
         orderBy: { created_at: "desc" },
@@ -117,7 +123,7 @@ export async function getGroupFeed(groupId: string): Promise<FeedItem[]> {
       prisma.penalty.findMany({
         where: { group_id: groupId },
         include: {
-          user: { select: { id: true, name: true } },
+          user: { select: { id: true, name: true, avatar_url: true } },
           goal: { select: { id: true, title: true } },
         },
         orderBy: { created_at: "desc" },

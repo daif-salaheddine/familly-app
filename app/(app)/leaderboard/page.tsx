@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "../../../auth";
 import { prisma } from "../../../lib/db";
+import Avatar from "../../../components/ui/Avatar";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -24,18 +25,41 @@ function getWeekKey(monday: Date): string {
 }
 
 /**
- * Count consecutive penalty-free complete weeks ending at (currentMonday - 1 week).
- * penaltyWeekKeys: Set of "YYYY-W" strings for weeks the user got a penalty.
+ * Returns the Monday of the week containing the given date (UTC).
  */
-function calcStreak(penaltyWeekKeys: Set<string>, currentMonday: Date): number {
-  let streak = 0;
-  const monday = new Date(currentMonday);
-  monday.setUTCDate(monday.getUTCDate() - 7); // start from last complete week
+function getMondayOf(date: Date): Date {
+  const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  const day = d.getUTCDay();
+  d.setUTCDate(d.getUTCDate() - (day === 0 ? 6 : day - 1));
+  return d;
+}
 
+/**
+ * Count consecutive penalty-free complete weeks ending at (currentMonday - 1 week).
+ * Only counts weeks that fall on or after the week the user created their first goal.
+ * Returns 0 if the user has no goals or no completed weeks yet.
+ */
+function calcStreak(
+  penaltyWeekKeys: Set<string>,
+  currentMonday: Date,
+  firstGoalDate: Date | null
+): number {
+  if (!firstGoalDate) return 0;
+
+  const firstGoalMonday = getMondayOf(firstGoalDate);
+  const cursor = new Date(currentMonday);
+  cursor.setUTCDate(cursor.getUTCDate() - 7); // last fully completed week
+
+  // No completed weeks yet since first goal was created
+  if (cursor.getTime() < firstGoalMonday.getTime()) return 0;
+
+  let streak = 0;
   for (let i = 0; i < 52; i++) {
-    if (penaltyWeekKeys.has(getWeekKey(monday))) break;
+    // Don't count weeks before the user's first goal existed
+    if (cursor.getTime() < firstGoalMonday.getTime()) break;
+    if (penaltyWeekKeys.has(getWeekKey(cursor))) break;
     streak++;
-    monday.setUTCDate(monday.getUTCDate() - 7);
+    cursor.setUTCDate(cursor.getUTCDate() - 7);
   }
   return streak;
 }
@@ -60,7 +84,7 @@ export default async function LeaderboardPage() {
   const [members, allGoals, allPenalties] = await Promise.all([
     prisma.groupMember.findMany({
       where: { group_id: groupId },
-      include: { user: { select: { id: true, name: true } } },
+      include: { user: { select: { id: true, name: true, avatar_url: true } } },
       orderBy: { joined_at: "asc" },
     }),
     prisma.goal.findMany({
@@ -100,17 +124,17 @@ export default async function LeaderboardPage() {
         0
       );
 
+      // Earliest goal — used for both streak and completion rate
+      const firstGoal = goals.length
+        ? goals.reduce((a, b) => (a.created_at < b.created_at ? a : b))
+        : null;
+
       // Penalty week keys for streak calculation — derived from period_start
       const penaltyWeekKeys = new Set(
         penalties.map((p) => getWeekKey(new Date(p.period_start)))
       );
 
-      const streak = calcStreak(penaltyWeekKeys, currentMonday);
-
-      // Completion rate: weeks active vs weeks with penalties
-      const firstGoal = goals.length
-        ? goals.reduce((a, b) => (a.created_at < b.created_at ? a : b))
-        : null;
+      const streak = calcStreak(penaltyWeekKeys, currentMonday, firstGoal?.created_at ?? null);
 
       let completionRate: number | null = null;
       if (firstGoal) {
@@ -166,15 +190,7 @@ export default async function LeaderboardPage() {
               </div>
 
               {/* Avatar */}
-              <div
-                className={`h-10 w-10 shrink-0 rounded-full flex items-center justify-center font-semibold text-sm ${
-                  isMe
-                    ? "bg-indigo-200 text-indigo-700"
-                    : "bg-gray-100 text-gray-600"
-                }`}
-              >
-                {entry.user.name[0]}
-              </div>
+              <Avatar name={entry.user.name} url={entry.user.avatar_url} size="md" />
 
               {/* Name + you badge */}
               <div className="flex-1 min-w-0">
@@ -204,9 +220,7 @@ export default async function LeaderboardPage() {
                   <span className="text-sm font-normal text-gray-400">w</span>
                 </p>
                 <p className="text-xs text-gray-400">
-                  {entry.completionRate !== null
-                    ? `${Math.round(entry.completionRate * 100)}% rate`
-                    : "no data"}
+                  {`${Math.round((entry.completionRate ?? 0) * 100)}% rate`}
                 </p>
               </div>
             </div>

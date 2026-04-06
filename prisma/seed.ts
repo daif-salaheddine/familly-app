@@ -8,11 +8,11 @@ const prisma = new PrismaClient({ adapter });
 
 const MEMBERS = [
   { name: "Salaheddine Daif", email: "salaheddine@family.com", role: "admin" as const },
-  { name: "Karim Daif",       email: "karim@family.com",       role: "member" as const },
-  { name: "Amina Daif",       email: "amina@family.com",       role: "member" as const },
-  { name: "Yasmine Daif",     email: "yasmine@family.com",     role: "member" as const },
-  { name: "Omar Daif",        email: "omar@family.com",        role: "member" as const },
-  { name: "Nadia Daif",       email: "nadia@family.com",       role: "member" as const },
+  { name: "Mostafa Daif",    email: "mostafa@family.com",     role: "member" as const },
+  { name: "Yasmine Daif",    email: "yasmine@family.com",     role: "member" as const },
+  { name: "Ibtissam Daif",   email: "ibtissam@family.com",   role: "member" as const },
+  { name: "Hiba Daif",       email: "hiba@family.com",        role: "member" as const },
+  { name: "Aicha Daif",      email: "aicha@family.com",       role: "member" as const },
 ];
 
 async function main() {

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "../../../../auth";
 import { prisma } from "../../../../lib/db";
 import type { GoalWithNominator } from "../../../../types";
+import Avatar from "../../../../components/ui/Avatar";
 
 const CATEGORY_COLORS: Record<string, string> = {
   body: "bg-orange-100 text-orange-700",
@@ -41,7 +42,7 @@ export default async function MemberPage({
     await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
-        select: { id: true, name: true, email: true },
+        select: { id: true, name: true, email: true, avatar_url: true },
       }),
       prisma.goal.findMany({
         where: { user_id: userId, group_id: groupId, status: "active" },
@@ -96,10 +97,7 @@ export default async function MemberPage({
           <h1 className="text-xl font-bold text-gray-900">{targetUser.name}</h1>
           <p className="text-sm text-gray-500">{targetUser.email}</p>
         </div>
-        {/* Avatar placeholder */}
-        <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-lg">
-          {targetUser.name[0]}
-        </div>
+        <Avatar name={targetUser.name} url={targetUser.avatar_url} size="lg" />
       </div>
 
       {/* Stats */}
