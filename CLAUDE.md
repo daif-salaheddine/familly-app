@@ -481,10 +481,10 @@ Each feature is vertical — finish the API + UI together before moving to the n
 
 ### Feature 8 — Leaderboard & Notifications
 
-- [ ] Leaderboard page
-- [ ] lib/notifications.ts
-- [ ] Notification triggers
-- [ ] Notification bell
+- [x] Leaderboard page — done 2026-04-06
+- [x] lib/notifications.ts — done 2026-04-06
+- [x] Notification triggers — done 2026-04-06
+- [x] Notification bell — done 2026-04-06
 
 ## End of session routine
 

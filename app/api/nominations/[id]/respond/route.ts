@@ -4,6 +4,7 @@ import {
   respondToNomination,
   respondNominationSchema,
 } from "../../../../../lib/nominations";
+import { createNotification } from "../../../../../lib/notifications";
 
 export async function POST(
   req: NextRequest,
@@ -28,6 +29,10 @@ export async function POST(
       parsed.data.action,
       parsed.data.chosen_reason
     );
+
+    if (parsed.data.action === "accept") {
+      void createNotification(nomination.from_user_id, "nomination_received", nomination.id);
+    }
 
     return NextResponse.json({ data: nomination, error: null });
   } catch (res) {

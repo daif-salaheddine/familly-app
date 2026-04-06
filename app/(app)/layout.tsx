@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth, signOut } from "../../auth";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/db";
+import { getUnreadCount } from "../../lib/notifications";
 
 export default async function AppLayout({
   children,
@@ -11,10 +12,13 @@ export default async function AppLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const membership = await prisma.groupMember.findFirst({
-    where: { user_id: session.user.id },
-    select: { group_id: true, group: { select: { name: true } } },
-  });
+  const [membership, unreadCount] = await Promise.all([
+    prisma.groupMember.findFirst({
+      where: { user_id: session.user.id },
+      select: { group_id: true, group: { select: { name: true } } },
+    }),
+    getUnreadCount(session.user.id!),
+  ]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -25,6 +29,17 @@ export default async function AppLayout({
         </span>
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-500">{session.user.name}</span>
+
+          {/* Notification bell */}
+          <Link href="/notifications" className="relative">
+            <span className="text-lg">🔔</span>
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold leading-none">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </Link>
+
           <form
             action={async () => {
               "use server";
@@ -51,10 +66,11 @@ export default async function AppLayout({
         <div className="max-w-2xl mx-auto flex">
           <NavLink href="/feed" label="Feed" />
           <NavLink href="/profile" label="Profile" />
-          <NavLink href="/nominations" label="Nominations" />
+          <NavLink href="/nominations" label="Nominate" />
           <NavLink href="/challenges" label="Challenges" />
           <NavLink href="/pot" label="Pot" />
-          <NavLink href="/members" label="Family" />
+          <NavLink href="/leaderboard" label="Ranks" />
+          <NavLink href="/members" label="Members" />
         </div>
       </nav>
     </div>
@@ -65,7 +81,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className="flex-1 py-3 text-center text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors"
+      className="flex-1 py-3 text-center text-xs font-medium text-gray-500 hover:text-indigo-600 transition-colors"
     >
       {label}
     </Link>

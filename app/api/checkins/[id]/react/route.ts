@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getUser } from "../../../../../lib/auth";
 import { getUserGroup } from "../../../../../lib/goals";
 import { prisma } from "../../../../../lib/db";
+import { createNotification } from "../../../../../lib/notifications";
 
 const reactSchema = z.object({
   emoji: z.enum(["💪", "🔥", "❤️", "👏"], {
@@ -61,6 +62,12 @@ export async function POST(
     const reaction = await prisma.reaction.create({
       data: { checkin_id: checkinId, user_id: user.id, emoji },
     });
+
+    // Notify checkin owner (skip if reacting to own checkin)
+    if (checkin.user_id !== user.id) {
+      void createNotification(checkin.user_id, "reaction_received", reaction.id);
+    }
+
     return NextResponse.json(
       { data: { action: "added", emoji, reaction }, error: null },
       { status: 201 }

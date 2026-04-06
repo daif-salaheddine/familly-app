@@ -1,6 +1,7 @@
 import { prisma } from "./db";
 import { getCurrentWeekNumber } from "./checkins";
 import { createChallenge } from "./challenges";
+import { createNotification } from "./notifications";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -160,7 +161,10 @@ export async function calculatePenalties(
           goal.id,
           groupId
         );
-        if (challenge) challengesTriggered++;
+        if (challenge) {
+          challengesTriggered++;
+          void createNotification(goal.user_id, "challenge_triggered", challenge.id);
+        }
       }
     }
   }

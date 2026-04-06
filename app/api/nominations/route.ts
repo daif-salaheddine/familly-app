@@ -7,6 +7,7 @@ import {
   createNomination,
   createNominationSchema,
 } from "../../../lib/nominations";
+import { createNotification } from "../../../lib/notifications";
 
 export async function GET() {
   try {
@@ -50,6 +51,7 @@ export async function POST(req: NextRequest) {
     }
 
     const nomination = await createNomination(user.id, groupId, parsed.data);
+    void createNotification(parsed.data.to_user_id, "nomination_received", nomination.id);
     return NextResponse.json({ data: nomination, error: null }, { status: 201 });
   } catch (res) {
     if (res instanceof Response) return res;
