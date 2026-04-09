@@ -394,5 +394,5 @@ What it should look like after:
 - [x] Goal 1 — Foundation
 - [x] Goal 2 — Profile + Goals
 - [x] Goal 3 — Social
-- [ ] Goal 4 — Feed + Pot
+- [x] Goal 4 — Feed + Pot
 - [ ] Goal 5 — Stats + Polish + Sound

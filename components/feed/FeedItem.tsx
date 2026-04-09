@@ -3,12 +3,12 @@ import type { FeedItem as FeedItemType, ReactionData } from "../../lib/feed";
 import ReactionBar from "./ReactionBar";
 import Avatar from "../ui/Avatar";
 
-const CATEGORY_COLORS: Record<string, string> = {
-  body: "bg-orange-100 text-orange-700",
-  mind: "bg-blue-100 text-blue-700",
-  soul: "bg-purple-100 text-purple-700",
-  work: "bg-yellow-100 text-yellow-700",
-  relationships: "bg-pink-100 text-pink-700",
+const CATEGORY_STYLES: Record<string, { background: string; color: string }> = {
+  body:          { background: "#FFE0E0", color: "#C0392B" },
+  mind:          { background: "#E0E8FF", color: "#2C3E8C" },
+  soul:          { background: "#E8FFE8", color: "#1A7A1A" },
+  work:          { background: "#FFF3E0", color: "#B36200" },
+  relationships: { background: "#FFE8F5", color: "#8C1A5C" },
 };
 
 function timeAgo(date: Date, t: Awaited<ReturnType<typeof getTranslations>>): string {
@@ -30,6 +30,28 @@ function isVideo(url: string) {
   return /\.(mp4|mov|webm)(\?|$)/i.test(url);
 }
 
+const comicCard: React.CSSProperties = {
+  background: "#ffffff",
+  border: "3px solid #1a1a2e",
+  borderRadius: "16px",
+  boxShadow: "3px 3px 0 #1a1a2e",
+  overflow: "hidden",
+};
+
+const nameStyle: React.CSSProperties = {
+  fontFamily: "Nunito, sans-serif",
+  fontWeight: 700,
+  fontSize: "14px",
+  color: "#1a1a2e",
+};
+
+const mutedStyle: React.CSSProperties = {
+  fontFamily: "Nunito, sans-serif",
+  fontSize: "11px",
+  fontWeight: 600,
+  color: "#888",
+};
+
 export default async function FeedItem({
   item,
   currentUserId,
@@ -40,7 +62,7 @@ export default async function FeedItem({
   const t = await getTranslations("feed");
 
   const ts = (
-    <span className="text-xs text-gray-400">{timeAgo(item.created_at, t)}</span>
+    <span style={mutedStyle}>{timeAgo(item.created_at, t)}</span>
   );
 
   // ── Checkin ──────────────────────────────────────────────────────────────
@@ -48,9 +70,9 @@ export default async function FeedItem({
     const { data } = item;
     const video = isVideo(data.media_url);
     return (
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+      <div style={comicCard}>
         {/* Media */}
-        <div className="bg-black">
+        <div style={{ background: "#000" }}>
           {video ? (
             <video
               src={data.media_url}
@@ -68,16 +90,14 @@ export default async function FeedItem({
           )}
         </div>
 
-        <div className="p-4 flex flex-col gap-3">
+        <div style={{ padding: "14px", display: "flex", flexDirection: "column", gap: "10px" }}>
           {/* Header */}
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-2">
               <Avatar name={data.user.name} url={data.user.avatar_url} size="sm" />
               <div>
-                <p className="font-semibold text-gray-900 text-sm">
-                  {data.user.name}
-                </p>
-                <p className="text-xs text-gray-500 mt-0.5">{data.goal.title}</p>
+                <p style={nameStyle}>{data.user.name}</p>
+                <p style={{ ...mutedStyle, marginTop: "1px" }}>{data.goal.title}</p>
               </div>
             </div>
             {ts}
@@ -85,7 +105,16 @@ export default async function FeedItem({
 
           {/* Caption */}
           {data.caption && (
-            <p className="text-sm text-gray-700">{data.caption}</p>
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "14px",
+                fontWeight: 600,
+                color: "#1a1a2e",
+              }}
+            >
+              {data.caption}
+            </p>
           )}
 
           {/* Reactions */}
@@ -102,19 +131,48 @@ export default async function FeedItem({
   // ── Goal created ─────────────────────────────────────────────────────────
   if (item.type === "goal") {
     const { data } = item;
+    const catStyle = CATEGORY_STYLES[data.category] ?? { background: "#f1efe8", color: "#888" };
     return (
-      <div className="rounded-xl border border-gray-200 bg-white px-4 py-3 flex items-center justify-between gap-3">
+      <div
+        style={{
+          ...comicCard,
+          padding: "14px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "12px",
+        }}
+      >
         <div className="flex items-center gap-3 min-w-0">
           <Avatar name={data.user.name} url={data.user.avatar_url} size="sm" />
-          <p className="text-sm text-gray-700 min-w-0">
-            <span className="font-semibold text-gray-900">{data.user.name}</span>
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "14px",
+              fontWeight: 600,
+              color: "#555",
+              minWidth: 0,
+            }}
+          >
+            <span style={nameStyle}>{data.user.name}</span>
             {" "}{t("startedGoal")}{" "}
-            <span className="font-medium text-gray-900">{data.title}</span>
+            <span style={{ fontWeight: 700, color: "#1a1a2e" }}>{data.title}</span>
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <span
-            className={`rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_COLORS[data.category] ?? "bg-gray-100 text-gray-600"}`}
+            style={{
+              ...catStyle,
+              border: "2px solid #1a1a2e",
+              borderRadius: "100px",
+              fontFamily: "Nunito, sans-serif",
+              fontWeight: 800,
+              fontSize: "10px",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              padding: "2px 8px",
+              whiteSpace: "nowrap",
+            }}
           >
             {data.category}
           </span>
@@ -128,19 +186,32 @@ export default async function FeedItem({
   if (item.type === "nomination") {
     const { data } = item;
     return (
-      <div className="rounded-xl border border-gray-200 bg-white px-4 py-3 flex items-center justify-between gap-3">
+      <div
+        style={{
+          ...comicCard,
+          padding: "14px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "12px",
+        }}
+      >
         <div className="flex items-center gap-3 min-w-0">
           <Avatar name={data.recipient.name} url={data.recipient.avatar_url} size="sm" />
-          <p className="text-sm text-gray-700 min-w-0">
-            <span className="font-semibold text-gray-900">
-              {data.recipient.name}
-            </span>
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "14px",
+              fontWeight: 600,
+              color: "#555",
+              minWidth: 0,
+            }}
+          >
+            <span style={nameStyle}>{data.recipient.name}</span>
             {" "}{t("acceptedNomination")}{" "}
-            <span className="font-semibold text-gray-900">
-              {data.nominator.name}
-            </span>
+            <span style={nameStyle}>{data.nominator.name}</span>
             {t("nominationSuffix")}{" "}
-            <span className="font-medium text-gray-900">{data.title}</span>
+            <span style={{ fontWeight: 700, color: "#1a1a2e" }}>{data.title}</span>
           </p>
         </div>
         {ts}
@@ -152,13 +223,33 @@ export default async function FeedItem({
   if (item.type === "challenge") {
     const { data } = item;
     return (
-      <div className="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 flex items-center justify-between gap-3">
+      <div
+        style={{
+          background: "#fff3e0",
+          border: "3px solid #f39c12",
+          borderRadius: "16px",
+          boxShadow: "3px 3px 0 #f39c12",
+          padding: "14px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "12px",
+        }}
+      >
         <div className="flex items-center gap-3 min-w-0">
           <Avatar name={data.user.name} url={data.user.avatar_url} size="sm" />
-          <p className="text-sm text-orange-800 min-w-0">
-            <span className="font-semibold">{data.user.name}</span>
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "14px",
+              fontWeight: 600,
+              color: "#B36200",
+              minWidth: 0,
+            }}
+          >
+            <span style={{ ...nameStyle, color: "#B36200" }}>{data.user.name}</span>
             {" "}{t("newChallenge")}{" "}
-            <span className="font-medium">{data.goal.title}</span>
+            <span style={{ fontWeight: 700 }}>{data.goal.title}</span>
             {t("challengeSuffix")}
           </p>
         </div>
@@ -171,17 +262,47 @@ export default async function FeedItem({
   if (item.type === "penalty") {
     const { data } = item;
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 flex items-center justify-between gap-3">
+      <div
+        style={{
+          background: "#ffe0e0",
+          border: "3px solid #e74c3c",
+          borderRadius: "16px",
+          boxShadow: "3px 3px 0 #e74c3c",
+          padding: "14px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "12px",
+        }}
+      >
         <div className="flex items-center gap-3 min-w-0">
           <Avatar name={data.user.name} url={data.user.avatar_url} size="sm" />
-          <p className="text-sm text-red-800 min-w-0">
-            <span className="font-semibold">{data.user.name}</span>
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "14px",
+              fontWeight: 600,
+              color: "#C0392B",
+              minWidth: 0,
+            }}
+          >
+            <span style={{ ...nameStyle, color: "#C0392B" }}>{data.user.name}</span>
             {" "}{t("missed")}{" "}
-            <span className="font-medium">{data.goal.title}</span>
-            {" "}{t("missedSuffix")}{" "}€{Number(data.amount).toFixed(2)} {t("addedToPot")}
+            <span style={{ fontWeight: 700 }}>{data.goal.title}</span>
+            {" "}{t("missedSuffix")}
           </p>
         </div>
-        {ts}
+        <p
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "18px",
+            letterSpacing: "1px",
+            color: "#e74c3c",
+            flexShrink: 0,
+          }}
+        >
+          +€{Number(data.amount).toFixed(2)}
+        </p>
       </div>
     );
   }

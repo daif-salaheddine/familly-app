@@ -53,16 +53,13 @@ export default function ProposalCard({
     setError(null);
     setPending(true);
 
-    // Optimistic update
     const prev = { votesFor, votesAgainst, activeVote };
     if (activeVote === direction) {
-      // Toggle off
       direction === "for"
         ? setVotesFor((n) => n - 1)
         : setVotesAgainst((n) => n - 1);
       setActiveVote(null);
     } else if (activeVote !== null) {
-      // Switch
       if (direction === "for") {
         setVotesFor((n) => n + 1);
         setVotesAgainst((n) => n - 1);
@@ -72,7 +69,6 @@ export default function ProposalCard({
       }
       setActiveVote(direction);
     } else {
-      // New vote
       direction === "for"
         ? setVotesFor((n) => n + 1)
         : setVotesAgainst((n) => n + 1);
@@ -87,7 +83,6 @@ export default function ProposalCard({
       });
       const json = await res.json();
       if (!res.ok) {
-        // Roll back
         setVotesFor(prev.votesFor);
         setVotesAgainst(prev.votesAgainst);
         setActiveVote(prev.activeVote);
@@ -107,86 +102,202 @@ export default function ProposalCard({
 
   const total = votesFor + votesAgainst;
   const forPct = total > 0 ? Math.round((votesFor / total) * 100) : 50;
+  const leading = forPct >= 50;
+
+  // Card style based on status
+  const cardStyle: React.CSSProperties =
+    proposal.status === "approved"
+      ? {
+          background: "#E8FFE8",
+          border: "3px solid #1a1a2e",
+          borderRadius: "16px",
+          boxShadow: "3px 3px 0 #1a1a2e",
+          padding: "16px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }
+      : proposal.status === "rejected"
+        ? {
+            background: "#ffe0e0",
+            border: "3px solid #e74c3c",
+            borderRadius: "16px",
+            boxShadow: "3px 3px 0 #e74c3c",
+            padding: "16px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }
+        : {
+            background: "#ffffff",
+            border: "3px solid #1a1a2e",
+            borderRadius: "16px",
+            boxShadow: "3px 3px 0 #1a1a2e",
+            padding: "16px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          };
+
+  const badgeBase: React.CSSProperties = {
+    border: "2px solid #1a1a2e",
+    borderRadius: "100px",
+    fontFamily: "Nunito, sans-serif",
+    fontWeight: 800,
+    fontSize: "11px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    padding: "3px 10px",
+    whiteSpace: "nowrap",
+    flexShrink: 0,
+  };
 
   return (
-    <div
-      className={`rounded-xl border bg-white p-4 flex flex-col gap-3 ${
-        proposal.status === "approved"
-          ? "border-green-200 bg-green-50"
-          : proposal.status === "rejected"
-            ? "border-red-200 bg-red-50"
-            : "border-gray-200"
-      }`}
-    >
+    <div style={cardStyle}>
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
-        <p className="font-medium text-gray-900 text-sm leading-snug flex-1">
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontWeight: 700,
+            fontSize: "14px",
+            color: "#1a1a2e",
+            lineHeight: "1.4",
+            flex: 1,
+          }}
+        >
           {proposal.description}
         </p>
         {proposal.status === "approved" && (
-          <span className="shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">
+          <span style={{ ...badgeBase, background: "#E8FFE8", color: "#1A7A1A" }}>
             {t("approved")}
           </span>
         )}
         {proposal.status === "rejected" && (
-          <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">
+          <span style={{ ...badgeBase, background: "#ffe0e0", color: "#C0392B" }}>
             {t("rejected")}
           </span>
         )}
         {proposal.status === "open" && (
-          <span className="shrink-0 text-xs text-gray-400">
+          <span
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "#888",
+              flexShrink: 0,
+            }}
+          >
             {timeUntil(proposal.closes_at, t)}
           </span>
         )}
       </div>
 
       {/* Proposer + date */}
-      <p className="text-xs text-gray-400">
+      <p
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontSize: "12px",
+          fontWeight: 600,
+          color: "#888",
+        }}
+      >
         {t("proposedBy")}{" "}
-        <span className="font-medium text-gray-600">{proposal.proposer.name}</span>
+        <span style={{ fontWeight: 700, color: "#6c31e3" }}>{proposal.proposer.name}</span>
         {" · "}
         {formatDate(proposal.created_at)}
       </p>
 
-      {/* Vote bar */}
+      {/* Vote bar — DESIGN.md progress bar style */}
       {total > 0 && (
         <div className="flex items-center gap-2">
-          <div className="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden">
+          <div
+            style={{
+              flex: 1,
+              background: "#f1efe8",
+              border: "2px solid #1a1a2e",
+              borderRadius: "100px",
+              height: "14px",
+              overflow: "hidden",
+            }}
+          >
             <div
-              className="h-full bg-indigo-500 rounded-full transition-all"
-              style={{ width: `${forPct}%` }}
+              style={{
+                width: `${forPct}%`,
+                height: "100%",
+                background: leading ? "#2ecc71" : "#e74c3c",
+                borderRadius: "100px",
+                transition: "width 0.3s",
+              }}
             />
           </div>
-          <span className="text-xs text-gray-400 tabular-nums">
+          <span
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "12px",
+              fontWeight: 800,
+              color: "#1a1a2e",
+              whiteSpace: "nowrap",
+            }}
+          >
             {votesFor}–{votesAgainst}
           </span>
         </div>
       )}
 
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && (
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "12px",
+            fontWeight: 700,
+            color: "#e74c3c",
+          }}
+        >
+          {error}
+        </p>
+      )}
 
-      {/* Vote buttons — only shown for open proposals */}
+      {/* Vote buttons — only for open proposals */}
       {isOpen && (
         <div className="flex gap-2">
           <button
             onClick={() => handleVote("for")}
             disabled={pending}
-            className={`flex-1 rounded-lg px-3 py-2 text-sm font-semibold transition-colors disabled:opacity-50 ${
-              activeVote === "for"
-                ? "bg-indigo-600 text-white"
-                : "border border-gray-300 text-gray-700 hover:bg-gray-50"
-            }`}
+            style={{
+              flex: 1,
+              fontFamily: "Nunito, sans-serif",
+              fontWeight: 800,
+              fontSize: "13px",
+              background: activeVote === "for" ? "#2ecc71" : "#ffffff",
+              color: activeVote === "for" ? "#1a1a2e" : "#1a1a2e",
+              border: "2px solid #1a1a2e",
+              borderRadius: "100px",
+              boxShadow: "2px 2px 0 #1a1a2e",
+              padding: "8px 12px",
+              cursor: pending ? "not-allowed" : "pointer",
+              opacity: pending ? 0.6 : 1,
+            }}
           >
             {t("voteFor")} {t("voteForLabel")}{votesFor > 0 ? ` (${votesFor})` : ""}
           </button>
           <button
             onClick={() => handleVote("against")}
             disabled={pending}
-            className={`flex-1 rounded-lg px-3 py-2 text-sm font-semibold transition-colors disabled:opacity-50 ${
-              activeVote === "against"
-                ? "bg-red-500 text-white"
-                : "border border-gray-300 text-gray-700 hover:bg-gray-50"
-            }`}
+            style={{
+              flex: 1,
+              fontFamily: "Nunito, sans-serif",
+              fontWeight: 800,
+              fontSize: "13px",
+              background: activeVote === "against" ? "#e74c3c" : "#ffffff",
+              color: activeVote === "against" ? "#ffffff" : "#1a1a2e",
+              border: "2px solid #1a1a2e",
+              borderRadius: "100px",
+              boxShadow: "2px 2px 0 #1a1a2e",
+              padding: "8px 12px",
+              cursor: pending ? "not-allowed" : "pointer",
+              opacity: pending ? 0.6 : 1,
+            }}
           >
             {t("voteAgainst")} {t("voteAgainstLabel")}{votesAgainst > 0 ? ` (${votesAgainst})` : ""}
           </button>

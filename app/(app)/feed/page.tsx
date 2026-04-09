@@ -23,14 +23,59 @@ export default async function FeedPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">{t("title")}</h1>
-        <p className="text-sm text-gray-500">{t("subtitle")}</p>
+        <h1
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "28px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+          }}
+        >
+          📰 {t("title")}
+        </h1>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#888",
+            marginTop: "4px",
+          }}
+        >
+          {t("subtitle")}
+        </p>
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
-          <p className="text-sm font-medium text-gray-500">{t("empty")}</p>
-          <p className="text-xs text-gray-400 mt-1">{t("emptySubtitle")}</p>
+        <div
+          style={{
+            background: "#F1EFE8",
+            border: "3px dashed #B4B2A9",
+            borderRadius: "16px",
+            padding: "48px 20px",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontWeight: 700,
+              fontSize: "14px",
+              color: "#888",
+            }}
+          >
+            {t("empty")}
+          </p>
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "12px",
+              color: "#aaa",
+              marginTop: "4px",
+            }}
+          >
+            {t("emptySubtitle")}
+          </p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">

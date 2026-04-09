@@ -40,12 +40,10 @@ export default function ReactionBar({
     const alreadyReacted = mine.has(emoji);
     setReactions((prev) => {
       if (alreadyReacted) {
-        // Remove the current user's reaction for this emoji
         return prev.filter(
           (r) => !(r.user_id === currentUserId && r.emoji === emoji)
         );
       } else {
-        // Add an optimistic reaction
         return [
           ...prev,
           { id: `optimistic-${Date.now()}`, user_id: currentUserId, emoji },
@@ -61,10 +59,8 @@ export default function ReactionBar({
       });
 
       if (!res.ok) {
-        // Roll back on failure
         setReactions(initialReactions);
       } else if (!alreadyReacted) {
-        // Replace optimistic entry with real data
         const json = await res.json();
         if (json.data?.reaction) {
           setReactions((prev) =>
@@ -84,7 +80,7 @@ export default function ReactionBar({
   }
 
   return (
-    <div className="flex gap-1.5 flex-wrap">
+    <div className="flex gap-2 flex-wrap">
       {EMOJIS.map((emoji) => {
         const active = mine.has(emoji);
         const count = counts[emoji];
@@ -93,16 +89,29 @@ export default function ReactionBar({
             key={emoji}
             onClick={() => handleToggle(emoji)}
             disabled={pending !== null}
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-sm transition-colors disabled:opacity-60
-              ${
-                active
-                  ? "bg-indigo-100 text-indigo-700 ring-1 ring-indigo-300"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "5px",
+              fontFamily: "Nunito, sans-serif",
+              fontWeight: 800,
+              fontSize: "13px",
+              background: active ? "#6c31e3" : "#ffffff",
+              color: active ? "#ffffff" : "#1a1a2e",
+              border: "2px solid #1a1a2e",
+              borderRadius: "100px",
+              boxShadow: "2px 2px 0 #1a1a2e",
+              padding: "4px 12px",
+              cursor: pending !== null ? "not-allowed" : "pointer",
+              opacity: pending !== null ? 0.7 : 1,
+              transition: "background 0.1s, color 0.1s",
+            }}
           >
-            <span>{emoji}</span>
+            <span style={{ fontSize: "15px", lineHeight: 1 }}>{emoji}</span>
             {count > 0 && (
-              <span className="text-xs font-semibold tabular-nums">{count}</span>
+              <span style={{ fontSize: "12px", fontWeight: 800, tabularNums: true } as React.CSSProperties}>
+                {count}
+              </span>
             )}
           </button>
         );

@@ -40,19 +40,52 @@ export default function ProposeForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="w-full rounded-lg border-2 border-dashed border-gray-300 px-4 py-3 text-sm font-medium text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition-colors"
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontWeight: 700,
+          fontSize: "14px",
+          color: "#888",
+          background: "#F1EFE8",
+          border: "3px dashed #B4B2A9",
+          borderRadius: "16px",
+          padding: "16px 20px",
+          width: "100%",
+          cursor: "pointer",
+          textAlign: "center",
+          transition: "opacity 0.15s",
+        }}
       >
         + {t("propose")}
       </button>
     );
   }
 
+  const disabled = description.trim().length === 0 || isPending;
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-xl border border-indigo-200 bg-indigo-50 p-4 flex flex-col gap-3"
+      style={{
+        background: "#ffffff",
+        border: "3px solid #1a1a2e",
+        borderRadius: "16px",
+        boxShadow: "3px 3px 0 #1a1a2e",
+        padding: "18px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
     >
-      <p className="text-sm font-semibold text-gray-900">{t("newProposal")}</p>
+      <p
+        style={{
+          fontFamily: "Bangers, cursive",
+          fontSize: "18px",
+          letterSpacing: "1px",
+          color: "#1a1a2e",
+        }}
+      >
+        {t("newProposal")}
+      </p>
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
@@ -60,24 +93,82 @@ export default function ProposeForm() {
         rows={3}
         placeholder={t("proposePlaceholder")}
         required
-        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontSize: "14px",
+          fontWeight: 600,
+          color: "#1a1a2e",
+          background: "#ffffff",
+          border: "2px solid #1a1a2e",
+          borderRadius: "10px",
+          padding: "8px 12px",
+          outline: "none",
+          resize: "none",
+          width: "100%",
+        }}
       />
-      <p className="text-xs text-gray-400 text-right -mt-1">
+      <p
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontSize: "11px",
+          fontWeight: 600,
+          color: "#aaa",
+          textAlign: "right",
+          marginTop: "-6px",
+        }}
+      >
         {description.length}/500 · {t("closesIn48h")}
       </p>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+
+      {error && (
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#e74c3c",
+          }}
+        >
+          {error}
+        </p>
+      )}
+
       <div className="flex gap-2">
         <button
           type="submit"
-          disabled={description.trim().length === 0 || isPending}
-          className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+          disabled={disabled}
+          style={{
+            flex: 1,
+            fontFamily: "Nunito, sans-serif",
+            fontWeight: 800,
+            fontSize: "14px",
+            background: disabled ? "#9b77ee" : "#6c31e3",
+            color: "#ffffff",
+            border: "2px solid #1a1a2e",
+            borderRadius: "100px",
+            boxShadow: "2px 2px 0 #1a1a2e",
+            padding: "9px 16px",
+            cursor: disabled ? "not-allowed" : "pointer",
+            opacity: disabled ? 0.7 : 1,
+          }}
         >
           {isPending ? t("submitting") : t("submitProposal")}
         </button>
         <button
           type="button"
           onClick={() => { setOpen(false); setDescription(""); setError(null); }}
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontWeight: 800,
+            fontSize: "14px",
+            background: "#ffffff",
+            color: "#1a1a2e",
+            border: "2px solid #1a1a2e",
+            borderRadius: "100px",
+            boxShadow: "2px 2px 0 #1a1a2e",
+            padding: "9px 16px",
+            cursor: "pointer",
+          }}
         >
           {tCommon("cancel")}
         </button>
