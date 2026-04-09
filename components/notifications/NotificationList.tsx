@@ -6,15 +6,15 @@ import type { Notification, NotificationType } from "../../app/generated/prisma/
 
 const TYPE_META: Record<
   NotificationType,
-  { href: string; icon: string; color: string }
+  { href: string; icon: string; bg: string; color: string }
 > = {
-  nomination_received: { href: "/nominations", icon: "🎯", color: "bg-indigo-100" },
-  challenge_triggered: { href: "/challenges", icon: "⚡", color: "bg-orange-100" },
-  challenge_suggestion: { href: "/challenges", icon: "💡", color: "bg-yellow-100" },
-  reaction_received: { href: "/feed", icon: "💪", color: "bg-pink-100" },
-  goal_missed: { href: "/profile", icon: "📉", color: "bg-red-100" },
-  pot_updated: { href: "/pot", icon: "💰", color: "bg-green-100" },
-  proposal_created: { href: "/pot", icon: "🗳️", color: "bg-blue-100" },
+  nomination_received: { href: "/nominations",  icon: "🎯", bg: "#E0E8FF", color: "#2C3E8C" },
+  challenge_triggered: { href: "/challenges",   icon: "⚡", bg: "#FFF3E0", color: "#B36200" },
+  challenge_suggestion:{ href: "/challenges",   icon: "💡", bg: "#FFF3B0", color: "#7A6000" },
+  reaction_received:   { href: "/feed",         icon: "💪", bg: "#FFE8F5", color: "#8C1A5C" },
+  goal_missed:         { href: "/profile",      icon: "📉", bg: "#FFE0E0", color: "#C0392B" },
+  pot_updated:         { href: "/pot",          icon: "💰", bg: "#E8FFE8", color: "#1A7A1A" },
+  proposal_created:    { href: "/pot",          icon: "🗳️", bg: "#E0E8FF", color: "#2C3E8C" },
 };
 
 function timeAgo(date: Date, t: ReturnType<typeof useTranslations>): string {
@@ -54,10 +54,28 @@ export default function NotificationList({
     <div className="flex flex-col gap-4">
       {unread > 0 && (
         <div className="flex items-center justify-between">
-          <p className="text-xs text-gray-500">{t("unread", { count: unread })}</p>
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "13px",
+              fontWeight: 600,
+              color: "#888",
+            }}
+          >
+            {t("unread", { count: unread })}
+          </p>
           <button
             onClick={handleMarkAll}
-            className="text-xs font-medium text-indigo-600 hover:text-indigo-700"
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "13px",
+              fontWeight: 800,
+              color: "#6c31e3",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+            }}
           >
             {t("markRead")}
           </button>
@@ -65,8 +83,25 @@ export default function NotificationList({
       )}
 
       {notifications.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-          <p className="text-sm text-gray-500">{t("empty")}</p>
+        <div
+          style={{
+            background: "#F1EFE8",
+            border: "3px dashed #B4B2A9",
+            borderRadius: "16px",
+            padding: "48px 20px",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontWeight: 700,
+              fontSize: "14px",
+              color: "#888",
+            }}
+          >
+            {t("empty")}
+          </p>
         </div>
       ) : (
         <div className="flex flex-col gap-2">
@@ -76,31 +111,76 @@ export default function NotificationList({
               <button
                 key={n.id}
                 onClick={() => handleClick(n)}
-                className={`w-full rounded-xl border text-left px-4 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50 ${
-                  n.is_read
-                    ? "border-gray-200 bg-white"
-                    : "border-indigo-200 bg-indigo-50"
-                }`}
+                className="w-full text-left hover:opacity-90 transition-opacity"
+                style={{
+                  background: n.is_read ? "#ffffff" : "#faf7ff",
+                  border: n.is_read ? "3px solid #1a1a2e" : "3px solid #6c31e3",
+                  borderRadius: "16px",
+                  boxShadow: n.is_read
+                    ? "3px 3px 0 #1a1a2e"
+                    : "3px 3px 0 #6c31e3",
+                  padding: "12px 14px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                }}
               >
+                {/* Icon */}
                 <div
-                  className={`h-9 w-9 shrink-0 rounded-full flex items-center justify-center text-base ${meta.color}`}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    flexShrink: 0,
+                    borderRadius: "50%",
+                    background: meta.bg,
+                    border: "2px solid #1a1a2e",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "18px",
+                  }}
                 >
                   {meta.icon}
                 </div>
+
+                {/* Text */}
                 <div className="flex-1 min-w-0">
                   <p
-                    className={`text-sm leading-snug ${
-                      n.is_read ? "text-gray-600" : "font-medium text-gray-900"
-                    }`}
+                    style={{
+                      fontFamily: "Nunito, sans-serif",
+                      fontWeight: n.is_read ? 600 : 800,
+                      fontSize: "14px",
+                      color: n.is_read ? "#555" : "#1a1a2e",
+                      lineHeight: "1.3",
+                    }}
                   >
                     {t(n.type as Parameters<typeof t>[0])}
                   </p>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p
+                    style={{
+                      fontFamily: "Nunito, sans-serif",
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      color: "#888",
+                      marginTop: "2px",
+                    }}
+                  >
                     {timeAgo(n.created_at, t)}
                   </p>
                 </div>
+
+                {/* Unread dot */}
                 {!n.is_read && (
-                  <div className="h-2 w-2 shrink-0 rounded-full bg-indigo-500" />
+                  <div
+                    style={{
+                      width: 10,
+                      height: 10,
+                      flexShrink: 0,
+                      borderRadius: "50%",
+                      background: "#6c31e3",
+                      border: "2px solid #1a1a2e",
+                    }}
+                  />
                 )}
               </button>
             );

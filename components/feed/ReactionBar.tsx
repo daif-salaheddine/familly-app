@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ReactionData } from "../../lib/feed";
+import { playClickPop } from "../../lib/sounds";
 
 const EMOJIS = ["💪", "🔥", "❤️", "👏"] as const;
 type Emoji = (typeof EMOJIS)[number];
@@ -38,6 +39,7 @@ export default function ReactionBar({
 
     // Optimistic update
     const alreadyReacted = mine.has(emoji);
+    if (!alreadyReacted) void playClickPop();
     setReactions((prev) => {
       if (alreadyReacted) {
         return prev.filter(

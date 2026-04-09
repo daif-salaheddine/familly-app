@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { playDing } from "../../lib/sounds";
 
 const ALLOWED_TYPES = [
   "image/jpeg",
@@ -88,6 +89,7 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
         return;
       }
 
+      void playDing();
       router.push(`/profile/goals/${goalId}`);
       router.refresh();
     } finally {

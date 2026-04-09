@@ -36,13 +36,10 @@ function calcStreak(
   firstGoalDate: Date | null
 ): number {
   if (!firstGoalDate) return 0;
-
   const firstGoalMonday = getMondayOf(firstGoalDate);
   const cursor = new Date(currentMonday);
   cursor.setUTCDate(cursor.getUTCDate() - 7);
-
   if (cursor.getTime() < firstGoalMonday.getTime()) return 0;
-
   let streak = 0;
   for (let i = 0; i < 52; i++) {
     if (cursor.getTime() < firstGoalMonday.getTime()) break;
@@ -52,6 +49,13 @@ function calcStreak(
   }
   return streak;
 }
+
+// Card background per rank
+const RANK_CARD: Record<number, React.CSSProperties> = {
+  0: { background: "#FFF3B0", border: "3px solid #1a1a2e", boxShadow: "3px 3px 0 #1a1a2e" }, // gold
+  1: { background: "#ECECEC", border: "3px solid #1a1a2e", boxShadow: "3px 3px 0 #1a1a2e" }, // silver
+  2: { background: "#FFE5CC", border: "3px solid #1a1a2e", boxShadow: "3px 3px 0 #1a1a2e" }, // bronze
+};
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -105,20 +109,15 @@ export default async function LeaderboardPage() {
     .map(({ user }) => {
       const goals = goalsByUser.get(user.id) ?? [];
       const penalties = penaltiesByUser.get(user.id) ?? [];
-
       const goalsCompleted = goals.filter((g) => g.status === "completed").length;
       const totalPaid = penalties.reduce((sum, p) => sum + Number(p.amount), 0);
-
       const firstGoal = goals.length
         ? goals.reduce((a, b) => (a.created_at < b.created_at ? a : b))
         : null;
-
       const penaltyWeekKeys = new Set(
         penalties.map((p) => getWeekKey(new Date(p.period_start)))
       );
-
       const streak = calcStreak(penaltyWeekKeys, currentMonday, firstGoal?.created_at ?? null);
-
       let completionRate: number | null = null;
       if (firstGoal) {
         const msPerWeek = 7 * 24 * 60 * 60 * 1000;
@@ -128,7 +127,6 @@ export default async function LeaderboardPage() {
         );
         completionRate = Math.max(0, (weeksActive - penaltyWeekKeys.size) / weeksActive);
       }
-
       return { user, streak, completionRate, goalsCompleted, totalPaid };
     })
     .sort((a, b) => {
@@ -139,8 +137,27 @@ export default async function LeaderboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">{t("title")}</h1>
-        <p className="text-sm text-gray-500">{t("subtitle")}</p>
+        <h1
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "28px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+          }}
+        >
+          🏆 {t("title")}
+        </h1>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#888",
+            marginTop: "4px",
+          }}
+        >
+          {t("subtitle")}
+        </p>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -149,21 +166,36 @@ export default async function LeaderboardPage() {
           const medal =
             index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : null;
 
+          const cardBase: React.CSSProperties = RANK_CARD[index] ?? {
+            background: "#ffffff",
+            border: "3px solid #1a1a2e",
+            boxShadow: "3px 3px 0 #1a1a2e",
+          };
+
           return (
             <div
               key={entry.user.id}
-              className={`rounded-xl border p-4 flex items-center gap-4 ${
-                isMe
-                  ? "border-indigo-300 bg-indigo-50"
-                  : "border-gray-200 bg-white"
-              }`}
+              style={{
+                ...cardBase,
+                borderRadius: "16px",
+                padding: "14px 16px",
+                display: "flex",
+                alignItems: "center",
+                gap: "14px",
+              }}
             >
-              {/* Rank */}
-              <div className="w-8 shrink-0 text-center">
+              {/* Rank / medal */}
+              <div style={{ width: "36px", flexShrink: 0, textAlign: "center" }}>
                 {medal ? (
-                  <span className="text-xl">{medal}</span>
+                  <span style={{ fontSize: index === 0 ? "28px" : "22px" }}>{medal}</span>
                 ) : (
-                  <span className="text-sm font-bold text-gray-400">
+                  <span
+                    style={{
+                      fontFamily: "Bangers, cursive",
+                      fontSize: "20px",
+                      color: "#aaa",
+                    }}
+                  >
                     {index + 1}
                   </span>
                 )}
@@ -172,34 +204,85 @@ export default async function LeaderboardPage() {
               {/* Avatar */}
               <Avatar name={entry.user.name} url={entry.user.avatar_url} size="md" />
 
-              {/* Name + you badge */}
+              {/* Name + stats */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <p
-                    className={`font-semibold text-sm ${
-                      isMe ? "text-indigo-700" : "text-gray-900"
-                    }`}
+                    style={{
+                      fontFamily: "Nunito, sans-serif",
+                      fontWeight: 800,
+                      fontSize: "15px",
+                      color: "#1a1a2e",
+                    }}
                   >
                     {entry.user.name}
                   </p>
                   {isMe && (
-                    <span className="rounded-full bg-indigo-100 px-1.5 py-0.5 text-xs font-medium text-indigo-600">
+                    <span
+                      style={{
+                        background: "#6c31e3",
+                        color: "#ffffff",
+                        border: "2px solid #1a1a2e",
+                        borderRadius: "100px",
+                        fontFamily: "Nunito, sans-serif",
+                        fontWeight: 800,
+                        fontSize: "10px",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                        padding: "2px 8px",
+                      }}
+                    >
                       {t("youBadge")}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-gray-400 mt-0.5">
+                <p
+                  style={{
+                    fontFamily: "Nunito, sans-serif",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    color: "#888",
+                    marginTop: "2px",
+                  }}
+                >
                   {entry.goalsCompleted} {t("completed")} · €{entry.totalPaid.toFixed(2)} {t("paid")}
                 </p>
               </div>
 
               {/* Streak + rate */}
-              <div className="shrink-0 text-right">
-                <p className="text-lg font-bold text-gray-900">
-                  {entry.streak}
-                  <span className="text-sm font-normal text-gray-400">{t("streakSuffix")}</span>
+              <div style={{ flexShrink: 0, textAlign: "right" }}>
+                <p>
+                  <span
+                    style={{
+                      fontFamily: "Bangers, cursive",
+                      fontSize: "24px",
+                      color: "#1a1a2e",
+                      letterSpacing: "1px",
+                    }}
+                  >
+                    {entry.streak}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "Nunito, sans-serif",
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      color: "#888",
+                      marginLeft: "2px",
+                    }}
+                  >
+                    {t("streakSuffix")}
+                  </span>
                 </p>
-                <p className="text-xs text-gray-400">
+                <p
+                  style={{
+                    fontFamily: "Nunito, sans-serif",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    color: "#888",
+                    marginTop: "2px",
+                  }}
+                >
                   {`${Math.round((entry.completionRate ?? 0) * 100)}${t("rateSuffix")}`}
                 </p>
               </div>
@@ -208,7 +291,17 @@ export default async function LeaderboardPage() {
         })}
       </div>
 
-      <p className="text-center text-xs text-gray-400">{t("footer")}</p>
+      <p
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontSize: "12px",
+          fontWeight: 600,
+          color: "#aaa",
+          textAlign: "center",
+        }}
+      >
+        {t("footer")}
+      </p>
     </div>
   );
 }

@@ -16,8 +16,27 @@ export default async function NotificationsPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">{t("title")}</h1>
-        <p className="text-sm text-gray-500">{t("subtitle")}</p>
+        <h1
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "28px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+          }}
+        >
+          🔔 {t("title")}
+        </h1>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#888",
+            marginTop: "4px",
+          }}
+        >
+          {t("subtitle")}
+        </p>
       </div>
       <NotificationList notifications={notifications} />
     </div>
