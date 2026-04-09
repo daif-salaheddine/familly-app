@@ -22,13 +22,20 @@ export default function Avatar({
         src={url}
         alt={name}
         className={`${sizeClass} rounded-full object-cover shrink-0`}
+        style={{ border: "3px solid #1a1a2e" }}
       />
     );
   }
 
   return (
     <div
-      className={`${sizeClass} rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold shrink-0`}
+      className={`${sizeClass} rounded-full flex items-center justify-center font-bold shrink-0`}
+      style={{
+        background: "#6c31e3",
+        color: "#ffffff",
+        border: "3px solid #1a1a2e",
+        fontFamily: "Nunito, sans-serif",
+      }}
     >
       {name[0]}
     </div>

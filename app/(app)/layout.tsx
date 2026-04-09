@@ -29,12 +29,27 @@ export default async function AppLayout({
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: "#FFFBF0" }}>
       {/* Top header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
-        <span className="font-semibold text-gray-900">
+      <header
+        className="px-4 py-3 flex items-center justify-between sticky top-0 z-10"
+        style={{
+          background: "#ffffff",
+          borderBottom: "3px solid #1a1a2e",
+        }}
+      >
+        {/* App / group name in Bangers */}
+        <span
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "22px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+          }}
+        >
           {membership?.group.name ?? "Family App"}
         </span>
+
         <div className="flex items-center gap-3">
           <Link href="/profile" className="flex items-center gap-2">
             <Avatar
@@ -42,7 +57,16 @@ export default async function AppLayout({
               url={currentUser?.avatar_url}
               size="sm"
             />
-            <span className="text-sm text-gray-500">{session.user.name}</span>
+            <span
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "13px",
+                fontWeight: 700,
+                color: "#1a1a2e",
+              }}
+            >
+              {session.user.name}
+            </span>
           </Link>
 
           {/* Notification bell */}
@@ -63,7 +87,13 @@ export default async function AppLayout({
           >
             <button
               type="submit"
-              className="text-sm text-gray-400 hover:text-red-500 transition-colors"
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "13px",
+                fontWeight: 700,
+                color: "#888",
+              }}
+              className="hover:text-red-500 transition-colors"
             >
               {tCommon("signOut")}
             </button>
@@ -72,33 +102,57 @@ export default async function AppLayout({
       </header>
 
       {/* Page content — pad bottom so it clears the nav */}
-      <main className="max-w-2xl mx-auto w-full px-4 py-6 pb-24 flex-1">
+      <main className="max-w-2xl mx-auto w-full px-4 py-6 pb-28 flex-1">
         {children}
       </main>
 
-      {/* Bottom navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
-        <div className="max-w-2xl mx-auto flex">
-          <NavLink href="/feed"         label={tNav("feed")} />
-          <NavLink href="/profile"      label={tNav("profile")} />
-          <NavLink href="/nominations"  label={tNav("nominate")} />
-          <NavLink href="/challenges"   label={tNav("challenges")} />
-          <NavLink href="/pot"          label={tNav("pot")} />
-          <NavLink href="/leaderboard"  label={tNav("ranks")} />
-          <NavLink href="/members"      label={tNav("members")} />
+      {/* Bottom navigation — comic card style */}
+      <nav className="fixed bottom-3 left-3 right-3 z-10">
+        <div
+          className="max-w-2xl mx-auto flex"
+          style={{
+            background: "#ffffff",
+            border: "3px solid #1a1a2e",
+            borderRadius: "20px",
+            boxShadow: "3px 3px 0 #1a1a2e",
+          }}
+        >
+          <NavLink href="/feed"        label={tNav("feed")}        emoji="📰" />
+          <NavLink href="/profile"     label={tNav("profile")}     emoji="👤" />
+          <NavLink href="/nominations" label={tNav("nominate")}    emoji="📬" />
+          <NavLink href="/challenges"  label={tNav("challenges")}  emoji="⚡" />
+          <NavLink href="/pot"         label={tNav("pot")}         emoji="💰" />
+          <NavLink href="/leaderboard" label={tNav("ranks")}       emoji="🏆" />
+          <NavLink href="/members"     label={tNav("members")}     emoji="👥" />
         </div>
       </nav>
     </div>
   );
 }
 
-function NavLink({ href, label }: { href: string; label: string }) {
+function NavLink({
+  href,
+  label,
+  emoji,
+}: {
+  href: string;
+  label: string;
+  emoji: string;
+}) {
   return (
     <Link
       href={href}
-      className="flex-1 py-3 text-center text-xs font-medium text-gray-500 hover:text-indigo-600 transition-colors"
+      className="flex-1 py-2 flex flex-col items-center gap-0.5 transition-colors hover:opacity-80"
+      style={{
+        fontFamily: "Bangers, cursive",
+        fontSize: "10px",
+        letterSpacing: "1px",
+        color: "#888",
+        textTransform: "uppercase",
+      }}
     >
-      {label}
+      <span className="text-base leading-none">{emoji}</span>
+      <span>{label}</span>
     </Link>
   );
 }
