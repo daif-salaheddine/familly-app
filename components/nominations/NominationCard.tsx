@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { NominationWithUsers } from "../../types";
 
-const CATEGORY_COLORS: Record<string, string> = {
-  body: "bg-orange-100 text-orange-700",
-  mind: "bg-blue-100 text-blue-700",
-  soul: "bg-purple-100 text-purple-700",
-  work: "bg-yellow-100 text-yellow-700",
-  relationships: "bg-pink-100 text-pink-700",
+const CATEGORY_STYLES: Record<string, { background: string; color: string }> = {
+  body:          { background: "#FFE0E0", color: "#C0392B" },
+  mind:          { background: "#E0E8FF", color: "#2C3E8C" },
+  soul:          { background: "#E8FFE8", color: "#1A7A1A" },
+  work:          { background: "#FFF3E0", color: "#B36200" },
+  relationships: { background: "#FFE8F5", color: "#8C1A5C" },
 };
 
 function frequencyLabel(
@@ -22,6 +22,18 @@ function frequencyLabel(
   if (n.frequency === "daily") return tCommon("everyDay");
   return tCommon("onceAWeek");
 }
+
+const btnBase: React.CSSProperties = {
+  fontFamily: "Nunito, sans-serif",
+  fontWeight: 800,
+  fontSize: "13px",
+  borderRadius: "100px",
+  padding: "8px 16px",
+  cursor: "pointer",
+  border: "2px solid #1a1a2e",
+  boxShadow: "2px 2px 0 #1a1a2e",
+  flex: 1,
+};
 
 export default function NominationCard({
   nomination,
@@ -35,6 +47,9 @@ export default function NominationCard({
   const [showAccept, setShowAccept] = useState(false);
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  const catStyle =
+    CATEGORY_STYLES[nomination.category] ?? { background: "#f1efe8", color: "#888" };
 
   async function respond(action: "accept" | "decline") {
     setError(null);
@@ -60,24 +75,75 @@ export default function NominationCard({
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 flex flex-col gap-3">
+    <div
+      style={{
+        background: "#ffffff",
+        border: "3px solid #1a1a2e",
+        borderRadius: "16px",
+        boxShadow: "3px 3px 0 #1a1a2e",
+        padding: "16px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="font-medium text-gray-900">{nomination.title}</p>
-          <p className="text-xs text-gray-500 mt-0.5">
-            {t("from")} <span className="font-medium">{nomination.fromUser.name}</span>
+        <div className="flex-1 min-w-0">
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontWeight: 700,
+              fontSize: "15px",
+              color: "#1a1a2e",
+            }}
+          >
+            {nomination.title}
+          </p>
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "12px",
+              color: "#888",
+              marginTop: "2px",
+            }}
+          >
+            {t("from")}{" "}
+            <span style={{ fontWeight: 700, color: "#6c31e3" }}>
+              {nomination.fromUser.name}
+            </span>
           </p>
         </div>
         <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_COLORS[nomination.category] ?? "bg-gray-100 text-gray-600"}`}
+          style={{
+            ...catStyle,
+            border: "2px solid #1a1a2e",
+            borderRadius: "100px",
+            fontFamily: "Nunito, sans-serif",
+            fontWeight: 800,
+            fontSize: "10px",
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+            padding: "3px 10px",
+            whiteSpace: "nowrap",
+            flexShrink: 0,
+          }}
         >
           {nomination.category}
         </span>
       </div>
 
       {/* Details */}
-      <div className="flex gap-3 text-sm text-gray-500">
+      <div
+        style={{
+          display: "flex",
+          gap: "12px",
+          fontFamily: "Nunito, sans-serif",
+          fontSize: "13px",
+          fontWeight: 600,
+          color: "#666",
+        }}
+      >
         <span>{frequencyLabel(nomination, tCommon)}</span>
         <span>·</span>
         <span>€{Number(nomination.penalty_amount).toFixed(2)} / {tCommon("perWeek")}</span>
@@ -85,25 +151,57 @@ export default function NominationCard({
 
       {/* Message */}
       {nomination.message && (
-        <p className="text-sm text-gray-600 italic border-l-2 border-gray-200 pl-3">
-          "{nomination.message}"
-        </p>
+        <div
+          style={{
+            background: "#F1EFE8",
+            borderLeft: "4px solid #1a1a2e",
+            borderRadius: "0 8px 8px 0",
+            padding: "10px 12px",
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontStyle: "italic",
+            color: "#555",
+          }}
+        >
+          &ldquo;{nomination.message}&rdquo;
+        </div>
       )}
 
       {/* Accept reason textarea */}
       {showAccept && (
-        <div className="flex flex-col gap-2">
-          <textarea
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            placeholder={t("reasonPlaceholder")}
-            rows={2}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
-          />
-        </div>
+        <textarea
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder={t("reasonPlaceholder")}
+          rows={2}
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#1a1a2e",
+            background: "#ffffff",
+            border: "2px solid #1a1a2e",
+            borderRadius: "10px",
+            padding: "8px 12px",
+            outline: "none",
+            resize: "none",
+            width: "100%",
+          }}
+        />
       )}
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#e74c3c",
+          }}
+        >
+          {error}
+        </p>
+      )}
 
       {/* Actions */}
       <div className="flex gap-2">
@@ -112,14 +210,24 @@ export default function NominationCard({
             <button
               onClick={() => respond("accept")}
               disabled={isFetching}
-              className="flex-1 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+              style={{
+                ...btnBase,
+                background: "#2ecc71",
+                color: "#1a1a2e",
+                opacity: isFetching ? 0.6 : 1,
+              }}
             >
               {isFetching ? t("accepting") : t("confirmAccept")}
             </button>
             <button
               onClick={() => setShowAccept(false)}
               disabled={isFetching}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              style={{
+                ...btnBase,
+                background: "#ffffff",
+                color: "#1a1a2e",
+                opacity: isFetching ? 0.6 : 1,
+              }}
             >
               {tCommon("cancel")}
             </button>
@@ -129,14 +237,24 @@ export default function NominationCard({
             <button
               onClick={() => setShowAccept(true)}
               disabled={isFetching}
-              className="flex-1 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+              style={{
+                ...btnBase,
+                background: "#2ecc71",
+                color: "#1a1a2e",
+                opacity: isFetching ? 0.6 : 1,
+              }}
             >
               {t("accept")}
             </button>
             <button
               onClick={() => respond("decline")}
               disabled={isFetching}
-              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              style={{
+                ...btnBase,
+                background: "#ffffff",
+                color: "#1a1a2e",
+                opacity: isFetching ? 0.6 : 1,
+              }}
             >
               {isFetching ? t("declining") : t("decline")}
             </button>

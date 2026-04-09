@@ -9,22 +9,35 @@ function StatusBadge({
   status: ChallengeWithDetails["status"];
   labels: { waiting: string; choosing: string; proving: string };
 }) {
+  const badgeBase: React.CSSProperties = {
+    border: "2px solid #1a1a2e",
+    borderRadius: "100px",
+    fontFamily: "Nunito, sans-serif",
+    fontWeight: 800,
+    fontSize: "10px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    padding: "3px 10px",
+    whiteSpace: "nowrap",
+    flexShrink: 0,
+  };
+
   if (status === "pending_suggestions") {
     return (
-      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+      <span style={{ ...badgeBase, background: "#FFF3E0", color: "#B36200" }}>
         {labels.waiting}
       </span>
     );
   }
   if (status === "pending_choice") {
     return (
-      <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+      <span style={{ ...badgeBase, background: "#E0E8FF", color: "#2C3E8C" }}>
         {labels.choosing}
       </span>
     );
   }
   return (
-    <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+    <span style={{ ...badgeBase, background: "#E8FFE8", color: "#1A7A1A" }}>
       {labels.proving}
     </span>
   );
@@ -54,35 +67,98 @@ export default async function OtherChallengeCard({
       : `${count} ${count === 1 ? t("suggestionSingular") : t("suggestionPlural")}`;
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 flex flex-col gap-3">
+    <div
+      style={{
+        background: "#fff3e0",
+        border: "3px solid #f39c12",
+        borderRadius: "16px",
+        boxShadow: "3px 3px 0 #f39c12",
+        padding: "16px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}
+    >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="font-medium text-gray-900">{challenge.user.name}</p>
-          <p className="text-xs text-gray-500 mt-0.5">
+        <div className="flex-1 min-w-0">
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontWeight: 700,
+              fontSize: "15px",
+              color: "#1a1a2e",
+            }}
+          >
+            {challenge.user.name}
+          </p>
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "12px",
+              color: "#888",
+              marginTop: "2px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
             {t("goalLabel")} {challenge.goal.title}
           </p>
         </div>
         <StatusBadge
           status={challenge.status}
           labels={{
-            waiting: t("waitingForSuggestions"),
+            waiting:  t("waitingForSuggestions"),
             choosing: t("choosingAction"),
-            proving: t("provingIt"),
+            proving:  t("provingIt"),
           }}
         />
       </div>
 
       {/* Suggestion count */}
-      <p className="text-xs text-gray-400">{suggestionCountLabel}</p>
+      <p
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontSize: "12px",
+          fontWeight: 600,
+          color: "#888",
+        }}
+      >
+        {suggestionCountLabel}
+      </p>
 
       {/* pending_proof: show chosen action */}
       {challenge.status === "pending_proof" && challenge.chosenSuggestion && (
-        <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2">
-          <p className="text-xs font-medium text-green-700 mb-0.5">
+        <div
+          style={{
+            background: "#E8FFE8",
+            border: "2px solid #1a1a2e",
+            borderRadius: "10px",
+            padding: "10px 12px",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "11px",
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              color: "#1A7A1A",
+              marginBottom: "4px",
+            }}
+          >
             {t("chosenAction")}
           </p>
-          <p className="text-sm text-gray-800">
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "13px",
+              fontWeight: 600,
+              color: "#1a1a2e",
+            }}
+          >
             {challenge.chosenSuggestion.description}
           </p>
         </div>
@@ -92,12 +168,34 @@ export default async function OtherChallengeCard({
       {canSuggest ? (
         <Link
           href={`/challenges/${challenge.user_id}/suggest`}
-          className="block w-full rounded-lg bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
+          style={{
+            display: "block",
+            width: "100%",
+            fontFamily: "Nunito, sans-serif",
+            fontWeight: 800,
+            fontSize: "14px",
+            background: "#6c31e3",
+            color: "#ffffff",
+            border: "2px solid #1a1a2e",
+            borderRadius: "100px",
+            boxShadow: "2px 2px 0 #1a1a2e",
+            padding: "9px 20px",
+            textAlign: "center",
+            textDecoration: "none",
+          }}
         >
           {t("suggest")}
         </Link>
       ) : alreadySuggested ? (
-        <p className="text-center text-xs text-gray-400">
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "12px",
+            fontWeight: 600,
+            color: "#888",
+            textAlign: "center",
+          }}
+        >
           {t("alreadySuggested")}
         </p>
       ) : null}

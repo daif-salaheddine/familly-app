@@ -6,12 +6,12 @@ import type { GoalWithNominator } from "../../../../types";
 import Avatar from "../../../../components/ui/Avatar";
 import { getTranslations } from "next-intl/server";
 
-const CATEGORY_COLORS: Record<string, string> = {
-  body: "bg-orange-100 text-orange-700",
-  mind: "bg-blue-100 text-blue-700",
-  soul: "bg-purple-100 text-purple-700",
-  work: "bg-yellow-100 text-yellow-700",
-  relationships: "bg-pink-100 text-pink-700",
+const CATEGORY_STYLES: Record<string, { background: string; color: string }> = {
+  body:          { background: "#FFE0E0", color: "#C0392B" },
+  mind:          { background: "#E0E8FF", color: "#2C3E8C" },
+  soul:          { background: "#E8FFE8", color: "#1A7A1A" },
+  work:          { background: "#FFF3E0", color: "#B36200" },
+  relationships: { background: "#FFE8F5", color: "#8C1A5C" },
 };
 
 export default async function MemberPage({
@@ -85,10 +85,10 @@ export default async function MemberPage({
     activeChallenge.suggestions.length === 0;
 
   const categoryLabels: Record<string, string> = {
-    body: tGoals("categoryBody"),
-    mind: tGoals("categoryMind"),
-    soul: tGoals("categorySoul"),
-    work: tGoals("categoryWork"),
+    body:          tGoals("categoryBody"),
+    mind:          tGoals("categoryMind"),
+    soul:          tGoals("categorySoul"),
+    work:          tGoals("categoryWork"),
     relationships: tGoals("categoryRelationships"),
   };
 
@@ -100,6 +100,19 @@ export default async function MemberPage({
     return tCommon("onceAWeek");
   }
 
+  const badgeStyle: React.CSSProperties = {
+    border: "2px solid #1a1a2e",
+    borderRadius: "100px",
+    fontFamily: "Nunito, sans-serif",
+    fontWeight: 800,
+    fontSize: "10px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    padding: "2px 8px",
+    whiteSpace: "nowrap",
+    flexShrink: 0,
+  };
+
   function GoalSlot({
     label,
     goal,
@@ -107,33 +120,97 @@ export default async function MemberPage({
     label: string;
     goal: GoalWithNominator | null;
   }) {
+    const catStyle = goal
+      ? CATEGORY_STYLES[goal.category] ?? { background: "#f1efe8", color: "#888" }
+      : null;
+
     return (
       <div className="flex flex-col gap-1">
-        <p className="text-xs font-medium text-gray-500">{label}</p>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "11px",
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+            color: "#888",
+          }}
+        >
+          {label}
+        </p>
         {goal ? (
-          <div className="rounded-xl border border-gray-200 bg-white p-4">
-            <div className="flex items-start justify-between gap-2">
-              <p className="font-medium text-gray-900 text-sm leading-snug">
+          <div
+            style={{
+              background: "#ffffff",
+              border: "3px solid #1a1a2e",
+              borderRadius: "16px",
+              boxShadow: "3px 3px 0 #1a1a2e",
+              padding: "14px",
+            }}
+          >
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <p
+                style={{
+                  fontFamily: "Nunito, sans-serif",
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  color: "#1a1a2e",
+                  lineHeight: "1.3",
+                }}
+              >
                 {goal.title}
               </p>
-              <span
-                className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_COLORS[goal.category] ?? "bg-gray-100 text-gray-600"}`}
-              >
-                {categoryLabels[goal.category] ?? goal.category}
-              </span>
+              {catStyle && (
+                <span style={{ ...badgeStyle, ...catStyle }}>
+                  {categoryLabels[goal.category] ?? goal.category}
+                </span>
+              )}
             </div>
-            <p className="mt-1 text-xs text-gray-500">
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "12px",
+                color: "#666",
+              }}
+            >
               {frequencyLabel(goal as GoalWithNominator)}
             </p>
             {goal.nominator && (
-              <p className="mt-1 text-xs text-indigo-500">
+              <p
+                style={{
+                  fontFamily: "Nunito, sans-serif",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  color: "#6c31e3",
+                  marginTop: "6px",
+                }}
+              >
                 {tGoals("nominatedBy")} {goal.nominator.name}
               </p>
             )}
           </div>
         ) : (
-          <div className="flex items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-white p-6">
-            <p className="text-xs text-gray-400">{t("empty")}</p>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#F1EFE8",
+              border: "3px dashed #B4B2A9",
+              borderRadius: "16px",
+              padding: "24px 12px",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontWeight: 700,
+                fontSize: "12px",
+                color: "#aaa",
+              }}
+            >
+              {t("empty")}
+            </p>
           </div>
         )}
       </div>
@@ -142,31 +219,124 @@ export default async function MemberPage({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">{targetUser.name}</h1>
-          <p className="text-sm text-gray-500">{targetUser.email}</p>
+      {/* Hero card */}
+      <div
+        style={{
+          background: "#6c31e3",
+          border: "3px solid #1a1a2e",
+          borderRadius: "20px",
+          boxShadow: "4px 4px 0 #1a1a2e",
+          padding: "20px",
+        }}
+      >
+        <div className="flex items-center gap-4">
+          <Avatar name={targetUser.name} url={targetUser.avatar_url} size="lg" />
+          <div className="flex-1 min-w-0">
+            <h1
+              style={{
+                fontFamily: "Bangers, cursive",
+                fontSize: "24px",
+                letterSpacing: "1px",
+                color: "#ffffff",
+                lineHeight: 1.1,
+              }}
+            >
+              {targetUser.name}
+            </h1>
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "12px",
+                color: "rgba(255,255,255,0.7)",
+                marginTop: "2px",
+              }}
+            >
+              {targetUser.email}
+            </p>
+          </div>
         </div>
-        <Avatar name={targetUser.name} url={targetUser.avatar_url} size="lg" />
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
-          <p className="text-2xl font-bold text-gray-900">{activeGoals.length}</p>
-          <p className="text-xs text-gray-500 mt-1">{t("activeGoals")}</p>
+        <div
+          style={{
+            background: "#ffffff",
+            border: "3px solid #1a1a2e",
+            borderRadius: "16px",
+            boxShadow: "3px 3px 0 #1a1a2e",
+            padding: "16px",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Bangers, cursive",
+              fontSize: "32px",
+              color: "#1a1a2e",
+              lineHeight: 1,
+            }}
+          >
+            {activeGoals.length}
+          </p>
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "#888",
+              marginTop: "4px",
+            }}
+          >
+            {t("activeGoals")}
+          </p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
-          <p className="text-2xl font-bold text-red-500">{totalMisses}</p>
-          <p className="text-xs text-gray-500 mt-1">{t("consecutiveMisses")}</p>
+        <div
+          style={{
+            background: "#ffffff",
+            border: "3px solid #1a1a2e",
+            borderRadius: "16px",
+            boxShadow: "3px 3px 0 #1a1a2e",
+            padding: "16px",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Bangers, cursive",
+              fontSize: "32px",
+              color: totalMisses > 0 ? "#e74c3c" : "#2ecc71",
+              lineHeight: 1,
+            }}
+          >
+            {totalMisses}
+          </p>
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "#888",
+              marginTop: "4px",
+            }}
+          >
+            {t("consecutiveMisses")}
+          </p>
         </div>
       </div>
 
       {/* Active goals */}
       <div>
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
-          {t("activeGoals")}
+        <h2
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "18px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+            marginBottom: "12px",
+          }}
+        >
+          ⚔️ {t("activeGoals")}
         </h2>
         <div className="grid grid-cols-2 gap-3">
           <GoalSlot label={t("slot1")} goal={slot1 as GoalWithNominator | null} />
@@ -180,13 +350,43 @@ export default async function MemberPage({
           {canNominate ? (
             <Link
               href={`/members/${userId}/nominate`}
-              className="block w-full rounded-lg bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
+              style={{
+                display: "block",
+                width: "100%",
+                fontFamily: "Nunito, sans-serif",
+                fontWeight: 800,
+                fontSize: "15px",
+                background: "#6c31e3",
+                color: "#ffffff",
+                border: "2px solid #1a1a2e",
+                borderRadius: "100px",
+                boxShadow: "2px 2px 0 #1a1a2e",
+                padding: "12px 24px",
+                textAlign: "center",
+                textDecoration: "none",
+              }}
             >
               {t("nominate")}
             </Link>
           ) : (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-center">
-              <p className="text-sm font-medium text-amber-700">
+            <div
+              style={{
+                background: "#FFF3E0",
+                border: "3px solid #f39c12",
+                borderRadius: "16px",
+                boxShadow: "3px 3px 0 #f39c12",
+                padding: "14px",
+                textAlign: "center",
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: "Nunito, sans-serif",
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  color: "#B36200",
+                }}
+              >
                 {t("alreadyNominated")} {targetUser.name}
               </p>
             </div>
@@ -194,13 +394,27 @@ export default async function MemberPage({
         </div>
       )}
 
-      {/* Suggest challenge action button */}
+      {/* Suggest challenge */}
       {canSuggestChallenge && (
         <Link
           href={`/challenges/${userId}/suggest`}
-          className="block w-full rounded-lg border border-orange-300 bg-orange-50 px-4 py-3 text-center text-sm font-semibold text-orange-700 hover:bg-orange-100 transition-colors"
+          style={{
+            display: "block",
+            width: "100%",
+            fontFamily: "Nunito, sans-serif",
+            fontWeight: 800,
+            fontSize: "15px",
+            background: "#fff3e0",
+            color: "#B36200",
+            border: "3px solid #f39c12",
+            borderRadius: "16px",
+            boxShadow: "3px 3px 0 #f39c12",
+            padding: "12px 24px",
+            textAlign: "center",
+            textDecoration: "none",
+          }}
         >
-          {t("suggestChallenge")}
+          ⚡ {t("suggestChallenge")}
         </Link>
       )}
     </div>

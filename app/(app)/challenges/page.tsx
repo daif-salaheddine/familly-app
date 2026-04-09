@@ -29,21 +29,73 @@ export default async function ChallengesPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">{t("title")}</h1>
-        <p className="text-sm text-gray-500">{t("subtitle")}</p>
+        <h1
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "28px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+          }}
+        >
+          ⚡ {t("title")}
+        </h1>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#888",
+            marginTop: "4px",
+          }}
+        >
+          {t("subtitle")}
+        </p>
       </div>
 
       {/* My challenge */}
       <section className="flex flex-col gap-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+        <h2
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "18px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+          }}
+        >
           {t("myChallenge")}
         </h2>
         {myChallenge ? (
           <MyChallengeCard challenge={myChallenge} />
         ) : (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-            <p className="text-sm font-medium text-gray-500">{t("noChallenge")}</p>
-            <p className="text-xs text-gray-400 mt-1">{t("keepStreak")}</p>
+          <div
+            style={{
+              background: "#F1EFE8",
+              border: "3px dashed #B4B2A9",
+              borderRadius: "16px",
+              padding: "40px 20px",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontWeight: 700,
+                fontSize: "14px",
+                color: "#888",
+              }}
+            >
+              {t("noChallenge")}
+            </p>
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "12px",
+                color: "#aaa",
+                marginTop: "4px",
+              }}
+            >
+              {t("keepStreak")}
+            </p>
           </div>
         )}
       </section>
@@ -51,8 +103,15 @@ export default async function ChallengesPage() {
       {/* Other members' challenges */}
       {otherChallenges.length > 0 && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-            {t("familyChallenges")}
+          <h2
+            style={{
+              fontFamily: "Bangers, cursive",
+              fontSize: "18px",
+              letterSpacing: "1px",
+              color: "#1a1a2e",
+            }}
+          >
+            👥 {t("familyChallenges")}
           </h2>
           <div className="flex flex-col gap-3">
             {otherChallenges.map((c) => (

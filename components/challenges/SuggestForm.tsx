@@ -33,10 +33,19 @@ export default function SuggestForm({ challengeId }: { challengeId: string }) {
     }
   }
 
+  const disabled = description.trim().length === 0 || isPending;
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">
+        <label
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#1a1a2e",
+          }}
+        >
           {t("describeAction")}
         </label>
         <textarea
@@ -45,18 +54,63 @@ export default function SuggestForm({ challengeId }: { challengeId: string }) {
           maxLength={500}
           rows={4}
           placeholder={t("exampleAction")}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
           required
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#1a1a2e",
+            background: "#ffffff",
+            border: "2px solid #1a1a2e",
+            borderRadius: "10px",
+            padding: "8px 12px",
+            outline: "none",
+            resize: "none",
+            width: "100%",
+          }}
         />
-        <p className="text-xs text-gray-400 text-right">{description.length}/500</p>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "11px",
+            fontWeight: 600,
+            color: "#aaa",
+            textAlign: "right",
+          }}
+        >
+          {description.length}/500
+        </p>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#e74c3c",
+          }}
+        >
+          {error}
+        </p>
+      )}
 
       <button
         type="submit"
-        disabled={description.trim().length === 0 || isPending}
-        className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+        disabled={disabled}
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontWeight: 800,
+          fontSize: "15px",
+          background: disabled ? "#9b77ee" : "#6c31e3",
+          color: "#ffffff",
+          border: "2px solid #1a1a2e",
+          borderRadius: "100px",
+          boxShadow: "2px 2px 0 #1a1a2e",
+          padding: "10px 24px",
+          cursor: disabled ? "not-allowed" : "pointer",
+          opacity: disabled ? 0.7 : 1,
+        }}
       >
         {isPending ? t("sending") : t("sendSuggestion")}
       </button>

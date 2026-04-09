@@ -6,6 +6,26 @@ import { useTranslations } from "next-intl";
 
 const CATEGORIES = ["body", "mind", "soul", "work", "relationships"] as const;
 
+const inputStyle: React.CSSProperties = {
+  fontFamily: "Nunito, sans-serif",
+  fontSize: "14px",
+  fontWeight: 600,
+  color: "#1a1a2e",
+  background: "#ffffff",
+  border: "2px solid #1a1a2e",
+  borderRadius: "10px",
+  padding: "8px 12px",
+  outline: "none",
+  width: "100%",
+};
+
+const labelStyle: React.CSSProperties = {
+  fontFamily: "Nunito, sans-serif",
+  fontSize: "13px",
+  fontWeight: 700,
+  color: "#1a1a2e",
+};
+
 export default function NominateForm({
   toUserId,
   toUserName,
@@ -59,24 +79,24 @@ export default function NominateForm({
   }
 
   const categoryLabels: Record<string, string> = {
-    body: tGoals("categoryBody"),
-    mind: tGoals("categoryMind"),
-    soul: tGoals("categorySoul"),
-    work: tGoals("categoryWork"),
+    body:          tGoals("categoryBody"),
+    mind:          tGoals("categoryMind"),
+    soul:          tGoals("categorySoul"),
+    work:          tGoals("categoryWork"),
     relationships: tGoals("categoryRelationships"),
   };
 
   const frequencies = [
-    { value: "daily", label: tCommon("everyDay") },
+    { value: "daily",          label: tCommon("everyDay") },
     { value: "times_per_week", label: tGoals("frequencyCount") },
-    { value: "weekly", label: tCommon("onceAWeek") },
+    { value: "weekly",         label: tCommon("onceAWeek") },
   ];
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {/* Title */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">{t("goalTitle")}</label>
+        <label style={labelStyle}>{t("goalTitle")}</label>
         <input
           type="text"
           value={title}
@@ -84,17 +104,17 @@ export default function NominateForm({
           required
           maxLength={100}
           placeholder={t("nominatePlaceholder", { name: toUserName })}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          style={inputStyle}
         />
       </div>
 
       {/* Category */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">{tGoals("category")}</label>
+        <label style={labelStyle}>{tGoals("category")}</label>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          style={inputStyle}
         >
           {CATEGORIES.map((c) => (
             <option key={c} value={c}>
@@ -106,11 +126,11 @@ export default function NominateForm({
 
       {/* Frequency */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">{tGoals("frequency")}</label>
+        <label style={labelStyle}>{tGoals("frequency")}</label>
         <select
           value={frequency}
           onChange={(e) => setFrequency(e.target.value)}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          style={inputStyle}
         >
           {frequencies.map((f) => (
             <option key={f.value} value={f.value}>
@@ -123,25 +143,21 @@ export default function NominateForm({
       {/* Times per week count */}
       {frequency === "times_per_week" && (
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">
-            {tGoals("frequencyCount")}
-          </label>
+          <label style={labelStyle}>{tGoals("frequencyCount")}</label>
           <input
             type="number"
             min={1}
             max={7}
             value={frequencyCount}
             onChange={(e) => setFrequencyCount(Number(e.target.value))}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            style={inputStyle}
           />
         </div>
       )}
 
       {/* Penalty */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">
-          {t("weeklyPenalty")}
-        </label>
+        <label style={labelStyle}>{t("weeklyPenalty")}</label>
         <input
           type="number"
           min={0.01}
@@ -150,31 +166,52 @@ export default function NominateForm({
           onChange={(e) => setPenaltyAmount(e.target.value)}
           required
           placeholder="5.00"
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          style={inputStyle}
         />
       </div>
 
       {/* Message */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">
-          {t("personalNote")}
-        </label>
+        <label style={labelStyle}>{t("personalNote")}</label>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           maxLength={300}
           rows={3}
           placeholder={t("personalNotePlaceholder")}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+          style={{ ...inputStyle, resize: "none" }}
         />
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#e74c3c",
+          }}
+        >
+          {error}
+        </p>
+      )}
 
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontWeight: 800,
+          fontSize: "15px",
+          background: isPending ? "#9b77ee" : "#6c31e3",
+          color: "#ffffff",
+          border: "2px solid #1a1a2e",
+          borderRadius: "100px",
+          boxShadow: "2px 2px 0 #1a1a2e",
+          padding: "10px 24px",
+          cursor: isPending ? "not-allowed" : "pointer",
+          opacity: isPending ? 0.7 : 1,
+        }}
       >
         {isPending ? t("sending") : t("nominateFor", { name: toUserName })}
       </button>

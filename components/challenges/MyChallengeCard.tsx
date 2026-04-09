@@ -24,25 +24,40 @@ function StatusBadge({
   status: ChallengeWithDetails["status"];
   t: ReturnType<typeof useTranslations>;
 }) {
+  const badgeBase: React.CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    border: "2px solid #1a1a2e",
+    borderRadius: "100px",
+    fontFamily: "Nunito, sans-serif",
+    fontWeight: 800,
+    fontSize: "11px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    padding: "3px 10px",
+    whiteSpace: "nowrap",
+  };
+
   if (status === "pending_suggestions") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+      <span style={{ ...badgeBase, background: "#FFF3E0", color: "#B36200" }}>
+        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#f39c12", flexShrink: 0 }} />
         {t("waitingForSuggestions")}
       </span>
     );
   }
   if (status === "pending_choice") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+      <span style={{ ...badgeBase, background: "#E0E8FF", color: "#2C3E8C" }}>
+        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#2C3E8C", flexShrink: 0 }} />
         {t("chooseYourChallenge")}
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-      <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+    <span style={{ ...badgeBase, background: "#E8FFE8", color: "#1A7A1A" }}>
+      <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#2ecc71", flexShrink: 0 }} />
       {t("proveIt")}
     </span>
   );
@@ -116,9 +131,16 @@ function ProofUploadForm({ challengeId }: { challengeId: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 mt-2">
       {previewUrl && (
-        <div className="rounded-xl overflow-hidden border border-gray-200 bg-black">
+        <div
+          style={{
+            border: "3px solid #1a1a2e",
+            borderRadius: "12px",
+            overflow: "hidden",
+            background: "#000",
+          }}
+        >
           {isVideo ? (
             <video src={previewUrl} controls className="w-full max-h-60 object-contain" />
           ) : (
@@ -130,7 +152,18 @@ function ProofUploadForm({ challengeId }: { challengeId: string }) {
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="rounded-lg border-2 border-dashed border-gray-300 px-4 py-5 text-sm font-medium text-gray-500 hover:border-green-400 hover:text-green-600 transition-colors text-center"
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontWeight: 700,
+          fontSize: "14px",
+          color: "#888",
+          background: "#F1EFE8",
+          border: "3px dashed #B4B2A9",
+          borderRadius: "12px",
+          padding: "20px 16px",
+          cursor: "pointer",
+          textAlign: "center",
+        }}
       >
         {file ? t("changeFile") : t("chooseMedia")}
       </button>
@@ -142,7 +175,16 @@ function ProofUploadForm({ challengeId }: { challengeId: string }) {
         className="hidden"
       />
       {file && (
-        <p className="text-xs text-gray-500 truncate">
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "12px",
+            color: "#888",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
           {file.name} ({(file.size / 1024 / 1024).toFixed(1)} MB)
         </p>
       )}
@@ -152,13 +194,41 @@ function ProofUploadForm({ challengeId }: { challengeId: string }) {
         maxLength={300}
         rows={2}
         placeholder={t("captionPlaceholderProof")}
-        className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 resize-none"
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontSize: "14px",
+          fontWeight: 600,
+          color: "#1a1a2e",
+          background: "#ffffff",
+          border: "2px solid #1a1a2e",
+          borderRadius: "10px",
+          padding: "8px 12px",
+          outline: "none",
+          resize: "none",
+          width: "100%",
+        }}
       />
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 700, color: "#e74c3c" }}>
+          {error}
+        </p>
+      )}
       <button
         type="submit"
         disabled={!file || isPending}
-        className="rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontWeight: 800,
+          fontSize: "14px",
+          background: !file || isPending ? "#a8e6c4" : "#2ecc71",
+          color: "#1a1a2e",
+          border: "2px solid #1a1a2e",
+          borderRadius: "100px",
+          boxShadow: "2px 2px 0 #1a1a2e",
+          padding: "9px 20px",
+          cursor: !file || isPending ? "not-allowed" : "pointer",
+          opacity: !file || isPending ? 0.7 : 1,
+        }}
       >
         {isPending ? t("uploading") : t("submitProof")}
       </button>
@@ -203,14 +273,44 @@ export default function MyChallengeCard({
   );
 
   return (
-    <div className="rounded-xl border-2 border-indigo-200 bg-white p-5 flex flex-col gap-4">
+    <div
+      style={{
+        background: "#fff3e0",
+        border: "3px solid #f39c12",
+        borderRadius: "16px",
+        boxShadow: "3px 3px 0 #f39c12",
+        padding: "18px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "14px",
+      }}
+    >
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "11px",
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              color: "#B36200",
+              marginBottom: "4px",
+            }}
+          >
             {t("myChallenge")}
           </p>
-          <p className="font-semibold text-gray-900">{challenge.goal.title}</p>
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontWeight: 700,
+              fontSize: "15px",
+              color: "#1a1a2e",
+            }}
+          >
+            {challenge.goal.title}
+          </p>
         </div>
         <StatusBadge status={challenge.status} t={t} />
       </div>
@@ -218,23 +318,65 @@ export default function MyChallengeCard({
       {/* ── pending_suggestions ── */}
       {challenge.status === "pending_suggestions" && (
         <div className="flex flex-col gap-3">
-          <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
-            <p className="text-sm text-amber-800">
+          <div
+            style={{
+              background: "rgba(255,255,255,0.6)",
+              border: "2px solid #f39c12",
+              borderRadius: "10px",
+              padding: "12px",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "#B36200",
+              }}
+            >
               {t("familySuggestionsHint")}
             </p>
           </div>
           {challenge.suggestions.length > 0 && (
             <div className="flex flex-col gap-2">
-              <p className="text-xs font-medium text-gray-500">
+              <p
+                style={{
+                  fontFamily: "Nunito, sans-serif",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  color: "#888",
+                }}
+              >
                 {t("suggestionsSoFar")} ({challenge.suggestions.length})
               </p>
               {challenge.suggestions.map((s) => (
                 <div
                   key={s.id}
-                  className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5"
+                  style={{
+                    background: "#ffffff",
+                    border: "2px solid #1a1a2e",
+                    borderRadius: "10px",
+                    padding: "10px 12px",
+                  }}
                 >
-                  <p className="text-sm text-gray-800">{s.description}</p>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p
+                    style={{
+                      fontFamily: "Nunito, sans-serif",
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      color: "#1a1a2e",
+                    }}
+                  >
+                    {s.description}
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: "Nunito, sans-serif",
+                      fontSize: "11px",
+                      color: "#888",
+                      marginTop: "4px",
+                    }}
+                  >
                     — {s.fromUser.name}
                   </p>
                 </div>
@@ -247,26 +389,82 @@ export default function MyChallengeCard({
       {/* ── pending_choice ── */}
       {challenge.status === "pending_choice" && (
         <div className="flex flex-col gap-3">
-          <p className="text-sm text-gray-600">
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "13px",
+              fontWeight: 600,
+              color: "#B36200",
+            }}
+          >
             {t("pickAction")}
           </p>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && (
+            <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 700, color: "#e74c3c" }}>
+              {error}
+            </p>
+          )}
           {pendingSuggestions.length === 0 ? (
-            <p className="text-sm text-gray-400">{t("noSuggestionsYet")}</p>
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "13px",
+                color: "#888",
+              }}
+            >
+              {t("noSuggestionsYet")}
+            </p>
           ) : (
             pendingSuggestions.map((s) => (
               <div
                 key={s.id}
-                className="flex items-start justify-between gap-3 rounded-lg border border-gray-200 bg-white p-3"
+                className="flex items-start justify-between gap-3"
+                style={{
+                  background: "#ffffff",
+                  border: "2px solid #1a1a2e",
+                  borderRadius: "12px",
+                  padding: "12px",
+                }}
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-800">{s.description}</p>
-                  <p className="text-xs text-gray-400 mt-1">— {s.fromUser.name}</p>
+                  <p
+                    style={{
+                      fontFamily: "Nunito, sans-serif",
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      color: "#1a1a2e",
+                    }}
+                  >
+                    {s.description}
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: "Nunito, sans-serif",
+                      fontSize: "11px",
+                      color: "#888",
+                      marginTop: "4px",
+                    }}
+                  >
+                    — {s.fromUser.name}
+                  </p>
                 </div>
                 <button
                   onClick={() => handleChoose(s.id)}
                   disabled={choosing !== null}
-                  className="shrink-0 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                  style={{
+                    fontFamily: "Nunito, sans-serif",
+                    fontWeight: 800,
+                    fontSize: "12px",
+                    background: "#6c31e3",
+                    color: "#ffffff",
+                    border: "2px solid #1a1a2e",
+                    borderRadius: "100px",
+                    boxShadow: "2px 2px 0 #1a1a2e",
+                    padding: "6px 14px",
+                    cursor: choosing !== null ? "not-allowed" : "pointer",
+                    opacity: choosing !== null ? 0.6 : 1,
+                    flexShrink: 0,
+                  }}
                 >
                   {choosing === s.id ? t("choosing") : t("choose")}
                 </button>
@@ -279,18 +477,56 @@ export default function MyChallengeCard({
       {/* ── pending_proof ── */}
       {challenge.status === "pending_proof" && challenge.chosenSuggestion && (
         <div className="flex flex-col gap-3">
-          <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-green-600 mb-1">
+          <div
+            style={{
+              background: "#E8FFE8",
+              border: "2px solid #1a1a2e",
+              borderRadius: "12px",
+              padding: "12px",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "11px",
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+                color: "#1A7A1A",
+                marginBottom: "4px",
+              }}
+            >
               {t("yourChallengeAction")}
             </p>
-            <p className="text-sm font-medium text-gray-900">
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontWeight: 700,
+                fontSize: "14px",
+                color: "#1a1a2e",
+              }}
+            >
               {challenge.chosenSuggestion.description}
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "12px",
+                color: "#555",
+                marginTop: "4px",
+              }}
+            >
               — {t("suggestedBy")} {challenge.chosenSuggestion.fromUser.name}
             </p>
           </div>
-          <p className="text-sm text-gray-600">
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "13px",
+              fontWeight: 600,
+              color: "#B36200",
+            }}
+          >
             {t("uploadProofInstructions")}
           </p>
           <ProofUploadForm challengeId={challenge.id} />

@@ -29,12 +29,40 @@ export default async function NominatePage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">{t("nominate")}</h1>
-        <p className="text-sm text-gray-500">
+        <h1
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "28px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+          }}
+        >
+          📬 {t("nominate")}
+        </h1>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#888",
+            marginTop: "4px",
+          }}
+        >
           {t("nominateSubtitle")} {targetUser.name}
         </p>
       </div>
-      <NominateForm toUserId={userId} toUserName={targetUser.name} />
+
+      <div
+        style={{
+          background: "#ffffff",
+          border: "3px solid #1a1a2e",
+          borderRadius: "16px",
+          boxShadow: "3px 3px 0 #1a1a2e",
+          padding: "24px",
+        }}
+      >
+        <NominateForm toUserId={userId} toUserName={targetUser.name} />
+      </div>
     </div>
   );
 }

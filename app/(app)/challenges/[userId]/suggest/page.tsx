@@ -52,8 +52,25 @@ export default async function SuggestPage({
 
   const header = (
     <div>
-      <h1 className="text-xl font-bold text-gray-900">{t("suggest")}</h1>
-      <p className="text-sm text-gray-500">
+      <h1
+        style={{
+          fontFamily: "Bangers, cursive",
+          fontSize: "28px",
+          letterSpacing: "1px",
+          color: "#1a1a2e",
+        }}
+      >
+        ⚡ {t("suggest")}
+      </h1>
+      <p
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontSize: "14px",
+          fontWeight: 600,
+          color: "#888",
+          marginTop: "4px",
+        }}
+      >
         {t("suggestSubtitle")} {targetUser.name}
       </p>
     </div>
@@ -63,8 +80,23 @@ export default async function SuggestPage({
     return (
       <div className="flex flex-col gap-6">
         {header}
-        <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-          <p className="text-sm font-medium text-gray-500">
+        <div
+          style={{
+            background: "#F1EFE8",
+            border: "3px dashed #B4B2A9",
+            borderRadius: "16px",
+            padding: "40px 20px",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontWeight: 700,
+              fontSize: "14px",
+              color: "#888",
+            }}
+          >
             {targetUser.name} — {t("noChallenge").toLowerCase()}
           </p>
         </div>
@@ -76,8 +108,24 @@ export default async function SuggestPage({
     return (
       <div className="flex flex-col gap-6">
         {header}
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-center">
-          <p className="text-sm font-medium text-amber-800">
+        <div
+          style={{
+            background: "#fff3e0",
+            border: "3px solid #f39c12",
+            borderRadius: "16px",
+            boxShadow: "3px 3px 0 #f39c12",
+            padding: "24px",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontWeight: 700,
+              fontSize: "14px",
+              color: "#B36200",
+            }}
+          >
             {t("alreadySuggested")}
           </p>
         </div>
@@ -89,11 +137,37 @@ export default async function SuggestPage({
     <div className="flex flex-col gap-6">
       {header}
 
-      <div className="rounded-xl border border-gray-200 bg-white p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">
+      {/* Goal reference card */}
+      <div
+        style={{
+          background: "#ffffff",
+          border: "3px solid #1a1a2e",
+          borderRadius: "16px",
+          boxShadow: "3px 3px 0 #1a1a2e",
+          padding: "16px",
+        }}
+      >
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "11px",
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+            color: "#888",
+            marginBottom: "4px",
+          }}
+        >
           {t("myChallenge")}
         </p>
-        <p className="text-sm font-medium text-gray-900">
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontWeight: 700,
+            fontSize: "15px",
+            color: "#1a1a2e",
+          }}
+        >
           {activeChallenge.goal.title}
         </p>
       </div>
