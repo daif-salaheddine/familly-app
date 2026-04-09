@@ -22,11 +22,15 @@ export default async function AppLayout({
     getUnreadCount(session.user.id!),
     prisma.user.findUnique({
       where: { id: session.user.id! },
-      select: { avatar_url: true },
+      select: { avatar_url: true, has_onboarded: true },
     }),
     getTranslations("nav"),
     getTranslations("common"),
   ]);
+
+  if (!currentUser?.has_onboarded) {
+    redirect("/onboarding");
+  }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#FFFBF0" }}>

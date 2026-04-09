@@ -92,9 +92,10 @@ model User {
   name          String
   email         String   @unique
   password_hash String
-  avatar_url    String?
-  language      Language @default(EN)
-  created_at    DateTime @default(now())
+  avatar_url     String?
+  language       Language @default(EN)
+  has_onboarded  Boolean  @default(false)
+  created_at     DateTime @default(now())
 
   createdGroups        Group[]               @relation("GroupCreator")
   groupMemberships     GroupMember[]
