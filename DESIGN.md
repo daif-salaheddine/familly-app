@@ -395,4 +395,4 @@ What it should look like after:
 - [x] Goal 2 — Profile + Goals
 - [x] Goal 3 — Social
 - [x] Goal 4 — Feed + Pot
-- [ ] Goal 5 — Stats + Polish + Sound
+- [x] Goal 5 — Stats + Polish + Sound
