@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { NominationWithUsers } from "../../types";
-import { playLevelUp } from "../../lib/sounds";
+import { playAcceptNomination } from "../../lib/sounds";
 
 const CATEGORY_STYLES: Record<string, { background: string; color: string }> = {
   body:          { background: "#FFE0E0", color: "#C0392B" },
@@ -69,7 +69,7 @@ export default function NominationCard({
         setError(json.error ?? "Something went wrong");
         return;
       }
-      if (action === "accept") void playLevelUp();
+      if (action === "accept") playAcceptNomination();
       router.refresh();
     } finally {
       setIsFetching(false);

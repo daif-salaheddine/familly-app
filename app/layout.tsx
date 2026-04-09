@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale, getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
+import ClickSound from "../components/ui/ClickSound";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -27,6 +28,7 @@ export default async function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider messages={messages}>
+          <ClickSound />
           {children}
         </NextIntlClientProvider>
       </body>

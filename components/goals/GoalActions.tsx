@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { playGoalCompleted } from "../../lib/sounds";
 
 interface Props {
   goalId: string;
@@ -42,6 +43,7 @@ export default function GoalActions({ goalId, status }: Props) {
       if (!res.ok) {
         setError(json.error ?? "Something went wrong");
       } else {
+        if (newStatus === "completed") playGoalCompleted();
         router.refresh();
       }
     } catch {

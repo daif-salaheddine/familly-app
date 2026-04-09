@@ -3,31 +3,34 @@
 import { useActionState, useEffect, useRef } from "react";
 import { loginAction } from "../../app/actions/auth";
 import { useTranslations } from "next-intl";
-import { playFanfare, playOof } from "../../lib/sounds";
+import { playLoginSuccess, playMissGoal } from "../../lib/sounds";
 
 const initialState = { error: null };
 
 export default function LoginForm() {
   const t = useTranslations("login");
-  const [state, formAction, isPending] = useActionState(
-    loginAction,
-    initialState
-  );
+  const [state, formAction, isPending] = useActionState(loginAction, initialState);
 
-  const prevIsPending = useRef(false);
+  // Track whether an attempt is in flight so we can react to errors
+  const attemptedRef = useRef(false);
+
+  // Play fanfare immediately on submit — if login succeeds the page
+  // navigates away before isPending settles, so useEffect never fires.
+  function handleSubmit() {
+    attemptedRef.current = true;
+    playLoginSuccess();
+  }
+
+  // If the action returns with an error (page stayed), play miss goal
   useEffect(() => {
-    if (prevIsPending.current && !isPending) {
-      if (!state.error) {
-        void playFanfare();
-      } else {
-        void playOof();
-      }
+    if (state.error && attemptedRef.current) {
+      playMissGoal();
+      attemptedRef.current = false;
     }
-    prevIsPending.current = isPending;
-  }, [isPending, state.error]);
+  }, [state.error]);
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <label
           htmlFor="email"
