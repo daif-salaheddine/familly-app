@@ -10,6 +10,26 @@ interface Props {
 
 const initialState = { error: null };
 
+const inputStyle: React.CSSProperties = {
+  fontFamily: "Nunito, sans-serif",
+  fontSize: "14px",
+  fontWeight: 600,
+  color: "#1a1a2e",
+  background: "#ffffff",
+  border: "2px solid #1a1a2e",
+  borderRadius: "10px",
+  padding: "8px 12px",
+  outline: "none",
+  width: "100%",
+};
+
+const labelStyle: React.CSSProperties = {
+  fontFamily: "Nunito, sans-serif",
+  fontSize: "13px",
+  fontWeight: 700,
+  color: "#1a1a2e",
+};
+
 export default function CreateGoalForm({ slot }: Props) {
   const t = useTranslations("goals");
   const tCommon = useTranslations("common");
@@ -32,7 +52,7 @@ export default function CreateGoalForm({ slot }: Props) {
 
       {/* Title */}
       <div className="flex flex-col gap-1">
-        <label htmlFor="title" className="text-sm font-medium text-gray-700">
+        <label htmlFor="title" style={labelStyle}>
           {t("title")}
         </label>
         <input
@@ -42,21 +62,16 @@ export default function CreateGoalForm({ slot }: Props) {
           required
           maxLength={100}
           placeholder={t("titlePlaceholder")}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          style={inputStyle}
         />
       </div>
 
       {/* Category */}
       <div className="flex flex-col gap-1">
-        <label htmlFor="category" className="text-sm font-medium text-gray-700">
+        <label htmlFor="category" style={labelStyle}>
           {t("category")}
         </label>
-        <select
-          id="category"
-          name="category"
-          required
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-        >
+        <select id="category" name="category" required style={inputStyle}>
           {categories.map((c) => (
             <option key={c.value} value={c.value}>
               {c.label}
@@ -67,7 +82,7 @@ export default function CreateGoalForm({ slot }: Props) {
 
       {/* Frequency */}
       <div className="flex flex-col gap-1">
-        <label htmlFor="frequency" className="text-sm font-medium text-gray-700">
+        <label htmlFor="frequency" style={labelStyle}>
           {t("frequency")}
         </label>
         <select
@@ -75,7 +90,7 @@ export default function CreateGoalForm({ slot }: Props) {
           name="frequency"
           required
           defaultValue="daily"
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          style={inputStyle}
           onChange={(e) => {
             const countRow = document.getElementById("count-row");
             if (countRow) {
@@ -92,10 +107,7 @@ export default function CreateGoalForm({ slot }: Props) {
 
       {/* Frequency count — shown only for times_per_week */}
       <div id="count-row" className="flex-col gap-1" style={{ display: "none" }}>
-        <label
-          htmlFor="frequency_count"
-          className="text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="frequency_count" style={labelStyle}>
           {t("frequencyCount")}
         </label>
         <input
@@ -105,16 +117,13 @@ export default function CreateGoalForm({ slot }: Props) {
           min={2}
           max={7}
           defaultValue={3}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          style={inputStyle}
         />
       </div>
 
       {/* Penalty */}
       <div className="flex flex-col gap-1">
-        <label
-          htmlFor="penalty_amount"
-          className="text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="penalty_amount" style={labelStyle}>
           {t("penaltyAmount")}
         </label>
         <input
@@ -125,18 +134,39 @@ export default function CreateGoalForm({ slot }: Props) {
           step={0.5}
           required
           placeholder={t("penaltyPlaceholder")}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          style={inputStyle}
         />
       </div>
 
       {state.error && (
-        <p className="text-sm text-red-600">{state.error}</p>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#e74c3c",
+          }}
+        >
+          {state.error}
+        </p>
       )}
 
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontWeight: 800,
+          fontSize: "15px",
+          background: isPending ? "#9b77ee" : "#6c31e3",
+          color: "#ffffff",
+          border: "2px solid #1a1a2e",
+          borderRadius: "100px",
+          boxShadow: "2px 2px 0 #1a1a2e",
+          padding: "10px 24px",
+          cursor: isPending ? "not-allowed" : "pointer",
+          opacity: isPending ? 0.7 : 1,
+        }}
       >
         {isPending ? t("creating") : t("createGoal")}
       </button>

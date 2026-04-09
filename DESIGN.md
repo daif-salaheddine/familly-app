@@ -392,7 +392,7 @@ What it should look like after:
 ## Current status
 
 - [x] Goal 1 — Foundation
-- [ ] Goal 2 — Profile + Goals
+- [x] Goal 2 — Profile + Goals
 - [ ] Goal 3 — Social
 - [ ] Goal 4 — Feed + Pot
 - [ ] Goal 5 — Stats + Polish + Sound

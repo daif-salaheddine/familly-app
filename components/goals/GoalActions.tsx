@@ -9,6 +9,18 @@ interface Props {
   status: "active" | "paused" | "completed";
 }
 
+const btnBase: React.CSSProperties = {
+  fontFamily: "Nunito, sans-serif",
+  fontWeight: 800,
+  fontSize: "14px",
+  borderRadius: "100px",
+  padding: "8px 20px",
+  cursor: "pointer",
+  border: "2px solid #1a1a2e",
+  boxShadow: "2px 2px 0 #1a1a2e",
+  width: "100%",
+};
+
 export default function GoalActions({ goalId, status }: Props) {
   const t = useTranslations("goals");
   const tCommon = useTranslations("common");
@@ -73,12 +85,16 @@ export default function GoalActions({ goalId, status }: Props) {
           <button
             onClick={() => setConfirmDelete(true)}
             disabled={loading}
-            className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+            style={{ ...btnBase, background: "#e74c3c", color: "#ffffff", opacity: loading ? 0.6 : 1 }}
           >
             {t("deleteGoal")}
           </button>
         )}
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && (
+          <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", color: "#e74c3c", fontWeight: 700 }}>
+            {error}
+          </p>
+        )}
       </div>
     );
   }
@@ -89,7 +105,7 @@ export default function GoalActions({ goalId, status }: Props) {
         <button
           onClick={() => patch("paused")}
           disabled={loading}
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+          style={{ ...btnBase, background: "#ffffff", color: "#1a1a2e", opacity: loading ? 0.6 : 1 }}
         >
           {loading ? t("pausing") : t("pauseGoal")}
         </button>
@@ -98,7 +114,7 @@ export default function GoalActions({ goalId, status }: Props) {
         <button
           onClick={() => patch("active")}
           disabled={loading}
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+          style={{ ...btnBase, background: "#6c31e3", color: "#ffffff", opacity: loading ? 0.6 : 1 }}
         >
           {loading ? t("resuming") : t("resumeGoal")}
         </button>
@@ -106,7 +122,7 @@ export default function GoalActions({ goalId, status }: Props) {
       <button
         onClick={() => patch("completed")}
         disabled={loading}
-        className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+        style={{ ...btnBase, background: "#2ecc71", color: "#1a1a2e", opacity: loading ? 0.6 : 1 }}
       >
         {loading ? t("completing") : t("completeGoal")}
       </button>
@@ -123,13 +139,17 @@ export default function GoalActions({ goalId, status }: Props) {
         <button
           onClick={() => setConfirmDelete(true)}
           disabled={loading}
-          className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+          style={{ ...btnBase, background: "#e74c3c", color: "#ffffff", opacity: loading ? 0.6 : 1 }}
         >
           {t("deleteGoal")}
         </button>
       )}
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", color: "#e74c3c", fontWeight: 700 }}>
+          {error}
+        </p>
+      )}
     </div>
   );
 }
@@ -148,20 +168,64 @@ function ConfirmDeleteBox({
   onCancel: () => void;
 }) {
   return (
-    <div className="rounded-lg border border-red-200 bg-red-50 p-3 flex flex-col gap-2">
-      <p className="text-sm font-medium text-red-700">{t("confirmDelete")}</p>
+    <div
+      style={{
+        background: "#FFE0E0",
+        border: "3px solid #e74c3c",
+        borderRadius: "16px",
+        boxShadow: "3px 3px 0 #e74c3c",
+        padding: "14px",
+      }}
+    >
+      <p
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontWeight: 800,
+          fontSize: "14px",
+          color: "#C0392B",
+          marginBottom: "10px",
+        }}
+      >
+        {t("confirmDelete")}
+      </p>
       <div className="flex gap-2">
         <button
           onClick={onConfirm}
           disabled={loading}
-          className="flex-1 rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+          style={{
+            flex: 1,
+            fontFamily: "Nunito, sans-serif",
+            fontWeight: 800,
+            fontSize: "13px",
+            background: "#e74c3c",
+            color: "#ffffff",
+            border: "2px solid #1a1a2e",
+            borderRadius: "100px",
+            boxShadow: "2px 2px 0 #1a1a2e",
+            padding: "7px 12px",
+            cursor: loading ? "not-allowed" : "pointer",
+            opacity: loading ? 0.6 : 1,
+          }}
         >
           {loading ? t("deleting") : t("deleteGoal")}
         </button>
         <button
           onClick={onCancel}
           disabled={loading}
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+          style={{
+            flex: 1,
+            fontFamily: "Nunito, sans-serif",
+            fontWeight: 800,
+            fontSize: "13px",
+            background: "#ffffff",
+            color: "#1a1a2e",
+            border: "2px solid #1a1a2e",
+            borderRadius: "100px",
+            boxShadow: "2px 2px 0 #1a1a2e",
+            padding: "7px 12px",
+            cursor: loading ? "not-allowed" : "pointer",
+            opacity: loading ? 0.6 : 1,
+          }}
         >
           {tCommon("cancel")}
         </button>

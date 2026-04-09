@@ -40,12 +40,37 @@ export default async function NewGoalPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">{t("newGoal")}</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "28px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+          }}
+        >
+          {t("newGoal")}
+        </h1>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            color: "#888",
+            marginTop: "4px",
+          }}
+        >
           {slot === "self" ? t("slotSelf") : t("slotNominated")}
         </p>
       </div>
-      <div className="rounded-2xl bg-white p-6 border border-gray-100 shadow-sm">
+
+      <div
+        style={{
+          background: "#ffffff",
+          border: "3px solid #1a1a2e",
+          borderRadius: "16px",
+          boxShadow: "3px 3px 0 #1a1a2e",
+          padding: "24px",
+        }}
+      >
         <CreateGoalForm slot={slot} />
       </div>
     </div>

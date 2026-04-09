@@ -99,13 +99,27 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       {/* File picker */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-700">
+        <label
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#1a1a2e",
+          }}
+        >
           {t("photoOrVideo")}
         </label>
 
         {/* Preview */}
         {previewUrl && (
-          <div className="rounded-xl overflow-hidden border border-gray-200 bg-black">
+          <div
+            style={{
+              border: "3px solid #1a1a2e",
+              borderRadius: "16px",
+              overflow: "hidden",
+              background: "#000",
+            }}
+          >
             {isVideo ? (
               <video
                 src={previewUrl}
@@ -126,7 +140,19 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="rounded-lg border-2 border-dashed border-gray-300 px-4 py-6 text-sm font-medium text-gray-500 hover:border-indigo-400 hover:text-indigo-500 transition-colors text-center"
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontWeight: 700,
+            fontSize: "14px",
+            color: "#888",
+            background: "#F1EFE8",
+            border: "3px dashed #B4B2A9",
+            borderRadius: "16px",
+            padding: "28px 16px",
+            cursor: "pointer",
+            textAlign: "center",
+            transition: "opacity 0.15s",
+          }}
         >
           {file ? t("changeFile") : t("chooseMedia")}
         </button>
@@ -138,7 +164,16 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
           className="hidden"
         />
         {file && (
-          <p className="text-xs text-gray-500 truncate">
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "12px",
+              color: "#888",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
             {file.name} ({(file.size / 1024 / 1024).toFixed(1)} MB)
           </p>
         )}
@@ -146,7 +181,14 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
 
       {/* Caption */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">
+        <label
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#1a1a2e",
+          }}
+        >
           {t("caption")}
         </label>
         <textarea
@@ -155,16 +197,51 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
           maxLength={300}
           rows={2}
           placeholder={t("captionPlaceholder")}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#1a1a2e",
+            background: "#ffffff",
+            border: "2px solid #1a1a2e",
+            borderRadius: "10px",
+            padding: "8px 12px",
+            outline: "none",
+            resize: "none",
+            width: "100%",
+          }}
         />
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#e74c3c",
+          }}
+        >
+          {error}
+        </p>
+      )}
 
       <button
         type="submit"
         disabled={!file || isPending}
-        className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontWeight: 800,
+          fontSize: "15px",
+          background: !file || isPending ? "#a8e6c4" : "#2ecc71",
+          color: "#1a1a2e",
+          border: "2px solid #1a1a2e",
+          borderRadius: "100px",
+          boxShadow: "2px 2px 0 #1a1a2e",
+          padding: "10px 24px",
+          cursor: !file || isPending ? "not-allowed" : "pointer",
+          opacity: !file || isPending ? 0.7 : 1,
+        }}
       >
         {isPending ? t("uploading") : t("submitCheckin")}
       </button>

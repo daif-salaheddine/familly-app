@@ -29,8 +29,27 @@ export default async function CheckinPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">{t("checkinTitle")}</h1>
-        <p className="text-sm text-gray-500 mt-0.5">{goal.title}</p>
+        <h1
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "28px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+          }}
+        >
+          {t("checkinTitle")}
+        </h1>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            fontWeight: 700,
+            color: "#888",
+            marginTop: "4px",
+          }}
+        >
+          {goal.title}
+        </p>
       </div>
       <CheckinForm goalId={id} />
     </div>
