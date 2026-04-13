@@ -14,9 +14,12 @@ export default async function OnboardingPage() {
   // If already onboarded, skip straight to the app
   const user = await prisma.user.findUnique({
     where: { id: session.user.id! },
-    select: { has_onboarded: true, name: true },
+    select: { has_onboarded: true, name: true, password_hash: true },
   });
   if (user?.has_onboarded) redirect("/profile");
 
-  return <OnboardingFlow userName={user?.name ?? ""} />;
+  // OAuth users have no password_hash — skip the password step
+  const isOAuthUser = !user?.password_hash;
+
+  return <OnboardingFlow userName={user?.name ?? ""} isOAuthUser={isOAuthUser} />;
 }

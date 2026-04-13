@@ -88,10 +88,11 @@ enum Language {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  name          String
-  email         String   @unique
-  password_hash String
+  id             String   @id @default(uuid())
+  name           String
+  email          String   @unique
+  password_hash  String?
+  email_verified Boolean  @default(false)
   avatar_url     String?
   language       Language @default(EN)
   has_onboarded  Boolean  @default(false)
@@ -99,6 +100,7 @@ model User {
 
   createdGroups        Group[]               @relation("GroupCreator")
   groupMemberships     GroupMember[]
+  accounts             Account[]
   goals                Goal[]                @relation("GoalOwner")
   nominatedGoals       Goal[]                @relation("GoalNominator")
   sentNominations      Nomination[]          @relation("NominationSender")
@@ -116,10 +118,11 @@ model User {
 }
 
 model Group {
-  id         String   @id @default(uuid())
-  name       String
-  created_by String
-  created_at DateTime @default(now())
+  id          String   @id @default(uuid())
+  name        String
+  created_by  String
+  invite_code String   @unique
+  created_at  DateTime @default(now())
 
   creator     User          @relation("GroupCreator", fields: [created_by], references: [id])
   members     GroupMember[]
@@ -143,6 +146,19 @@ model GroupMember {
   user  User  @relation(fields: [user_id], references: [id])
 
   @@map("group_members")
+}
+
+model Account {
+  id                  String   @id @default(uuid())
+  user_id             String
+  provider            String
+  provider_account_id String
+  created_at          DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([provider, provider_account_id])
+  @@map("accounts")
 }
 
 model Goal {

@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { getUser } from "../../../lib/auth";
-import { getUserGroup } from "../../../lib/goals";
+import { getActiveGroupId } from "../../../lib/group";
 import { getGroupFeed } from "../../../lib/feed";
 
 export async function GET() {
   try {
     const user = await getUser();
-    const groupId = await getUserGroup(user.id);
+    const groupId = await getActiveGroupId(user.id);
     const feed = await getGroupFeed(groupId);
     return NextResponse.json({ data: feed, error: null });
   } catch (res) {

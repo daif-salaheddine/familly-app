@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "../../../../../../lib/auth";
-import { getUserGroup } from "../../../../../../lib/goals";
+import { getActiveGroupId } from "../../../../../../lib/group";
 import { voteOnProposal, voteSchema } from "../../../../../../lib/pot";
 
 export async function POST(
@@ -9,7 +9,7 @@ export async function POST(
 ) {
   try {
     const user = await getUser();
-    const groupId = await getUserGroup(user.id);
+    const groupId = await getActiveGroupId(user.id);
     const { id } = await params;
 
     const body = await req.json();

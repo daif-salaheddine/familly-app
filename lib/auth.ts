@@ -19,5 +19,6 @@ export async function getUser(): Promise<SessionUser> {
     id: session.user.id,
     email: session.user.email!,
     name: session.user.name!,
+    has_onboarded: session.user.has_onboarded,
   };
 }

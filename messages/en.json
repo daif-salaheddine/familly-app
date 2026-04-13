@@ -1,4 +1,58 @@
 {
+  "join": {
+    "invited": "You're invited to join",
+    "memberCount": "{count, plural, one {# member} other {# members}}",
+    "joinButton": "Join {name}",
+    "joining": "Joining…",
+    "signInToJoin": "Sign in to join",
+    "alreadyMember": "You're already in this group!",
+    "goToFeed": "Go to feed →",
+    "invalidTitle": "Invalid invite link",
+    "invalidSubtitle": "This link doesn't exist or has been revoked.",
+    "goToHome": "Go home"
+  },
+  "settings": {
+    "title": "Group settings",
+    "groupNameLabel": "Group name",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved!",
+    "inviteLink": "Invite link",
+    "inviteLinkHint": "Share this link to invite people to your group.",
+    "copyLink": "Copy",
+    "copied": "Copied!",
+    "regenerate": "Regenerate",
+    "regenerateConfirm": "Regenerate?",
+    "regenerating": "Regenerating…",
+    "regenerateWarning": "Old links will stop working immediately.",
+    "members": "Members",
+    "roleAdmin": "Admin",
+    "roleMember": "Member",
+    "kick": "Kick",
+    "kickConfirm": "Remove from group?",
+    "kicking": "Removing…",
+    "makeAdmin": "Make admin",
+    "makeAdminConfirm": "Transfer admin to {name}?",
+    "transferring": "Transferring…",
+    "transferWarning": "You will become a regular member.",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "notAdmin": "You need to be an admin to access this page."
+  },
+  "groups": {
+    "newTitle": "Create a group",
+    "newSubtitle": "Give your group a name. You can rename it later.",
+    "namePlaceholder": "e.g. The Daif Family",
+    "nameLabel": "Group name",
+    "createButton": "Create group",
+    "creating": "Creating…",
+    "successTitle": "Group created!",
+    "successSubtitle": "Share this link with your family to invite them.",
+    "copyLink": "Copy invite link",
+    "copied": "Copied!",
+    "goToProfile": "Go to my profile →",
+    "goToSettings": "Group settings →"
+  },
   "nav": {
     "feed": "Feed",
     "profile": "Profile",
@@ -9,14 +63,34 @@
     "members": "Members"
   },
   "login": {
-    "title": "Family App",
+    "title": "Family Quest",
     "subtitle": "Sign in to your account",
     "email": "Email",
     "emailPlaceholder": "you@example.com",
     "password": "Password",
     "signIn": "Sign in",
     "signingIn": "Signing in…",
-    "invalidCredentials": "Invalid email or password"
+    "invalidCredentials": "Invalid email or password",
+    "noAccount": "No account?",
+    "registerLink": "Create one",
+    "orDivider": "or",
+    "signInWithGoogle": "Sign in with Google"
+  },
+  "register": {
+    "title": "Family Quest",
+    "subtitle": "Create your account",
+    "name": "Your name",
+    "namePlaceholder": "e.g. Sara",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "signUp": "Create account",
+    "signingUp": "Creating account…",
+    "orDivider": "or",
+    "signUpWithGoogle": "Sign up with Google",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInLink": "Sign in"
   },
   "profile": {
     "activeGoals": "Active goals",
@@ -266,6 +340,14 @@
     "alreadyNominated": "You already have a pending nomination to",
     "suggestChallenge": "Suggest a challenge action",
     "viewProfile": "View"
+  },
+  "onboarding": {
+    "step1Label": "Pick your language",
+    "step2Label": "Set your password",
+    "step2bLabel": "Show your face!",
+    "step2bSub": "Add a profile photo so your family recognizes you.",
+    "step2bSkip": "Skip for now",
+    "step3Label": "App walkthrough"
   },
   "common": {
     "save": "Save",

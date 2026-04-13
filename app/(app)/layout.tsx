@@ -2,8 +2,10 @@ import Link from "next/link";
 import { auth, signOut } from "../../auth";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/db";
+import { getActiveGroupId } from "../../lib/group";
 import { getUnreadCount } from "../../lib/notifications";
 import Avatar from "../../components/ui/Avatar";
+import GroupSwitcher from "../../components/layout/GroupSwitcher";
 import { getTranslations } from "next-intl/server";
 
 export default async function AppLayout({
@@ -14,10 +16,11 @@ export default async function AppLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [membership, unreadCount, currentUser, tNav, tCommon] = await Promise.all([
-    prisma.groupMember.findFirst({
+  const [memberships, unreadCount, currentUser, tNav, tCommon] = await Promise.all([
+    prisma.groupMember.findMany({
       where: { user_id: session.user.id },
-      select: { group_id: true, group: { select: { name: true } } },
+      select: { group_id: true, role: true, group: { select: { id: true, name: true } } },
+      orderBy: { joined_at: "asc" },
     }),
     getUnreadCount(session.user.id!),
     prisma.user.findUnique({
@@ -32,6 +35,17 @@ export default async function AppLayout({
     redirect("/onboarding");
   }
 
+  // Determine which group is currently active
+  const activeGroupId = memberships.length > 0
+    ? await getActiveGroupId(session.user.id!)
+    : null;
+
+  const groups = memberships.map((m) => ({
+    id: m.group.id,
+    name: m.group.name,
+    isAdmin: m.role === "admin",
+  }));
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#FFFBF0" }}>
       {/* Top header */}
@@ -42,17 +56,11 @@ export default async function AppLayout({
           borderBottom: "3px solid #1a1a2e",
         }}
       >
-        {/* App / group name in Bangers */}
-        <span
-          style={{
-            fontFamily: "Bangers, cursive",
-            fontSize: "22px",
-            letterSpacing: "1px",
-            color: "#1a1a2e",
-          }}
-        >
-          {membership?.group.name ?? "Family App"}
-        </span>
+        {/* Group name / switcher */}
+        <GroupSwitcher
+          groups={groups}
+          activeGroupId={activeGroupId ?? ""}
+        />
 
         <div className="flex items-center gap-3">
           <Link href="/profile" className="flex items-center gap-2">

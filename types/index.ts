@@ -4,6 +4,7 @@ export interface SessionUser {
   id: string;
   email: string;
   name: string;
+  has_onboarded: boolean;
 }
 
 export type GoalWithNominator = Goal & {

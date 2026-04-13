@@ -6,7 +6,9 @@ import { prisma } from "../../../../lib/db";
 
 const schema = z.object({
   language: z.enum(["EN", "FR", "AR"]),
-  newPassword: z.string().min(6, "Password must be at least 6 characters"),
+  // newPassword is optional — OAuth users skip the password step entirely
+  newPassword: z.string().min(6, "Password must be at least 6 characters").optional(),
+  avatar_url: z.string().url().optional(),
 });
 
 export async function PATCH(req: NextRequest) {
@@ -22,19 +24,32 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const { language, newPassword } = parsed.data;
-    const password_hash = await bcrypt.hash(newPassword, 12);
+    const { language, newPassword, avatar_url } = parsed.data;
+
+    const password_hash = newPassword
+      ? await bcrypt.hash(newPassword, 12)
+      : undefined;
 
     await prisma.user.update({
       where: { id: sessionUser.id },
       data: {
         language,
-        password_hash,
         has_onboarded: true,
+        ...(password_hash ? { password_hash } : {}),
+        ...(avatar_url ? { avatar_url } : {}),
       },
     });
 
-    return NextResponse.json({ data: { success: true }, error: null });
+    // Return whether the user is already in a group so the flow can
+    // redirect them to /groups/new if they aren't.
+    const groupCount = await prisma.groupMember.count({
+      where: { user_id: sessionUser.id },
+    });
+
+    return NextResponse.json({
+      data: { success: true, hasGroup: groupCount > 0 },
+      error: null,
+    });
   } catch (err) {
     if (err instanceof Response) return err;
     console.error("[onboard PATCH]", err);

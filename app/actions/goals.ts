@@ -2,7 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { auth } from "../../auth";
-import { getUserGroup, createGoal, createGoalSchema } from "../../lib/goals";
+import { getActiveGroupId } from "../../lib/group";
+import { createGoal, createGoalSchema } from "../../lib/goals";
 
 export async function createGoalAction(
   _prevState: { error: string | null },
@@ -30,7 +31,7 @@ export async function createGoalAction(
   }
 
   try {
-    const groupId = await getUserGroup(session.user.id);
+    const groupId = await getActiveGroupId(session.user.id);
     await createGoal(session.user.id, groupId, parsed.data);
   } catch (res) {
     if (res instanceof Response) {

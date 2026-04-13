@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "../../../../lib/auth";
-import { getUserGroup, updateGoal, pauseGoal, resumeGoal, completeGoal, deleteGoal, updateGoalSchema } from "../../../../lib/goals";
+import { getActiveGroupId } from "../../../../lib/group";
+import { updateGoal, pauseGoal, resumeGoal, completeGoal, deleteGoal, updateGoalSchema } from "../../../../lib/goals";
 import { prisma } from "../../../../lib/db";
 
 export async function GET(
@@ -9,7 +10,7 @@ export async function GET(
 ) {
   try {
     const user = await getUser();
-    const groupId = await getUserGroup(user.id);
+    const groupId = await getActiveGroupId(user.id);
     const { id } = await params;
 
     const goal = await prisma.goal.findUnique({

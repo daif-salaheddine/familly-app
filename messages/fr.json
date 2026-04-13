@@ -1,4 +1,58 @@
 {
+  "join": {
+    "invited": "Vous êtes invité à rejoindre",
+    "memberCount": "{count, plural, one {# membre} other {# membres}}",
+    "joinButton": "Rejoindre {name}",
+    "joining": "Rejoindre…",
+    "signInToJoin": "Connectez-vous pour rejoindre",
+    "alreadyMember": "Vous êtes déjà dans ce groupe !",
+    "goToFeed": "Aller au fil →",
+    "invalidTitle": "Lien d'invitation invalide",
+    "invalidSubtitle": "Ce lien n'existe pas ou a été révoqué.",
+    "goToHome": "Retour à l'accueil"
+  },
+  "settings": {
+    "title": "Paramètres du groupe",
+    "groupNameLabel": "Nom du groupe",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré !",
+    "inviteLink": "Lien d'invitation",
+    "inviteLinkHint": "Partagez ce lien pour inviter des personnes.",
+    "copyLink": "Copier",
+    "copied": "Copié !",
+    "regenerate": "Régénérer",
+    "regenerateConfirm": "Régénérer ?",
+    "regenerating": "Régénération…",
+    "regenerateWarning": "Les anciens liens cesseront de fonctionner immédiatement.",
+    "members": "Membres",
+    "roleAdmin": "Admin",
+    "roleMember": "Membre",
+    "kick": "Exclure",
+    "kickConfirm": "Retirer du groupe ?",
+    "kicking": "Retrait…",
+    "makeAdmin": "Rendre admin",
+    "makeAdminConfirm": "Transférer le rôle admin à {name} ?",
+    "transferring": "Transfert…",
+    "transferWarning": "Vous deviendrez un membre ordinaire.",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "notAdmin": "Vous devez être admin pour accéder à cette page."
+  },
+  "groups": {
+    "newTitle": "Créer un groupe",
+    "newSubtitle": "Donnez un nom à votre groupe. Vous pourrez le renommer plus tard.",
+    "namePlaceholder": "ex. La famille Daif",
+    "nameLabel": "Nom du groupe",
+    "createButton": "Créer le groupe",
+    "creating": "Création…",
+    "successTitle": "Groupe créé !",
+    "successSubtitle": "Partagez ce lien avec votre famille pour les inviter.",
+    "copyLink": "Copier le lien d'invitation",
+    "copied": "Copié !",
+    "goToProfile": "Aller à mon profil →",
+    "goToSettings": "Paramètres du groupe →"
+  },
   "nav": {
     "feed": "Fil",
     "profile": "Profil",
@@ -9,14 +63,34 @@
     "members": "Membres"
   },
   "login": {
-    "title": "Application Famille",
+    "title": "Family Quest",
     "subtitle": "Connectez-vous à votre compte",
     "email": "E-mail",
     "emailPlaceholder": "vous@exemple.com",
     "password": "Mot de passe",
     "signIn": "Se connecter",
     "signingIn": "Connexion…",
-    "invalidCredentials": "E-mail ou mot de passe invalide"
+    "invalidCredentials": "E-mail ou mot de passe invalide",
+    "noAccount": "Pas de compte ?",
+    "registerLink": "Créer un",
+    "orDivider": "ou",
+    "signInWithGoogle": "Se connecter avec Google"
+  },
+  "register": {
+    "title": "Family Quest",
+    "subtitle": "Créez votre compte",
+    "name": "Votre prénom",
+    "namePlaceholder": "ex. Sara",
+    "email": "E-mail",
+    "emailPlaceholder": "vous@exemple.com",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "signUp": "Créer un compte",
+    "signingUp": "Création du compte…",
+    "orDivider": "ou",
+    "signUpWithGoogle": "S'inscrire avec Google",
+    "alreadyHaveAccount": "Déjà un compte ?",
+    "signInLink": "Se connecter"
   },
   "profile": {
     "activeGoals": "Objectifs actifs",
@@ -266,6 +340,14 @@
     "alreadyNominated": "Vous avez déjà une nomination en attente pour",
     "suggestChallenge": "Suggérer une action de défi",
     "viewProfile": "Voir"
+  },
+  "onboarding": {
+    "step1Label": "Choisis ta langue",
+    "step2Label": "Définis ton mot de passe",
+    "step2bLabel": "Montre ton visage !",
+    "step2bSub": "Ajoute une photo de profil pour que ta famille te reconnaisse.",
+    "step2bSkip": "Passer pour l'instant",
+    "step3Label": "Visite guidée de l'appli"
   },
   "common": {
     "save": "Enregistrer",

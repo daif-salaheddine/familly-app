@@ -41,6 +41,7 @@ async function main() {
       id: "00000000-0000-0000-0000-000000000001",
       name: "Family",
       created_by: admin.id,
+      invite_code: "familyq1",
     },
   });
   console.log(`✓ group "${group.name}"`);

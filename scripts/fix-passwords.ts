@@ -39,7 +39,9 @@ async function main() {
   });
 
   for (const u of users) {
-    const ok = await bcrypt.compare("password123", u.password_hash);
+    const ok = u.password_hash
+      ? await bcrypt.compare("password123", u.password_hash)
+      : false;
     console.log(`${u.email} → compare: ${ok}`);
   }
 }

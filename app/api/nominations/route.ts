@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "../../../lib/auth";
-import { getUserGroup } from "../../../lib/goals";
+import { getActiveGroupId } from "../../../lib/group";
 import {
   getNominationsForUser,
   getSentNominations,
@@ -12,7 +12,7 @@ import { createNotification } from "../../../lib/notifications";
 export async function GET() {
   try {
     const user = await getUser();
-    const groupId = await getUserGroup(user.id);
+    const groupId = await getActiveGroupId(user.id);
 
     const [received, sent] = await Promise.all([
       getNominationsForUser(user.id, groupId),
@@ -32,7 +32,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
-    const groupId = await getUserGroup(user.id);
+    const groupId = await getActiveGroupId(user.id);
 
     const body = await req.json();
     const parsed = createNominationSchema.safeParse(body);

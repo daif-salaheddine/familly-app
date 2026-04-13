@@ -7,21 +7,30 @@ const { auth } = NextAuth(authConfig);
 export default auth((req) => {
   const { nextUrl, auth: session } = req;
   const isLoggedIn = !!session?.user;
+  const { pathname } = nextUrl;
 
-  const isAuthRoute = nextUrl.pathname === "/login";
-  const isNextAuthRoute = nextUrl.pathname.startsWith("/api/auth");
+  // Routes that never require authentication
+  const isNextAuthRoute = pathname.startsWith("/api/auth");
+  const isLoginRoute    = pathname === "/login";
+  const isRegisterRoute = pathname === "/register";
+  const isJoinRoute     = pathname.startsWith("/join/");
 
-  if (isNextAuthRoute) return NextResponse.next();
+  if (isNextAuthRoute || isJoinRoute) return NextResponse.next();
 
-  if (isAuthRoute) {
+  // Auth pages — redirect logged-in users away
+  if (isLoginRoute || isRegisterRoute) {
     if (isLoggedIn) {
       return NextResponse.redirect(new URL("/profile", nextUrl));
     }
     return NextResponse.next();
   }
 
+  // All other routes require authentication
   if (!isLoggedIn) {
-    return NextResponse.redirect(new URL("/login", nextUrl));
+    // Preserve the intended destination so login can redirect back
+    const loginUrl = new URL("/login", nextUrl);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();

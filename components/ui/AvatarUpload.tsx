@@ -45,9 +45,11 @@ async function getCroppedImg(imageSrc: string, pixelCrop: Area): Promise<Blob> {
 export default function AvatarUpload({
   name,
   initialUrl,
+  onUpload,
 }: {
   name: string;
   initialUrl: string | null;
+  onUpload?: (url: string) => void;
 }) {
   const [url, setUrl] = useState(initialUrl);
 
@@ -103,6 +105,7 @@ export default function AvatarUpload({
       if (json.data?.avatar_url) {
         setUrl(json.data.avatar_url);
         setImageSrc(null);
+        onUpload?.(json.data.avatar_url);
       }
     } finally {
       setUploading(false);

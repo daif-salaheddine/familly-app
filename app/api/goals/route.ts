@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "../../../lib/auth";
+import { getActiveGroupId } from "../../../lib/group";
 import {
-  getUserGroup,
   getGoals,
   createGoal,
   createGoalSchema,
@@ -10,7 +10,7 @@ import {
 export async function GET() {
   try {
     const user = await getUser();
-    const groupId = await getUserGroup(user.id);
+    const groupId = await getActiveGroupId(user.id);
     const goals = await getGoals(user.id, groupId);
     return NextResponse.json({ data: goals, error: null });
   } catch (res) {
@@ -22,7 +22,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
-    const groupId = await getUserGroup(user.id);
+    const groupId = await getActiveGroupId(user.id);
 
     const body = await req.json();
     const parsed = createGoalSchema.safeParse(body);

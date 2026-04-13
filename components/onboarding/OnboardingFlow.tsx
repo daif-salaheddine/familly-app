@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { playAcceptNomination, playLoginSuccess, playClick } from "../../lib/sounds";
+import AvatarUpload from "../ui/AvatarUpload";
 
 // ---------------------------------------------------------------------------
 // Inline translations — the language can change in step 1 before next-intl
@@ -23,6 +24,9 @@ const COPY: Record<
     // Step 2
     step2Title: string;
     step2Sub: string;
+    // Step 2b
+    step2bTitle: string;
+    step2bSub: string;
     newPassword: string;
     confirmPassword: string;
     passwordMismatch: string;
@@ -47,6 +51,8 @@ const COPY: Record<
     step1Sub: "You can change this any time in your profile.",
     step2Title: "Set your password",
     step2Sub: "This is your personal password for this account.",
+    step2bTitle: "Show your face!",
+    step2bSub: "Add a profile photo so your family recognizes you.",
     newPassword: "New password",
     confirmPassword: "Confirm password",
     passwordMismatch: "Passwords don't match.",
@@ -89,6 +95,8 @@ const COPY: Record<
     step1Sub: "Tu peux la changer à tout moment dans ton profil.",
     step2Title: "Définis ton mot de passe",
     step2Sub: "C'est ton mot de passe personnel pour ce compte.",
+    step2bTitle: "Montre ton visage !",
+    step2bSub: "Ajoute une photo de profil pour que ta famille te reconnaisse.",
     newPassword: "Nouveau mot de passe",
     confirmPassword: "Confirmer le mot de passe",
     passwordMismatch: "Les mots de passe ne correspondent pas.",
@@ -131,6 +139,8 @@ const COPY: Record<
     step1Sub: "يمكنك تغييرها في أي وقت من ملفك الشخصي.",
     step2Title: "اضبط كلمة مرورك",
     step2Sub: "هذه كلمة مرورك الشخصية لهذا الحساب.",
+    step2bTitle: "أرِنا وجهك!",
+    step2bSub: "أضف صورة ملفك الشخصي حتى تتعرف عليك عائلتك.",
     newPassword: "كلمة مرور جديدة",
     confirmPassword: "تأكيد كلمة المرور",
     passwordMismatch: "كلمتا المرور غير متطابقتين.",
@@ -177,11 +187,17 @@ const LANG_OPTIONS: { code: Lang; flag: string; label: string }[] = [
 // Root component
 // ---------------------------------------------------------------------------
 
-export default function OnboardingFlow({ userName }: { userName: string }) {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+export default function OnboardingFlow({ userName, isOAuthUser }: { userName: string; isOAuthUser: boolean }) {
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [lang, setLang] = useState<Lang>("EN");
+  // hasGroup is set after the password step (credentials) or in WalkthroughStep (OAuth)
+  const [hasGroup, setHasGroup] = useState<boolean | null>(null);
 
   const copy = COPY[lang];
+
+  // OAuth flow has 3 visual steps (skip password), credentials has 4
+  const visibleSteps = isOAuthUser ? ([1, 3, 4] as const) : ([1, 2, 3, 4] as const);
+  const visualStep = visibleSteps.indexOf(step as never) + 1;
 
   return (
     <div
@@ -191,19 +207,22 @@ export default function OnboardingFlow({ userName }: { userName: string }) {
     >
       {/* Progress dots */}
       <div className="flex gap-2 mb-8">
-        {[1, 2, 3].map((s) => (
-          <div
-            key={s}
-            style={{
-              width: s === step ? "28px" : "10px",
-              height: "10px",
-              borderRadius: "100px",
-              border: "2px solid #1a1a2e",
-              background: s <= step ? "#6c31e3" : "#ffffff",
-              transition: "all 0.2s",
-            }}
-          />
-        ))}
+        {visibleSteps.map((_, i) => {
+          const dotNumber = i + 1;
+          return (
+            <div
+              key={dotNumber}
+              style={{
+                width: dotNumber === visualStep ? "28px" : "10px",
+                height: "10px",
+                borderRadius: "100px",
+                border: "2px solid #1a1a2e",
+                background: dotNumber <= visualStep ? "#6c31e3" : "#ffffff",
+                transition: "all 0.2s",
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* Welcome line (shown on step 1 only) */}
@@ -253,7 +272,7 @@ export default function OnboardingFlow({ userName }: { userName: string }) {
               // Set locale cookie so the rest of the app uses the right language
               document.cookie = `LOCALE=${l.toLowerCase()}; path=/; max-age=${365 * 24 * 3600}; samesite=lax`;
             }}
-            onNext={() => { playClick(); setStep(2); }}
+            onNext={() => { playClick(); setStep(isOAuthUser ? 3 : 2); }}
             copy={copy}
           />
         )}
@@ -261,13 +280,23 @@ export default function OnboardingFlow({ userName }: { userName: string }) {
           <PasswordStep
             lang={lang}
             onBack={() => { playClick(); setStep(1); }}
-            onSuccess={() => { playAcceptNomination(); setStep(3); }}
+            onSuccess={(hg) => { playAcceptNomination(); setHasGroup(hg); setStep(3); }}
             copy={copy}
           />
         )}
         {step === 3 && (
+          <AvatarStep
+            userName={userName}
+            onAdvance={() => { playClick(); setStep(4); }}
+            copy={copy}
+          />
+        )}
+        {step === 4 && (
           <WalkthroughStep
             copy={copy}
+            lang={lang}
+            isOAuthUser={isOAuthUser}
+            hasGroup={hasGroup}
           />
         )}
       </div>
@@ -383,7 +412,7 @@ function PasswordStep({
 }: {
   lang: Lang;
   onBack: () => void;
-  onSuccess: () => void;
+  onSuccess: (hasGroup: boolean) => void;
   copy: (typeof COPY)["EN"];
 }) {
   const [newPassword, setNewPassword] = useState("");
@@ -415,7 +444,7 @@ function PasswordStep({
       if (!res.ok || json.error) {
         setError(json.error ?? "Something went wrong.");
       } else {
-        onSuccess();
+        onSuccess(json.data?.hasGroup ?? false);
       }
     } catch {
       setError("Something went wrong.");
@@ -563,15 +592,90 @@ function PasswordStep({
 }
 
 // ---------------------------------------------------------------------------
+// Step 2b — Avatar upload
+// ---------------------------------------------------------------------------
+
+function AvatarStep({
+  userName,
+  onAdvance,
+  copy,
+}: {
+  userName: string;
+  onAdvance: () => void;
+  copy: (typeof COPY)["EN"];
+}) {
+  return (
+    <div className="flex flex-col gap-5">
+      <div>
+        <h2
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "22px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+          }}
+        >
+          {copy.step2bTitle}
+        </h2>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 600,
+            color: "#888",
+            marginTop: "4px",
+          }}
+        >
+          {copy.step2bSub}
+        </p>
+      </div>
+
+      <div className="flex justify-center py-4">
+        <AvatarUpload name={userName} initialUrl={null} onUpload={onAdvance} />
+      </div>
+
+      <button
+        type="button"
+        onClick={onAdvance}
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontWeight: 700,
+          fontSize: "14px",
+          background: "transparent",
+          color: "#888",
+          border: "none",
+          padding: "8px 20px",
+          cursor: "pointer",
+          alignSelf: "center",
+        }}
+      >
+        {copy.skipForNow}
+      </button>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Step 3 — Walkthrough slides
 // ---------------------------------------------------------------------------
 
 const SLIDE_COLORS = ["#E8F4FF", "#FFF8E0", "#FFE8F5", "#E8FFE8"];
 const SLIDE_BORDER_COLORS = ["#6c31e3", "#f1c40f", "#e74c3c", "#2ecc71"];
 
-function WalkthroughStep({ copy }: { copy: (typeof COPY)["EN"] }) {
+function WalkthroughStep({
+  copy,
+  lang,
+  isOAuthUser,
+  hasGroup,
+}: {
+  copy: (typeof COPY)["EN"];
+  lang: Lang;
+  isOAuthUser: boolean;
+  hasGroup: boolean | null;
+}) {
   const router = useRouter();
   const [slide, setSlide] = useState(0);
+  const [completing, setCompleting] = useState(false);
   const isLast = slide === copy.slides.length - 1;
   const current = copy.slides[slide];
 
@@ -583,13 +687,42 @@ function WalkthroughStep({ copy }: { copy: (typeof COPY)["EN"] }) {
     playClick();
     setSlide((s) => Math.max(0, s - 1));
   }
+
+  async function finish(redirectTo: "goal" | "skip") {
+    setCompleting(true);
+    let finalHasGroup = hasGroup;
+
+    // OAuth users haven't called the onboard API yet — do it now
+    if (isOAuthUser) {
+      try {
+        const res = await fetch("/api/user/onboard", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ language: lang }),
+        });
+        const json = await res.json();
+        finalHasGroup = json.data?.hasGroup ?? false;
+      } catch {
+        finalHasGroup = false;
+      }
+    }
+
+    if (!finalHasGroup) {
+      router.push("/groups/new");
+    } else if (redirectTo === "goal") {
+      router.push("/profile/goals/new");
+    } else {
+      router.push("/profile");
+    }
+  }
+
   function handleSetGoal() {
     playLoginSuccess();
-    router.push("/profile/goals/new");
+    finish("goal");
   }
   function handleSkip() {
     playClick();
-    router.push("/profile");
+    finish("skip");
   }
 
   return (
@@ -660,23 +793,26 @@ function WalkthroughStep({ copy }: { copy: (typeof COPY)["EN"] }) {
         <div className="flex flex-col gap-3 mt-2">
           <button
             onClick={handleSetGoal}
+            disabled={completing}
             style={{
               fontFamily: "Nunito, sans-serif",
               fontWeight: 800,
               fontSize: "15px",
-              background: "#2ecc71",
+              background: completing ? "#9be0b3" : "#2ecc71",
               color: "#1a1a2e",
               border: "2px solid #1a1a2e",
               borderRadius: "100px",
-              boxShadow: "2px 2px 0 #1a1a2e",
+              boxShadow: completing ? "none" : "2px 2px 0 #1a1a2e",
               padding: "12px 20px",
-              cursor: "pointer",
+              cursor: completing ? "not-allowed" : "pointer",
+              opacity: completing ? 0.7 : 1,
             }}
           >
-            {copy.setFirstGoal}
+            {completing ? copy.saving : copy.setFirstGoal}
           </button>
           <button
             onClick={handleSkip}
+            disabled={completing}
             style={{
               fontFamily: "Nunito, sans-serif",
               fontWeight: 700,
@@ -686,7 +822,8 @@ function WalkthroughStep({ copy }: { copy: (typeof COPY)["EN"] }) {
               border: "none",
               borderRadius: "100px",
               padding: "8px 20px",
-              cursor: "pointer",
+              cursor: completing ? "not-allowed" : "pointer",
+              opacity: completing ? 0.5 : 1,
             }}
           >
             {copy.skipForNow}

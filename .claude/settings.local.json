@@ -18,7 +18,20 @@
       "Bash(python3 -c ':*)",
       "Bash(python -c ':*)",
       "mcp__claude_ai_Supabase__apply_migration",
-      "mcp__claude_ai_Supabase__execute_sql"
+      "mcp__claude_ai_Supabase__execute_sql",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(git commit -m 'feat: goals feature — lib/goals.ts, API routes, profile page, create form, goal detail:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run:*)",
+      "Bash(npx next:*)",
+      "Bash(xxd \"C:/Users/daif4/familly_app/ONBOARDING.md\")",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(ls \"C:/Users/daif4/familly_app/.env\"*)",
+      "Bash(find:*)"
     ]
   }
 }

@@ -27,21 +27,6 @@ export type UpdateGoalInput = z.infer<typeof updateGoalSchema>;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-/** Returns the user's group_id. Throws 400 if not in any group. */
-export async function getUserGroup(userId: string): Promise<string> {
-  const membership = await prisma.groupMember.findFirst({
-    where: { user_id: userId },
-    select: { group_id: true },
-  });
-  if (!membership) {
-    throw new Response(
-      JSON.stringify({ data: null, error: "User is not in any group" }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
-  }
-  return membership.group_id;
-}
-
 /** Returns all goals for a user in a group, ordered newest first. */
 export async function getGoals(
   userId: string,
