@@ -7,6 +7,7 @@ import { getUnreadCount } from "../../lib/notifications";
 import Avatar from "../../components/ui/Avatar";
 import GroupSwitcher from "../../components/layout/GroupSwitcher";
 import { getTranslations } from "next-intl/server";
+import { headers } from "next/headers";
 
 export default async function AppLayout({
   children,
@@ -33,6 +34,17 @@ export default async function AppLayout({
 
   if (!currentUser?.has_onboarded) {
     redirect("/onboarding");
+  }
+
+  // Logged in + onboarded but not in any group → send to group creation.
+  // Read the injected header (set by middleware) to avoid redirecting
+  // /groups/new itself into an infinite loop.
+  if (memberships.length === 0) {
+    const headersList = await headers();
+    const pathname = headersList.get("x-pathname") ?? "";
+    if (pathname !== "/groups/new") {
+      redirect("/groups/new");
+    }
   }
 
   // Determine which group is currently active

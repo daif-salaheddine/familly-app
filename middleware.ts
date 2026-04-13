@@ -9,20 +9,29 @@ export default auth((req) => {
   const isLoggedIn = !!session?.user;
   const { pathname } = nextUrl;
 
+  // Helper: pass through but inject the current pathname as a header
+  // so server layouts can read it without a separate headers() call.
+  function passThrough() {
+    const headers = new Headers(req.headers);
+    headers.set("x-pathname", pathname);
+    return NextResponse.next({ request: { headers } });
+  }
+
   // Routes that never require authentication
   const isNextAuthRoute = pathname.startsWith("/api/auth");
-  const isLoginRoute    = pathname === "/login";
-  const isRegisterRoute = pathname === "/register";
   const isJoinRoute     = pathname.startsWith("/join/");
 
-  if (isNextAuthRoute || isJoinRoute) return NextResponse.next();
+  if (isNextAuthRoute || isJoinRoute) return passThrough();
 
-  // Auth pages — redirect logged-in users away
+  // Auth pages (/login, /register) — redirect logged-in users away
+  const isLoginRoute    = pathname === "/login";
+  const isRegisterRoute = pathname === "/register";
+
   if (isLoginRoute || isRegisterRoute) {
     if (isLoggedIn) {
       return NextResponse.redirect(new URL("/profile", nextUrl));
     }
-    return NextResponse.next();
+    return passThrough();
   }
 
   // All other routes require authentication
@@ -33,7 +42,7 @@ export default auth((req) => {
     return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  return passThrough();
 });
 
 export const config = {
