@@ -5,8 +5,13 @@ export const metadata = {
   title: "Sign in — Family App",
 };
 
-export default async function LoginPage() {
+interface Props {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}
+
+export default async function LoginPage({ searchParams }: Props) {
   const t = await getTranslations("login");
+  const { callbackUrl } = await searchParams;
 
   return (
     <div
@@ -47,7 +52,7 @@ export default async function LoginPage() {
             padding: "28px",
           }}
         >
-          <LoginForm />
+          <LoginForm callbackUrl={callbackUrl} />
         </div>
       </div>
     </div>

@@ -38,7 +38,11 @@ export async function loginAction(
     throw error;
   }
 
-  redirect("/profile");
+  // Redirect to callbackUrl if it's a safe relative path, otherwise /profile
+  const raw = formData.get("callbackUrl") as string | null;
+  const destination =
+    raw && raw.startsWith("/") && !raw.startsWith("//") ? raw : "/profile";
+  redirect(destination);
 }
 
 const registerSchema = z.object({

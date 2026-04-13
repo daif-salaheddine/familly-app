@@ -9,7 +9,7 @@ import { playLoginSuccess, playMissGoal } from "../../lib/sounds";
 
 const initialState = { error: null };
 
-export default function LoginForm() {
+export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
   const t = useTranslations("login");
   const [state, formAction, isPending] = useActionState(loginAction, initialState);
 
@@ -33,6 +33,8 @@ export default function LoginForm() {
 
   return (
     <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* Pass callbackUrl through so the server action can redirect there */}
+      <input type="hidden" name="callbackUrl" value={callbackUrl ?? ""} />
       <div className="flex flex-col gap-1">
         <label
           htmlFor="email"
@@ -146,7 +148,7 @@ export default function LoginForm() {
       {/* Google button */}
       <button
         type="button"
-        onClick={() => signIn("google", { callbackUrl: "/profile" })}
+        onClick={() => signIn("google", { callbackUrl: callbackUrl ?? "/profile" })}
         style={{
           fontFamily: "Nunito, sans-serif",
           fontWeight: 800,
