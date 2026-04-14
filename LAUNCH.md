@@ -321,27 +321,10 @@ component (`"closes in 4h 12m"` or `"closed"`).
 
 ---
 
-### P1-7 · Onboarding is static slides, not the intended interactive tour
+### ↓ P1-7 · Onboarding is static slides, not the intended interactive tour — moved to P2
 
-**What needs to change**
-ONBOARDING.md specifies tooltip bubbles overlaid on the real app UI, pointing at
-actual elements (goal slots, bottom nav, pot icon). What was built is a generic
-slide deck. Users exit onboarding having never seen the real interface.
-
-Fix: implement the tooltip overlay — render the real profile page underneath,
-dimmed, with comic-style pointer bubbles that highlight elements in sequence.
-Four tooltips: goal slots → feed tab → pot tab → avatar. Final CTA: "Set my
-first goal" or "Skip for now."
-
-**Files to touch**
-- `components/onboarding/OnboardingFlow.tsx` — replace WalkthroughStep slides
-  with a tooltip overlay component
-- `components/onboarding/TooltipOverlay.tsx` — new: renders dimmed backdrop +
-  comic pointer bubble positioned over target elements
-- `app/(auth)/onboarding/page.tsx` — may need to render layout elements for
-  the tour to point at real UI
-
-**Effort:** Large
+Deferred 14 Apr 2026. Static slide deck works well enough for launch. Interactive
+tooltip overlay over real UI is a significant undertaking — moved to P2-13.
 
 ---
 
@@ -409,29 +392,11 @@ Add a simple "Add to home screen" banner for first-time mobile visitors.
 | P2-10 | Invite code brute-forceable | Add rate limiting on `/join/[code]` page and API | `app/api/groups/join/route.ts`, `middleware.ts` | Small |
 | P2-11 | Challenge suggestion no "seen" indicator | Add `seen_at` to ChallengeSuggestion | `prisma/schema.prisma`, `components/challenges/` | Small |
 | P2-12 | No admin engagement dashboard | New `/groups/[id]/stats` page with weekly engagement | `app/(app)/groups/[id]/stats/page.tsx`, new API route | Large |
+| P2-13 | Onboarding is static slides (moved from P1-7) | Tooltip overlay over real UI: goal slots → feed → pot → avatar | `components/onboarding/OnboardingFlow.tsx`, new `TooltipOverlay.tsx` | Large |
 
 ---
 
-## Build order recommendation
+## Status as of 14 Apr 2026
 
-Fix P0 items first, in this sequence (all small/medium effort, high impact):
-
-1. **P0-4** Active nav highlight — 30 minutes, pure UI
-2. **P0-1** Onboarding password fix — 1 hour, prevents day-1 abandonment
-3. **P0-3** Pot disclaimer — 1 hour, sets correct expectations
-4. **P0-5** Goal weekly progress — 2 hours, core engagement loop
-5. **P0-7** Cron fallback + monitoring — 2 hours, protects the game engine
-6. **P0-6** Email notifications (weekly digest) — 1 day, biggest retention lever
-7. **P0-2** Forgot password — 1 day, required for production auth
-
-Then P1 items in order of effort (small first):
-
-8. **P1-3** Week label — 30 minutes
-9. **P1-4** Hide member emails — 30 minutes
-10. **P1-6** Proposal countdown — 1 hour
-11. **P1-9** PWA manifest — 2 hours
-12. **P1-1** Email verification — 1 day
-13. **P1-2** Challenge deadline — 1 day
-14. **P1-5** Freeze week — 1 day
-15. **P1-8** Edit goals — 1 day
-16. **P1-7** Interactive onboarding tour — 2–3 days
+All P0 and P1 items are complete except P1-7 which was moved to P2.
+The app is ready for launch. Remaining P2 items are post-launch improvements.
