@@ -133,7 +133,7 @@ required / 7), red if behind.
 
 ---
 
-### P0-6 · No email or push notifications — app invisible when closed
+### ✅ P0-6 · No email or push notifications — app invisible when closed — done 14 Apr 2026
 
 **What needs to change**
 Every notification is in-app only. When the app is closed, users receive no signal
