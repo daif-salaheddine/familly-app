@@ -81,7 +81,36 @@
     "noAccount": "ليس لديك حساب؟",
     "registerLink": "أنشئ واحداً",
     "orDivider": "أو",
-    "signInWithGoogle": "تسجيل الدخول بـ Google"
+    "signInWithGoogle": "تسجيل الدخول بـ Google",
+    "forgotPassword": "نسيت كلمة المرور؟"
+  },
+  "forgotPassword": {
+    "title": "إعادة تعيين كلمة المرور",
+    "subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.",
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "you@example.com",
+    "sendLink": "إرسال الرابط",
+    "sending": "جارٍ الإرسال…",
+    "successTitle": "تحقق من بريدك الوارد",
+    "successBody": "إذا كان هناك حساب لهذا البريد، فرابط إعادة التعيين في طريقه إليك. تنتهي صلاحيته خلال ساعة واحدة.",
+    "backToLogin": "← العودة إلى تسجيل الدخول",
+    "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+  },
+  "resetPassword": {
+    "title": "تعيين كلمة مرور جديدة",
+    "subtitle": "اختر كلمة مرور قوية لحسابك.",
+    "passwordLabel": "كلمة المرور الجديدة",
+    "confirmLabel": "تأكيد كلمة المرور",
+    "submit": "تحديث كلمة المرور",
+    "submitting": "جارٍ التحديث…",
+    "successTitle": "تم تحديث كلمة المرور!",
+    "successBody": "يمكنك الآن تسجيل الدخول بكلمة مرورك الجديدة.",
+    "goToLogin": "الذهاب إلى تسجيل الدخول ←",
+    "invalidToken": "رابط إعادة التعيين غير صالح أو انتهت صلاحيته.",
+    "requestNew": "طلب رابط جديد ←",
+    "mismatch": "كلمتا المرور غير متطابقتين.",
+    "tooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل.",
+    "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
   },
   "register": {
     "title": "Family Quest",

@@ -38,7 +38,7 @@ the logic just needs to be applied to credentials users who self-registered too.
 
 ---
 
-### P0-2 · No forgot password / account recovery
+### ✅ P0-2 · No forgot password / account recovery — done 14 Apr 2026
 
 **What needs to change**
 There is no way for a user to recover their account if they forget their password.

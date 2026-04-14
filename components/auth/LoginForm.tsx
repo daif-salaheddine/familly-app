@@ -102,6 +102,22 @@ export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
         />
       </div>
 
+      {/* Forgot password link */}
+      <div style={{ textAlign: "right", marginTop: "-8px" }}>
+        <Link
+          href="/forgot-password"
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "12px",
+            fontWeight: 700,
+            color: "#6c31e3",
+            textDecoration: "none",
+          }}
+        >
+          {t("forgotPassword")}
+        </Link>
+      </div>
+
       {state.error && (
         <p
           style={{

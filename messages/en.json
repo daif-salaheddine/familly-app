@@ -81,7 +81,36 @@
     "noAccount": "No account?",
     "registerLink": "Create one",
     "orDivider": "or",
-    "signInWithGoogle": "Sign in with Google"
+    "signInWithGoogle": "Sign in with Google",
+    "forgotPassword": "Forgot password?"
+  },
+  "forgotPassword": {
+    "title": "Reset your password",
+    "subtitle": "Enter your email and we'll send you a reset link.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "sendLink": "Send reset link",
+    "sending": "Sending…",
+    "successTitle": "Check your inbox",
+    "successBody": "If an account exists for that email, a reset link is on its way. It expires in 1 hour.",
+    "backToLogin": "← Back to sign in",
+    "errorGeneric": "Something went wrong. Please try again."
+  },
+  "resetPassword": {
+    "title": "Set a new password",
+    "subtitle": "Choose a strong password for your account.",
+    "passwordLabel": "New password",
+    "confirmLabel": "Confirm password",
+    "submit": "Update password",
+    "submitting": "Updating…",
+    "successTitle": "Password updated!",
+    "successBody": "You can now sign in with your new password.",
+    "goToLogin": "Go to sign in →",
+    "invalidToken": "This reset link is invalid or has expired.",
+    "requestNew": "Request a new link →",
+    "mismatch": "Passwords don't match.",
+    "tooShort": "Password must be at least 8 characters.",
+    "errorGeneric": "Something went wrong. Please try again."
   },
   "register": {
     "title": "Family Quest",
