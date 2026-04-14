@@ -6,12 +6,13 @@ export const metadata = {
 };
 
 interface Props {
-  searchParams: Promise<{ callbackUrl?: string }>;
+  searchParams: Promise<{ callbackUrl?: string; verified?: string }>;
 }
 
 export default async function LoginPage({ searchParams }: Props) {
   const t = await getTranslations("login");
-  const { callbackUrl } = await searchParams;
+  const tVerify = await getTranslations("emailVerification");
+  const { callbackUrl, verified } = await searchParams;
 
   return (
     <div
@@ -42,6 +43,25 @@ export default async function LoginPage({ searchParams }: Props) {
             {t("subtitle")}
           </p>
         </div>
+
+        {verified === "1" && (
+          <div
+            style={{
+              background: "#d1fae5",
+              border: "2px solid #059669",
+              borderRadius: "10px",
+              padding: "10px 14px",
+              marginBottom: "16px",
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "13px",
+              fontWeight: 700,
+              color: "#065f46",
+              textAlign: "center",
+            }}
+          >
+            {tVerify("successBanner")}
+          </div>
+        )}
 
         <div
           style={{

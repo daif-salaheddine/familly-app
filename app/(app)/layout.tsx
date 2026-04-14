@@ -18,7 +18,7 @@ export default async function AppLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [memberships, unreadCount, currentUser, tNav, tCommon] = await Promise.all([
+  const [memberships, unreadCount, currentUser, tNav, tCommon, tVerify] = await Promise.all([
     prisma.groupMember.findMany({
       where: { user_id: session.user.id },
       select: { group_id: true, role: true, group: { select: { id: true, name: true } } },
@@ -27,10 +27,11 @@ export default async function AppLayout({
     getUnreadCount(session.user.id!),
     prisma.user.findUnique({
       where: { id: session.user.id! },
-      select: { avatar_url: true, has_onboarded: true },
+      select: { avatar_url: true, has_onboarded: true, email_verified: true },
     }),
     getTranslations("nav"),
     getTranslations("common"),
+    getTranslations("emailVerification"),
   ]);
 
   if (!currentUser?.has_onboarded) {
@@ -125,6 +126,24 @@ export default async function AppLayout({
           </form>
         </div>
       </header>
+
+      {/* Email verification banner */}
+      {!currentUser?.email_verified && (
+        <div
+          style={{
+            background: "#fff8e1",
+            borderBottom: "2px solid #f59e0b",
+            padding: "10px 16px",
+            textAlign: "center",
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#92400e",
+          }}
+        >
+          {tVerify("banner")}
+        </div>
+      )}
 
       {/* Page content — pad bottom so it clears the nav */}
       <main className="max-w-2xl mx-auto w-full px-4 py-6 pb-28 flex-1">

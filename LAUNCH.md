@@ -195,7 +195,7 @@ Fix:
 
 ---
 
-### P1-1 · No email verification on registration
+### ✅ P1-1 · No email verification on registration — done 14 Apr 2026
 
 **What needs to change**
 Users can register with any email address including one they don't own. For a

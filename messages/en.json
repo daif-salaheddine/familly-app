@@ -112,6 +112,14 @@
     "tooShort": "Password must be at least 8 characters.",
     "errorGeneric": "Something went wrong. Please try again."
   },
+  "emailVerification": {
+    "title": "Verify your email",
+    "sentTitle": "Check your inbox",
+    "sentBody": "We sent a verification link to your email address. Click it to activate your account.",
+    "backToLogin": "← Back to sign in",
+    "banner": "📩 Please verify your email address — check your inbox for the link.",
+    "successBanner": "✅ Email verified! You can now sign in."
+  },
   "register": {
     "title": "Family Quest",
     "subtitle": "Create your account",

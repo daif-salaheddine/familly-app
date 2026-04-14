@@ -112,6 +112,14 @@
     "tooShort": "Le mot de passe doit comporter au moins 8 caractères.",
     "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
   },
+  "emailVerification": {
+    "title": "Vérifiez votre e-mail",
+    "sentTitle": "Consultez votre boîte de réception",
+    "sentBody": "Nous avons envoyé un lien de vérification à votre adresse e-mail. Cliquez dessus pour activer votre compte.",
+    "backToLogin": "← Retour à la connexion",
+    "banner": "📩 Veuillez vérifier votre adresse e-mail — consultez votre boîte de réception.",
+    "successBanner": "✅ E-mail vérifié ! Vous pouvez maintenant vous connecter."
+  },
   "register": {
     "title": "Family Quest",
     "subtitle": "Créez votre compte",

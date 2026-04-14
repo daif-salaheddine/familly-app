@@ -1,11 +1,13 @@
 "use server";
 
 import { z } from "zod";
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { signIn } from "../../auth";
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/db";
+import { sendVerificationEmail } from "../../lib/email";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -80,9 +82,24 @@ export async function registerAction(
 
   const password_hash = await bcrypt.hash(password, 12);
 
+  const rawToken = crypto.randomBytes(32).toString("hex");
+  const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+
   await prisma.user.create({
-    data: { name, email, password_hash, has_onboarded: false },
+    data: {
+      name,
+      email,
+      password_hash,
+      has_onboarded: false,
+      email_verified: false,
+      verification_token: tokenHash,
+    },
   });
+
+  // Fire-and-forget — don't block registration on email delivery
+  sendVerificationEmail(email, name, rawToken).catch((err) =>
+    console.error("[registerAction] failed to send verification email:", err)
+  );
 
   try {
     await signIn("credentials", { email, password, redirect: false });
