@@ -223,7 +223,13 @@
     "chooseMedia": "Choisir une photo ou vidéo",
     "uploading": "Envoi…",
     "fileTypeError": "Type de fichier non autorisé. Utilisez des images ou une vidéo.",
-    "fileSizeError": "Le fichier dépasse 50 Mo"
+    "fileSizeError": "Le fichier dépasse 50 Mo",
+    "editGoal": "Modifier l'objectif",
+    "editCancel": "Annuler",
+    "editSave": "Enregistrer les modifications",
+    "editSaving": "Enregistrement…",
+    "editError": "Une erreur est survenue. Veuillez réessayer.",
+    "editInvalidPenalty": "La pénalité doit être un nombre positif."
   },
   "nominations": {
     "title": "Nominations",

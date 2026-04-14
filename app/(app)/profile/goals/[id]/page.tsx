@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth } from "../../../../../auth";
 import { prisma } from "../../../../../lib/db";
 import GoalActions from "../../../../../components/goals/GoalActions";
+import EditGoalPanel from "../../../../../components/goals/EditGoalPanel";
 import { getTranslations } from "next-intl/server";
 
 const CATEGORY_STYLES: Record<string, { background: string; color: string }> = {
@@ -203,6 +204,16 @@ export default async function GoalDetailPage({
             }}
           >
             <GoalActions goalId={goal.id} status={goal.status} />
+            <EditGoalPanel
+              goalId={goal.id}
+              initial={{
+                title: goal.title,
+                category: goal.category,
+                frequency: goal.frequency,
+                frequency_count: goal.frequency_count,
+                penalty_amount: Number(goal.penalty_amount),
+              }}
+            />
           </div>
         )}
       </div>

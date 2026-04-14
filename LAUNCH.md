@@ -345,7 +345,7 @@ first goal" or "Skip for now."
 
 ---
 
-### P1-8 · Goals cannot be edited after creation
+### ✅ P1-8 · Goals cannot be edited after creation — done 14 Apr 2026
 
 **What needs to change**
 Once a goal is created, title, category, frequency, and penalty amount are

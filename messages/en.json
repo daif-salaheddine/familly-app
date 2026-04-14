@@ -223,7 +223,13 @@
     "chooseMedia": "Choose photo or video",
     "uploading": "Uploading…",
     "fileTypeError": "File type not allowed. Use images or video.",
-    "fileSizeError": "File exceeds 50 MB"
+    "fileSizeError": "File exceeds 50 MB",
+    "editGoal": "Edit goal",
+    "editCancel": "Cancel",
+    "editSave": "Save changes",
+    "editSaving": "Saving…",
+    "editError": "Something went wrong. Please try again.",
+    "editInvalidPenalty": "Penalty must be a positive number."
   },
   "nominations": {
     "title": "Nominations",

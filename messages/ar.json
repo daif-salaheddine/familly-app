@@ -223,7 +223,13 @@
     "chooseMedia": "اختر صورة أو فيديو",
     "uploading": "جارٍ الرفع…",
     "fileTypeError": "نوع الملف غير مسموح. استخدم صورًا أو فيديو.",
-    "fileSizeError": "حجم الملف يتجاوز 50 ميغابايت"
+    "fileSizeError": "حجم الملف يتجاوز 50 ميغابايت",
+    "editGoal": "تعديل الهدف",
+    "editCancel": "إلغاء",
+    "editSave": "حفظ التغييرات",
+    "editSaving": "جارٍ الحفظ…",
+    "editError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "editInvalidPenalty": "يجب أن تكون الغرامة رقمًا موجبًا."
   },
   "nominations": {
     "title": "الترشيحات",
