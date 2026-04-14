@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { auth, signOut } from "../../auth";
+import { auth } from "../../auth";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/db";
 import { getActiveGroupId } from "../../lib/group";
 import { getUnreadCount } from "../../lib/notifications";
-import Avatar from "../../components/ui/Avatar";
+import Link from "next/link";
 import GroupSwitcher from "../../components/layout/GroupSwitcher";
+import ProfileDropdown from "../../components/layout/ProfileDropdown";
 import BottomNav from "../../components/layout/BottomNav";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
@@ -18,7 +18,7 @@ export default async function AppLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [memberships, unreadCount, currentUser, tNav, tCommon, tVerify] = await Promise.all([
+  const [memberships, unreadCount, currentUser, tNav, tVerify] = await Promise.all([
     prisma.groupMember.findMany({
       where: { user_id: session.user.id },
       select: { group_id: true, role: true, group: { select: { id: true, name: true } } },
@@ -27,10 +27,9 @@ export default async function AppLayout({
     getUnreadCount(session.user.id!),
     prisma.user.findUnique({
       where: { id: session.user.id! },
-      select: { avatar_url: true, has_onboarded: true, email_verified: true },
+      select: { avatar_url: true, has_onboarded: true, email_verified: true, language: true },
     }),
     getTranslations("nav"),
-    getTranslations("common"),
     getTranslations("emailVerification"),
   ]);
 
@@ -77,24 +76,6 @@ export default async function AppLayout({
         />
 
         <div className="flex items-center gap-3">
-          <Link href="/profile" className="flex items-center gap-2">
-            <Avatar
-              name={session.user.name!}
-              url={currentUser?.avatar_url}
-              size="sm"
-            />
-            <span
-              style={{
-                fontFamily: "Nunito, sans-serif",
-                fontSize: "13px",
-                fontWeight: 700,
-                color: "#1a1a2e",
-              }}
-            >
-              {session.user.name}
-            </span>
-          </Link>
-
           {/* Notification bell */}
           <Link href="/notifications" className="relative">
             <span className="text-lg">🔔</span>
@@ -105,25 +86,13 @@ export default async function AppLayout({
             )}
           </Link>
 
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/login" });
-            }}
-          >
-            <button
-              type="submit"
-              style={{
-                fontFamily: "Nunito, sans-serif",
-                fontSize: "13px",
-                fontWeight: 700,
-                color: "#888",
-              }}
-              className="hover:text-red-500 transition-colors"
-            >
-              {tCommon("signOut")}
-            </button>
-          </form>
+          {/* Profile dropdown */}
+          <ProfileDropdown
+            name={session.user.name!}
+            email={session.user.email!}
+            avatarUrl={currentUser?.avatar_url}
+            currentLanguage={currentUser?.language ?? "EN"}
+          />
         </div>
       </header>
 
