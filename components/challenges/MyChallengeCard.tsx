@@ -15,6 +15,45 @@ const ALLOWED_TYPES = [
   "video/webm",
 ];
 
+// ─── Deadline chip ────────────────────────────────────────────────────────────
+
+function DeadlineChip({
+  deadline,
+  t,
+}: {
+  deadline: Date;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  const ms = deadline.getTime() - Date.now();
+  const isPast = ms <= 0;
+  let label: string;
+  if (isPast) {
+    label = t("deadlinePast");
+  } else {
+    const h = Math.floor(ms / 3_600_000);
+    if (h < 1) label = `${t("deadlineLabel")} ${t("lessThan1hLeft")}`;
+    else if (h < 24) label = `${t("deadlineLabel")} ${h}${t("hoursLeft")}`;
+    else label = `${t("deadlineLabel")} ${Math.floor(h / 24)}${t("daysLeft")}`;
+  }
+
+  return (
+    <div
+      style={{
+        background: isPast ? "#ffe0e0" : ms < 24 * 3_600_000 ? "#FFF3E0" : "#f0f0f0",
+        border: `2px solid ${isPast ? "#e74c3c" : ms < 24 * 3_600_000 ? "#f39c12" : "#ccc"}`,
+        borderRadius: "10px",
+        padding: "6px 12px",
+        fontFamily: "Nunito, sans-serif",
+        fontSize: "12px",
+        fontWeight: 700,
+        color: isPast ? "#c0392b" : ms < 24 * 3_600_000 ? "#B36200" : "#555",
+      }}
+    >
+      ⏰ {label}
+    </div>
+  );
+}
+
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
 function StatusBadge({
@@ -314,6 +353,11 @@ export default function MyChallengeCard({
         </div>
         <StatusBadge status={challenge.status} t={t} />
       </div>
+
+      {/* Deadline countdown */}
+      {challenge.deadline && (
+        <DeadlineChip deadline={new Date(challenge.deadline)} t={t} />
+      )}
 
       {/* ── pending_suggestions ── */}
       {challenge.status === "pending_suggestions" && (

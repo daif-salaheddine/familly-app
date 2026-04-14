@@ -53,7 +53,7 @@ export async function getChallengeForUser(
     where: {
       user_id: userId,
       group_id: groupId,
-      status: { not: "completed" },
+      status: { notIn: ["completed", "expired"] },
     },
     include: { suggestions: { orderBy: { created_at: "asc" } } },
     orderBy: { created_at: "desc" },
@@ -67,7 +67,7 @@ export async function getGroupChallenges(
   return prisma.challenge.findMany({
     where: {
       group_id: groupId,
-      status: { not: "completed" },
+      status: { notIn: ["completed", "expired"] },
     },
     include: {
       user: { select: { id: true, name: true } },
@@ -105,12 +105,16 @@ export async function createChallenge(
   });
   if (existing) return null;
 
+  const deadline = new Date();
+  deadline.setDate(deadline.getDate() + 7);
+
   return prisma.challenge.create({
     data: {
       user_id: userId,
       goal_id: goalId,
       group_id: groupId,
       status: "pending_suggestions",
+      deadline,
     },
   });
 }

@@ -222,7 +222,7 @@ needs to be wired into the registration + email send flow.
 
 ---
 
-### P1-2 · Challenges have no deadline
+### ✅ P1-2 · Challenges have no deadline — done 14 Apr 2026
 
 **What needs to change**
 Challenges can be ignored forever. There is no time pressure, no escalation,

@@ -169,6 +169,44 @@ export async function calculatePenalties(
     }
   }
 
+  // ── Expire overdue challenges and add an extra penalty ────────────────────
+  const overdueChallenge = await prisma.challenge.findMany({
+    where: {
+      group_id: groupId,
+      status: { notIn: ["completed", "expired"] },
+      deadline: { lt: new Date() },
+    },
+    include: { goal: { select: { penalty_amount: true } } },
+  });
+
+  for (const challenge of overdueChallenge) {
+    await prisma.$transaction(async (tx) => {
+      await tx.challenge.update({
+        where: { id: challenge.id },
+        data: { status: "expired" },
+      });
+
+      // Extra penalty for ignoring the challenge (same amount as the goal)
+      await tx.penalty.create({
+        data: {
+          user_id: challenge.user_id,
+          goal_id: challenge.goal_id,
+          group_id: groupId,
+          amount: challenge.goal.penalty_amount,
+          period_start: periodStart,
+          period_end: periodEnd,
+        },
+      });
+
+      await tx.pot.update({
+        where: { group_id: groupId },
+        data: { total_amount: { increment: challenge.goal.penalty_amount } },
+      });
+    });
+
+    penaltiesCreated++;
+  }
+
   return {
     groupId,
     goalsChecked: goals.length,

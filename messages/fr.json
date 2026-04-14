@@ -253,7 +253,12 @@
     "fileTypeError": "Type de fichier non autorisé. Utilisez des images ou une vidéo.",
     "fileSizeError": "Le fichier dépasse 50 Mo",
     "describeAction": "Décrivez l'action du défi",
-    "exampleAction": "ex. Courir 5 km sans s'arrêter ce week-end"
+    "exampleAction": "ex. Courir 5 km sans s'arrêter ce week-end",
+    "deadlineLabel": "Date limite :",
+    "deadlinePast": "Date limite dépassée — pénalité appliquée",
+    "daysLeft": "j restants",
+    "hoursLeft": "h restantes",
+    "lessThan1hLeft": "< 1h restante"
   },
   "feed": {
     "title": "Fil d'actualité",

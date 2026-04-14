@@ -253,7 +253,12 @@
     "fileTypeError": "File type not allowed. Use images or video.",
     "fileSizeError": "File exceeds 50 MB",
     "describeAction": "Describe the challenge action",
-    "exampleAction": "e.g. Run 5km without stopping this weekend"
+    "exampleAction": "e.g. Run 5km without stopping this weekend",
+    "deadlineLabel": "Deadline:",
+    "deadlinePast": "Deadline passed — penalty applied",
+    "daysLeft": "d left",
+    "hoursLeft": "h left",
+    "lessThan1hLeft": "< 1h left"
   },
   "feed": {
     "title": "Feed",

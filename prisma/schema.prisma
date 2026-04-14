@@ -52,6 +52,7 @@ enum ChallengeStatus {
   pending_choice
   pending_proof
   completed
+  expired
 }
 
 enum SuggestionStatus {
@@ -251,6 +252,7 @@ model Challenge {
   proof_url            String?
   proof_caption        String?
   status               ChallengeStatus @default(pending_suggestions)
+  deadline             DateTime?
   created_at           DateTime        @default(now())
   completed_at         DateTime?
 
