@@ -114,6 +114,7 @@ model User {
   challenges           Challenge[]
   challengeSuggestions ChallengeSuggestion[]
   penalties            Penalty[]
+  weekFreezes          WeekFreeze[]
   potProposals         PotProposal[]
   potVotes             PotVote[]
   notifications        Notification[]
@@ -135,6 +136,7 @@ model Group {
   nominations Nomination[]
   challenges  Challenge[]
   penalties   Penalty[]
+  weekFreezes WeekFreeze[]
   pot         Pot?
 
   @@map("groups")
@@ -355,4 +357,20 @@ model Notification {
   user User @relation(fields: [user_id], references: [id])
 
   @@map("notifications")
+}
+
+model WeekFreeze {
+  id          String   @id @default(uuid())
+  user_id     String
+  group_id    String
+  week_number Int
+  year        Int
+  reason      String?
+  created_at  DateTime @default(now())
+
+  user  User  @relation(fields: [user_id], references: [id])
+  group Group @relation(fields: [group_id], references: [id])
+
+  @@unique([user_id, group_id, week_number, year])
+  @@map("week_freezes")
 }

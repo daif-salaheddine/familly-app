@@ -5,8 +5,10 @@ import { prisma } from "../../../lib/db";
 import type { GoalWithNominator } from "../../../types";
 import AvatarUpload from "../../../components/ui/AvatarUpload";
 import LanguageSelector from "../../../components/ui/LanguageSelector";
+import FreezeWeekButton from "../../../components/profile/FreezeWeekButton";
 import { getTranslations } from "next-intl/server";
 import { getWeeklyProgressForGoals } from "../../../lib/goals";
+import { getCurrentWeekPeriod } from "../../../lib/penalties";
 
 const CATEGORY_STYLES: Record<string, { background: string; color: string }> = {
   body:          { background: "#FFE0E0", color: "#C0392B" },
@@ -35,7 +37,11 @@ export default async function ProfilePage() {
 
   const groupId = membership.group_id;
 
-  const [currentUser, goals, pendingNomination] = await Promise.all([
+  const { weekNumber, year } = getCurrentWeekPeriod();
+  const monthStart = new Date(Date.UTC(year, new Date().getUTCMonth(), 1));
+  const monthEnd = new Date(Date.UTC(year, new Date().getUTCMonth() + 1, 1));
+
+  const [currentUser, goals, pendingNomination, currentFreeze, monthFreezeCount] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { avatar_url: true, language: true },
@@ -48,6 +54,22 @@ export default async function ProfilePage() {
     prisma.nomination.findFirst({
       where: { to_user_id: userId, group_id: groupId, status: "pending" },
       select: { id: true },
+    }),
+    prisma.weekFreeze.findUnique({
+      where: {
+        user_id_group_id_week_number_year: {
+          user_id: userId,
+          group_id: groupId,
+          week_number: weekNumber,
+          year,
+        },
+      },
+    }),
+    prisma.weekFreeze.count({
+      where: {
+        user_id: userId,
+        created_at: { gte: monthStart, lt: monthEnd },
+      },
     }),
   ]);
 
@@ -286,17 +308,24 @@ export default async function ProfilePage() {
 
       {/* Active slots */}
       <div>
-        <h2
-          style={{
-            fontFamily: "Bangers, cursive",
-            fontSize: "18px",
-            letterSpacing: "1px",
-            color: "#1a1a2e",
-            marginBottom: "12px",
-          }}
-        >
-          ⚔️ {tProfile("activeGoals")}
-        </h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2
+            style={{
+              fontFamily: "Bangers, cursive",
+              fontSize: "18px",
+              letterSpacing: "1px",
+              color: "#1a1a2e",
+            }}
+          >
+            ⚔️ {tProfile("activeGoals")}
+          </h2>
+          <FreezeWeekButton
+            groupId={groupId}
+            frozen={!!currentFreeze}
+            freezesUsedThisMonth={monthFreezeCount}
+            limitPerMonth={2}
+          />
+        </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1">
             <p

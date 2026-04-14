@@ -143,7 +143,20 @@
     "paused": "En pause",
     "completed": "Terminés",
     "language": "Langue",
-    "penaltyPerWeek": "/ semaine de pénalité"
+    "penaltyPerWeek": "/ semaine de pénalité",
+    "freezeButton": "Geler cette semaine",
+    "freezeActive": "Semaine gelée",
+    "freezeNoRemaining": "Plus de gels disponibles ce mois-ci",
+    "freezeModalTitle": "Geler cette semaine ?",
+    "freezeModalBody": "Vos objectifs ne seront pas pénalisés cette semaine. Il vous restera {remaining} gel ce mois-ci après cela.",
+    "freezeReasonLabel": "Raison (optionnel)",
+    "freezeReasonPlaceholder": "ex. voyage, maladie…",
+    "freezeCancel": "Annuler",
+    "freezeConfirm": "Geler la semaine",
+    "freezeConfirming": "Gel en cours…",
+    "freezeLimitReached": "Vous avez utilisé tous vos gels pour ce mois.",
+    "freezeAlreadyFrozen": "Cette semaine est déjà gelée.",
+    "freezeError": "Une erreur est survenue. Veuillez réessayer."
   },
   "goals": {
     "addGoal": "+ Ajouter votre objectif",

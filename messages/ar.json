@@ -143,7 +143,20 @@
     "paused": "متوقف",
     "completed": "مكتمل",
     "language": "اللغة",
-    "penaltyPerWeek": "/ أسبوع غرامة"
+    "penaltyPerWeek": "/ أسبوع غرامة",
+    "freezeButton": "تجميد هذا الأسبوع",
+    "freezeActive": "الأسبوع مجمّد",
+    "freezeNoRemaining": "لا يوجد تجميد متبقٍّ هذا الشهر",
+    "freezeModalTitle": "تجميد هذا الأسبوع؟",
+    "freezeModalBody": "لن يُعاقَب على أهدافك هذا الأسبوع. سيتبقى لك {remaining} تجميد هذا الشهر بعد ذلك.",
+    "freezeReasonLabel": "السبب (اختياري)",
+    "freezeReasonPlaceholder": "مثال: سفر، مرض…",
+    "freezeCancel": "إلغاء",
+    "freezeConfirm": "تجميد الأسبوع",
+    "freezeConfirming": "جارٍ التجميد…",
+    "freezeLimitReached": "لقد استخدمت جميع تجميداتك لهذا الشهر.",
+    "freezeAlreadyFrozen": "هذا الأسبوع مجمّد بالفعل.",
+    "freezeError": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
   },
   "goals": {
     "addGoal": "+ أضف هدفك",

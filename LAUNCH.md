@@ -282,7 +282,7 @@ page (`app/(app)/profile/page.tsx`).
 
 ---
 
-### P1-5 · No vacation / freeze week
+### ✅ P1-5 · No vacation / freeze week — done 14 Apr 2026
 
 **What needs to change**
 There is no way to pause participation for a week. Illness, travel, or personal

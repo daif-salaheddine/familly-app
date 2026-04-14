@@ -143,7 +143,20 @@
     "paused": "Paused",
     "completed": "Completed",
     "language": "Language",
-    "penaltyPerWeek": "/ week penalty"
+    "penaltyPerWeek": "/ week penalty",
+    "freezeButton": "Freeze this week",
+    "freezeActive": "Week frozen",
+    "freezeNoRemaining": "No freezes left this month",
+    "freezeModalTitle": "Freeze this week?",
+    "freezeModalBody": "Your goals won't be penalised this week. You'll have {remaining} freeze left this month after this.",
+    "freezeReasonLabel": "Reason (optional)",
+    "freezeReasonPlaceholder": "e.g. travelling, sick…",
+    "freezeCancel": "Cancel",
+    "freezeConfirm": "Freeze week",
+    "freezeConfirming": "Freezing…",
+    "freezeLimitReached": "You've used all your freezes for this month.",
+    "freezeAlreadyFrozen": "This week is already frozen.",
+    "freezeError": "Something went wrong. Please try again."
   },
   "goals": {
     "addGoal": "+ Add your goal",

@@ -107,6 +107,19 @@ export async function calculatePenalties(
     const alreadyDone = await hasPenaltyThisWeek(goal.id, weekNumber, year);
     if (alreadyDone) continue;
 
+    // Skip if the user has frozen this week for this group
+    const frozen = await prisma.weekFreeze.findUnique({
+      where: {
+        user_id_group_id_week_number_year: {
+          user_id: goal.user_id,
+          group_id: groupId,
+          week_number: weekNumber,
+          year,
+        },
+      },
+    });
+    if (frozen) continue;
+
     const checkinCount = await getWeeklyCheckinCount(
       goal.id,
       weekNumber,
