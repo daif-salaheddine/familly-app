@@ -19,7 +19,7 @@ export interface CheckinFeedItem {
   created_at: Date;
   data: {
     id: string;
-    media_url: string;
+    media_url: string | null;
     caption: string | null;
     user: FeedUser;
     goal: { id: string; title: string };

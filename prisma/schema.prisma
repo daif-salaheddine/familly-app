@@ -221,7 +221,7 @@ model Checkin {
   id           String   @id @default(uuid())
   goal_id      String
   user_id      String
-  media_url    String
+  media_url    String?
   caption      String?
   checkin_date DateTime @db.Date
   week_number  Int

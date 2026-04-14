@@ -6,6 +6,7 @@ import type { GoalWithNominator } from "../../../types";
 import AvatarUpload from "../../../components/ui/AvatarUpload";
 import LanguageSelector from "../../../components/ui/LanguageSelector";
 import FreezeWeekButton from "../../../components/profile/FreezeWeekButton";
+import QuickCheckinButton from "../../../components/goals/QuickCheckinButton";
 import { getTranslations } from "next-intl/server";
 import { getWeeklyProgressForGoals } from "../../../lib/goals";
 import { getCurrentWeekPeriod } from "../../../lib/penalties";
@@ -78,6 +79,20 @@ export default async function ProfilePage() {
   const completedGoals = goals.filter((g) => g.status === "completed");
 
   const weeklyProgress = await getWeeklyProgressForGoals(activeGoals);
+
+  // Determine which active goals have already been checked in today
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayDate = new Date(todayStr);
+  const todayCheckins = activeGoals.length > 0
+    ? await prisma.checkin.findMany({
+        where: {
+          goal_id: { in: activeGoals.map((g) => g.id) },
+          checkin_date: todayDate,
+        },
+        select: { goal_id: true },
+      })
+    : [];
+  const checkedInTodayGoalIds = new Set(todayCheckins.map((c) => c.goal_id));
 
   const slot1 = activeGoals.find((g) => g.slot === "self") ?? null;
   const slot2 = activeGoals.find((g) => g.slot === "nominated") ?? null;
@@ -341,7 +356,15 @@ export default async function ProfilePage() {
               {tProfile("slot1Label")}
             </p>
             {slot1 ? (
-              <GoalCard goal={slot1 as GoalWithNominator} progress={weeklyProgress.get(slot1.id)} />
+              <div className="flex flex-col">
+                <GoalCard goal={slot1 as GoalWithNominator} progress={weeklyProgress.get(slot1.id)} />
+                <QuickCheckinButton
+                  goalId={slot1.id}
+                  done={weeklyProgress.get(slot1.id)?.done ?? 0}
+                  required={weeklyProgress.get(slot1.id)?.required ?? 1}
+                  checkedInToday={checkedInTodayGoalIds.has(slot1.id)}
+                />
+              </div>
             ) : (
               <EmptySlot slot="self" hasPendingNomination={false} />
             )}
@@ -360,7 +383,15 @@ export default async function ProfilePage() {
               {tProfile("slot2Label")}
             </p>
             {slot2 ? (
-              <GoalCard goal={slot2 as GoalWithNominator} progress={weeklyProgress.get(slot2.id)} />
+              <div className="flex flex-col">
+                <GoalCard goal={slot2 as GoalWithNominator} progress={weeklyProgress.get(slot2.id)} />
+                <QuickCheckinButton
+                  goalId={slot2.id}
+                  done={weeklyProgress.get(slot2.id)?.done ?? 0}
+                  required={weeklyProgress.get(slot2.id)?.required ?? 1}
+                  checkedInToday={checkedInTodayGoalIds.has(slot2.id)}
+                />
+              </div>
             ) : (
               <EmptySlot slot="nominated" hasPendingNomination={!!pendingNomination} />
             )}

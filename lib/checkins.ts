@@ -5,7 +5,7 @@ import type { Checkin } from "../app/generated/prisma/client";
 // ─── Zod schemas ─────────────────────────────────────────────────────────────
 
 export const createCheckinSchema = z.object({
-  media_url: z.string().url("Invalid media URL"),
+  media_url: z.string().url("Invalid media URL").optional(),
   caption: z.string().max(300).optional(),
   checkin_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be YYYY-MM-DD"),
 });
@@ -80,7 +80,7 @@ export async function createCheckin(
     data: {
       goal_id: goalId,
       user_id: userId,
-      media_url: data.media_url,
+      media_url: data.media_url ?? null,
       caption: data.caption ?? null,
       checkin_date: date,
       week_number: weekNumber,

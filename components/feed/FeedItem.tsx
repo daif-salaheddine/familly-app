@@ -68,27 +68,29 @@ export default async function FeedItem({
   // ── Checkin ──────────────────────────────────────────────────────────────
   if (item.type === "checkin") {
     const { data } = item;
-    const video = isVideo(data.media_url);
+    const video = data.media_url ? isVideo(data.media_url) : false;
     return (
       <div style={comicCard}>
         {/* Media */}
-        <div style={{ background: "#000" }}>
-          {video ? (
-            <video
-              src={data.media_url}
-              controls
-              playsInline
-              className="w-full max-h-80 object-contain"
-            />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={data.media_url}
-              alt={t("checkinAlt")}
-              className="w-full max-h-80 object-contain"
-            />
-          )}
-        </div>
+        {data.media_url && (
+          <div style={{ background: "#000" }}>
+            {video ? (
+              <video
+                src={data.media_url}
+                controls
+                playsInline
+                className="w-full max-h-80 object-contain"
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={data.media_url}
+                alt={t("checkinAlt")}
+                className="w-full max-h-80 object-contain"
+              />
+            )}
+          </div>
+        )}
 
         <div style={{ padding: "14px", display: "flex", flexDirection: "column", gap: "10px" }}>
           {/* Header */}

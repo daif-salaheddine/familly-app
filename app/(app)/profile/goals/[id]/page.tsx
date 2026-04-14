@@ -316,7 +316,7 @@ export default async function GoalDetailPage({
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {goal.checkins.map((c) => {
-              const isVideo = /\.(mp4|mov|webm)$/i.test(c.media_url);
+              const isVideo = c.media_url ? /\.(mp4|mov|webm)$/i.test(c.media_url) : false;
               return (
                 <div
                   key={c.id}
@@ -328,19 +328,28 @@ export default async function GoalDetailPage({
                     overflow: "hidden",
                   }}
                 >
-                  {isVideo ? (
-                    <video
-                      src={c.media_url}
-                      controls
-                      className="w-full aspect-square object-cover bg-black"
-                    />
+                  {c.media_url ? (
+                    isVideo ? (
+                      <video
+                        src={c.media_url}
+                        controls
+                        className="w-full aspect-square object-cover bg-black"
+                      />
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={c.media_url}
+                        alt={c.caption ?? t("checkIn")}
+                        className="w-full aspect-square object-cover"
+                      />
+                    )
                   ) : (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={c.media_url}
-                      alt={c.caption ?? t("checkIn")}
-                      className="w-full aspect-square object-cover"
-                    />
+                    <div
+                      className="w-full aspect-square flex items-center justify-center"
+                      style={{ background: "#f1efe8", fontSize: "32px" }}
+                    >
+                      ✅
+                    </div>
                   )}
                   <div style={{ padding: "10px" }}>
                     {c.caption && (

@@ -23,6 +23,14 @@ export default auth((req) => {
 
   if (isNextAuthRoute || isJoinRoute) return passThrough();
 
+  // Password / email recovery pages — always public (that's the whole point)
+  const isPublicAuthPage =
+    pathname === "/forgot-password" ||
+    pathname === "/reset-password" ||
+    pathname === "/verify-email";
+
+  if (isPublicAuthPage) return passThrough();
+
   // Auth pages (/login, /register) — redirect logged-in users away
   const isLoginRoute    = pathname === "/login";
   const isRegisterRoute = pathname === "/register";
