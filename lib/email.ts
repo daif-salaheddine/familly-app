@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM = "Family Quest <noreply@familyquest.app>";
+const FROM = "Family Quest <onboarding@resend.dev>";
 
 /**
  * Sends a password-reset email containing a one-time link.

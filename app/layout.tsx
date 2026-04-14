@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { getLocale, getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import ClickSound from "../components/ui/ClickSound";
@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Family Quest",
   },
+};
+
+export const viewport: Viewport = {
   themeColor: "#6c31e3",
 };
 
