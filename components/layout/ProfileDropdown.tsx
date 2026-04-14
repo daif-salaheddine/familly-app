@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+
+function hardSignOut(callbackUrl: string) {
+  // Bypass SessionProvider requirement by hitting NextAuth's signout endpoint directly
+  window.location.href = `/api/auth/signout?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+}
 import { useTranslations } from "next-intl";
 import Avatar from "../ui/Avatar";
 import { setLanguage } from "../../actions/setLanguage";
@@ -22,7 +25,6 @@ interface Props {
 }
 
 export default function ProfileDropdown({ name, email, avatarUrl, currentLanguage }: Props) {
-  const router = useRouter();
   const t = useTranslations("common.profileMenu");
 
   const [open, setOpen] = useState(false);
@@ -60,7 +62,7 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
   async function handleSignOut() {
     setSigningOut(true);
     setOpen(false);
-    await signOut({ callbackUrl: "/login" });
+    hardSignOut("/login");
   }
 
   function openDeleteModal() {
@@ -75,8 +77,9 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
     try {
       const res = await fetch("/api/user/delete", { method: "DELETE" });
       if (res.ok) {
-        await signOut({ redirect: false });
-        router.push("/register");
+        // Hard redirect to NextAuth signout then /login — no SessionProvider needed
+        hardSignOut("/login");
+        return; // don't run finally setDeleting(false) after redirect
       }
     } finally {
       setDeleting(false);
