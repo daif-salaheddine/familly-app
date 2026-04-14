@@ -244,7 +244,7 @@ applies an extra penalty and marks the challenge as `expired`.
 
 ---
 
-### P1-3 · Current week and reset time not shown anywhere
+### ✅ P1-3 · Current week and reset time not shown anywhere — done 14 Apr 2026
 
 **What needs to change**
 The app tracks everything Monday–Sunday but never tells the user what week it is
@@ -264,7 +264,7 @@ profile page. The week number is derivable from the current date with no DB quer
 
 ---
 
-### P1-4 · Member email addresses exposed to the whole group
+### ✅ P1-4 · Member email addresses exposed to the whole group — done 14 Apr 2026
 
 **What needs to change**
 `app/(app)/members/[userId]/page.tsx` displays the full email address of every
@@ -303,7 +303,7 @@ members. Limit: 2 freezes per month per user.
 
 ---
 
-### P1-6 · Proposal closing date not shown
+### ✅ P1-6 · Proposal closing date not shown — already implemented via timeUntil() in ProposalCard
 
 **What needs to change**
 Proposals close after 48 hours but no closing time is displayed. Members
@@ -369,7 +369,7 @@ PATCH the goal and create a feed item logging the change.
 
 ---
 
-### P1-9 · No PWA — app not installable on mobile
+### ✅ P1-9 · No PWA — app not installable on mobile — done 14 Apr 2026
 
 **What needs to change**
 There is no `manifest.json` and no install prompt. On mobile (the primary use

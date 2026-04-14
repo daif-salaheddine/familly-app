@@ -272,7 +272,8 @@
     "minutesAgo": "m ago",
     "hoursAgo": "h ago",
     "daysAgo": "d ago",
-    "checkinAlt": "Check-in proof"
+    "checkinAlt": "Check-in proof",
+    "weekLabel": "Week {week} · resets Sunday midnight UTC"
   },
   "pot": {
     "title": "Group Pot",

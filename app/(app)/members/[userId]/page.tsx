@@ -243,16 +243,18 @@ export default async function MemberPage({
             >
               {targetUser.name}
             </h1>
-            <p
-              style={{
-                fontFamily: "Nunito, sans-serif",
-                fontSize: "12px",
-                color: "rgba(255,255,255,0.7)",
-                marginTop: "2px",
-              }}
-            >
-              {targetUser.email}
-            </p>
+            {isOwnProfile && (
+              <p
+                style={{
+                  fontFamily: "Nunito, sans-serif",
+                  fontSize: "12px",
+                  color: "rgba(255,255,255,0.7)",
+                  marginTop: "2px",
+                }}
+              >
+                {targetUser.email}
+              </p>
+            )}
           </div>
         </div>
       </div>

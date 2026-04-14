@@ -4,6 +4,7 @@ import { prisma } from "../../../lib/db";
 import { getGroupFeed } from "../../../lib/feed";
 import FeedItem from "../../../components/feed/FeedItem";
 import { getTranslations } from "next-intl/server";
+import { getCurrentWeekNumber } from "../../../lib/checkins";
 
 export default async function FeedPage() {
   const session = await auth();
@@ -19,20 +20,39 @@ export default async function FeedPage() {
   if (!membership) redirect("/login");
 
   const items = await getGroupFeed(membership.group_id);
+  const weekNumber = getCurrentWeekNumber();
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1
-          style={{
-            fontFamily: "Bangers, cursive",
-            fontSize: "28px",
-            letterSpacing: "1px",
-            color: "#1a1a2e",
-          }}
-        >
-          📰 {t("title")}
-        </h1>
+        <div className="flex items-start justify-between gap-2">
+          <h1
+            style={{
+              fontFamily: "Bangers, cursive",
+              fontSize: "28px",
+              letterSpacing: "1px",
+              color: "#1a1a2e",
+            }}
+          >
+            📰 {t("title")}
+          </h1>
+          <span
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "11px",
+              fontWeight: 700,
+              color: "#6c31e3",
+              background: "#f0ebff",
+              border: "2px solid #6c31e3",
+              borderRadius: "100px",
+              padding: "3px 10px",
+              whiteSpace: "nowrap",
+              marginTop: "4px",
+            }}
+          >
+            {t("weekLabel", { week: weekNumber })}
+          </span>
+        </div>
         <p
           style={{
             fontFamily: "Nunito, sans-serif",

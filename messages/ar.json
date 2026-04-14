@@ -272,7 +272,8 @@
     "minutesAgo": "د",
     "hoursAgo": "س",
     "daysAgo": "ي",
-    "checkinAlt": "دليل التحقق"
+    "checkinAlt": "دليل التحقق",
+    "weekLabel": "الأسبوع {week} · إعادة الضبط الأحد منتصف الليل UTC"
   },
   "pot": {
     "title": "الصندوق المشترك",

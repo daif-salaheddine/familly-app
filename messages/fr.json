@@ -272,7 +272,8 @@
     "minutesAgo": "min",
     "hoursAgo": "h",
     "daysAgo": "j",
-    "checkinAlt": "Preuve de validation"
+    "checkinAlt": "Preuve de validation",
+    "weekLabel": "Semaine {week} · réinitialisation dimanche minuit UTC"
   },
   "pot": {
     "title": "Cagnotte Commune",

@@ -5,8 +5,15 @@ import ClickSound from "../components/ui/ClickSound";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Family App",
-  description: "Family accountability app",
+  title: "Family Quest",
+  description: "Family accountability app — goals, challenges, and real stakes.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Family Quest",
+  },
+  themeColor: "#6c31e3",
 };
 
 export default async function RootLayout({
