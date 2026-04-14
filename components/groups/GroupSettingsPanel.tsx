@@ -16,6 +16,7 @@ interface GroupSettingsPanelProps {
   groupId: string;
   initialName: string;
   initialInviteCode: string;
+  lastPenaltyRunAt: string | null;
   members: Member[];
   currentUserId: string;
   origin: string;
@@ -80,6 +81,7 @@ export default function GroupSettingsPanel({
   groupId,
   initialName,
   initialInviteCode,
+  lastPenaltyRunAt,
   members,
   currentUserId,
   origin,
@@ -126,6 +128,21 @@ export default function GroupSettingsPanel({
     const json = await res.json();
     if (json.data?.invite_code) setInviteCode(json.data.invite_code);
     setRegenerating(false);
+  }
+
+  // ── Cron monitoring ─────────────────────────────────────────────────────────
+  const [runningPenalties, setRunningPenalties] = useState(false);
+  const [penaltiesDone, setPenaltiesDone] = useState(false);
+
+  const lastRunDate = lastPenaltyRunAt ? new Date(lastPenaltyRunAt) : null;
+  const isStale = !lastRunDate || (Date.now() - lastRunDate.getTime() > 8 * 24 * 60 * 60 * 1000);
+
+  async function runPenalties() {
+    setRunningPenalties(true);
+    await fetch(`/api/groups/${groupId}/run-penalties`, { method: "POST" });
+    setRunningPenalties(false);
+    setPenaltiesDone(true);
+    setTimeout(() => { setPenaltiesDone(false); router.refresh(); }, 2000);
   }
 
   // ── Kick member ─────────────────────────────────────────────────────────────
@@ -233,6 +250,56 @@ export default function GroupSettingsPanel({
             </button>
           )}
         </div>
+      </div>
+
+      {/* ── Cron monitoring ─────────────────────────────────────────────────── */}
+      <div
+        style={{
+          ...cardStyle,
+          ...(isStale ? { border: "3px solid #e74c3c", background: "#fff5f5" } : {}),
+        }}
+      >
+        <p style={sectionTitle}>⏱️ {t("cronStatus")}</p>
+
+        {isStale && (
+          <div
+            style={{
+              background: "#ffe0e0",
+              border: "2px solid #e74c3c",
+              borderRadius: "10px",
+              padding: "10px 14px",
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "13px",
+              fontWeight: 700,
+              color: "#c0392b",
+              marginBottom: "12px",
+            }}
+          >
+            ⚠️ {lastRunDate ? t("cronStale") : t("cronNeverRun")}
+          </div>
+        )}
+
+        {lastRunDate && (
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "13px",
+              fontWeight: 600,
+              color: "#555",
+              marginBottom: "12px",
+            }}
+          >
+            {t("cronLastRun")} {lastRunDate.toLocaleString()}
+          </p>
+        )}
+
+        <button
+          onClick={runPenalties}
+          disabled={runningPenalties || penaltiesDone}
+          style={pillBtn(penaltiesDone ? "#22c55e" : "#6c31e3", runningPenalties || penaltiesDone)}
+        >
+          {penaltiesDone ? `✓ ${t("penaltiesRan")}` : runningPenalties ? t("runningPenalties") : t("runPenalties")}
+        </button>
       </div>
 
       {/* ── Members ─────────────────────────────────────────────────────────── */}

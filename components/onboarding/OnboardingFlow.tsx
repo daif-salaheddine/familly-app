@@ -49,14 +49,14 @@ const COPY: Record<
     welcomeSub: "Let's get you set up in 3 quick steps.",
     step1Title: "Pick your language",
     step1Sub: "You can change this any time in your profile.",
-    step2Title: "Set your password",
-    step2Sub: "This is your personal password for this account.",
+    step2Title: "Add a backup password",
+    step2Sub: "Optional — lets you sign in without Google. Skip if you prefer.",
     step2bTitle: "Show your face!",
     step2bSub: "Add a profile photo so your family recognizes you.",
     newPassword: "New password",
     confirmPassword: "Confirm password",
     passwordMismatch: "Passwords don't match.",
-    passwordTooShort: "Password must be at least 6 characters.",
+    passwordTooShort: "Password must be at least 8 characters.",
     saving: "Saving…",
     continue: "Continue →",
     slides: [
@@ -93,14 +93,14 @@ const COPY: Record<
     welcomeSub: "Configurons ton compte en 3 étapes rapides.",
     step1Title: "Choisis ta langue",
     step1Sub: "Tu peux la changer à tout moment dans ton profil.",
-    step2Title: "Définis ton mot de passe",
-    step2Sub: "C'est ton mot de passe personnel pour ce compte.",
+    step2Title: "Ajoute un mot de passe de secours",
+    step2Sub: "Optionnel — pour te connecter sans Google. Tu peux passer.",
     step2bTitle: "Montre ton visage !",
     step2bSub: "Ajoute une photo de profil pour que ta famille te reconnaisse.",
     newPassword: "Nouveau mot de passe",
     confirmPassword: "Confirmer le mot de passe",
     passwordMismatch: "Les mots de passe ne correspondent pas.",
-    passwordTooShort: "Le mot de passe doit comporter au moins 6 caractères.",
+    passwordTooShort: "Le mot de passe doit comporter au moins 8 caractères.",
     saving: "Enregistrement…",
     continue: "Continuer →",
     slides: [
@@ -137,14 +137,14 @@ const COPY: Record<
     welcomeSub: "لنُعِدَّ حسابك في 3 خطوات سريعة.",
     step1Title: "اختر لغتك",
     step1Sub: "يمكنك تغييرها في أي وقت من ملفك الشخصي.",
-    step2Title: "اضبط كلمة مرورك",
-    step2Sub: "هذه كلمة مرورك الشخصية لهذا الحساب.",
+    step2Title: "أضف كلمة مرور احتياطية",
+    step2Sub: "اختياري — للدخول بدون Google. يمكنك تخطّي هذه الخطوة.",
     step2bTitle: "أرِنا وجهك!",
     step2bSub: "أضف صورة ملفك الشخصي حتى تتعرف عليك عائلتك.",
     newPassword: "كلمة مرور جديدة",
     confirmPassword: "تأكيد كلمة المرور",
     passwordMismatch: "كلمتا المرور غير متطابقتين.",
-    passwordTooShort: "يجب أن تكون كلمة المرور 6 أحرف على الأقل.",
+    passwordTooShort: "يجب أن تكون كلمة المرور 8 أحرف على الأقل.",
     saving: "جارٍ الحفظ…",
     continue: "متابعة →",
     slides: [
@@ -187,16 +187,17 @@ const LANG_OPTIONS: { code: Lang; flag: string; label: string }[] = [
 // Root component
 // ---------------------------------------------------------------------------
 
-export default function OnboardingFlow({ userName, isOAuthUser }: { userName: string; isOAuthUser: boolean }) {
+export default function OnboardingFlow({ userName, skipPasswordStep }: { userName: string; skipPasswordStep: boolean }) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [lang, setLang] = useState<Lang>("EN");
-  // hasGroup is set after the password step (credentials) or in WalkthroughStep (OAuth)
+  // hasGroup is set after the password step or in WalkthroughStep when step 2 is skipped
   const [hasGroup, setHasGroup] = useState<boolean | null>(null);
 
   const copy = COPY[lang];
 
-  // OAuth flow has 3 visual steps (skip password), credentials has 4
-  const visibleSteps = isOAuthUser ? ([1, 3, 4] as const) : ([1, 2, 3, 4] as const);
+  // Email users (skipPasswordStep=true) skip step 2 → 3 visual steps
+  // OAuth users (skipPasswordStep=false) see step 2 → 4 visual steps
+  const visibleSteps = skipPasswordStep ? ([1, 3, 4] as const) : ([1, 2, 3, 4] as const);
   const visualStep = visibleSteps.indexOf(step as never) + 1;
 
   return (
@@ -236,7 +237,7 @@ export default function OnboardingFlow({ userName, isOAuthUser }: { userName: st
               color: "#888",
             }}
           >
-            {copy.welcomeSub.replace("3", "3")}
+            {copy.welcomeSub.replace("3", String(visibleSteps.length))}
           </p>
           <h1
             style={{
@@ -272,7 +273,7 @@ export default function OnboardingFlow({ userName, isOAuthUser }: { userName: st
               // Set locale cookie so the rest of the app uses the right language
               document.cookie = `LOCALE=${l.toLowerCase()}; path=/; max-age=${365 * 24 * 3600}; samesite=lax`;
             }}
-            onNext={() => { playClick(); setStep(isOAuthUser ? 3 : 2); }}
+            onNext={() => { playClick(); setStep(skipPasswordStep ? 3 : 2); }}
             copy={copy}
           />
         )}
@@ -281,6 +282,7 @@ export default function OnboardingFlow({ userName, isOAuthUser }: { userName: st
             lang={lang}
             onBack={() => { playClick(); setStep(1); }}
             onSuccess={(hg) => { playAcceptNomination(); setHasGroup(hg); setStep(3); }}
+            onSkip={() => { playClick(); setStep(3); }}
             copy={copy}
           />
         )}
@@ -295,7 +297,7 @@ export default function OnboardingFlow({ userName, isOAuthUser }: { userName: st
           <WalkthroughStep
             copy={copy}
             lang={lang}
-            isOAuthUser={isOAuthUser}
+            skipPasswordStep={skipPasswordStep}
             hasGroup={hasGroup}
           />
         )}
@@ -408,11 +410,13 @@ function PasswordStep({
   lang,
   onBack,
   onSuccess,
+  onSkip,
   copy,
 }: {
   lang: Lang;
   onBack: () => void;
   onSuccess: (hasGroup: boolean) => void;
+  onSkip: () => void;
   copy: (typeof COPY)["EN"];
 }) {
   const [newPassword, setNewPassword] = useState("");
@@ -424,7 +428,7 @@ function PasswordStep({
     e.preventDefault();
     setError(null);
 
-    if (newPassword.length < 6) {
+    if (newPassword.length < 8) {
       setError(copy.passwordTooShort);
       return;
     }
@@ -587,6 +591,26 @@ function PasswordStep({
           {loading ? copy.saving : copy.continue}
         </button>
       </div>
+
+      <button
+        type="button"
+        onClick={onSkip}
+        disabled={loading}
+        style={{
+          fontFamily: "Nunito, sans-serif",
+          fontWeight: 700,
+          fontSize: "13px",
+          background: "transparent",
+          color: "#888",
+          border: "none",
+          padding: "4px",
+          cursor: loading ? "not-allowed" : "pointer",
+          alignSelf: "center",
+          opacity: loading ? 0.5 : 1,
+        }}
+      >
+        {copy.skipForNow}
+      </button>
     </form>
   );
 }
@@ -665,12 +689,12 @@ const SLIDE_BORDER_COLORS = ["#6c31e3", "#f1c40f", "#e74c3c", "#2ecc71"];
 function WalkthroughStep({
   copy,
   lang,
-  isOAuthUser,
+  skipPasswordStep,
   hasGroup,
 }: {
   copy: (typeof COPY)["EN"];
   lang: Lang;
-  isOAuthUser: boolean;
+  skipPasswordStep: boolean;
   hasGroup: boolean | null;
 }) {
   const router = useRouter();
@@ -692,8 +716,8 @@ function WalkthroughStep({
     setCompleting(true);
     let finalHasGroup = hasGroup;
 
-    // OAuth users haven't called the onboard API yet — do it now
-    if (isOAuthUser) {
+    // Email users skipped step 2 — call the onboard API now to mark has_onboarded
+    if (skipPasswordStep) {
       try {
         const res = await fetch("/api/user/onboard", {
           method: "PATCH",

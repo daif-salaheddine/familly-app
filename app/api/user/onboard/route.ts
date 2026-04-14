@@ -6,8 +6,8 @@ import { prisma } from "../../../../lib/db";
 
 const schema = z.object({
   language: z.enum(["EN", "FR", "AR"]),
-  // newPassword is optional — OAuth users skip the password step entirely
-  newPassword: z.string().min(6, "Password must be at least 6 characters").optional(),
+  // newPassword is optional — email users already have one; OAuth users may add one
+  newPassword: z.string().min(8, "Password must be at least 8 characters").optional(),
   avatar_url: z.string().url().optional(),
 });
 

@@ -37,7 +37,14 @@
     "transferWarning": "You will become a regular member.",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "notAdmin": "You need to be an admin to access this page."
+    "notAdmin": "You need to be an admin to access this page.",
+    "cronStatus": "Weekly penalty cron",
+    "cronNeverRun": "The penalty cron has never run for this group.",
+    "cronStale": "Warning: last penalty run was over 8 days ago.",
+    "cronLastRun": "Last run:",
+    "runPenalties": "Run penalties now",
+    "runningPenalties": "Running…",
+    "penaltiesRan": "Done! Penalties calculated."
   },
   "groups": {
     "newTitle": "Create a group",
@@ -298,7 +305,8 @@
     "closesIn48h": "closes in 48h",
     "voteForLabel": "For",
     "voteAgainstLabel": "Against",
-    "closedStatus": "Closed"
+    "closedStatus": "Closed",
+    "disclaimer": "Penalties are tracked here as a ledger. Your group handles payment outside the app — e.g. Lydia, PayPal, or cash."
   },
   "leaderboard": {
     "title": "Leaderboard",

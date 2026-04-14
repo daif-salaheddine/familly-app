@@ -20,7 +20,11 @@ export default async function GroupSettingsPage({ params }: Props) {
   // Fetch group with all members
   const group = await prisma.group.findUnique({
     where: { id: groupId },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      invite_code: true,
+      last_penalty_run_at: true,
       members: {
         include: {
           user: { select: { id: true, name: true, avatar_url: true } },
@@ -96,6 +100,7 @@ export default async function GroupSettingsPage({ params }: Props) {
         groupId={group.id}
         initialName={group.name}
         initialInviteCode={group.invite_code}
+        lastPenaltyRunAt={group.last_penalty_run_at?.toISOString() ?? null}
         members={members}
         currentUserId={session.user.id}
         origin={origin}

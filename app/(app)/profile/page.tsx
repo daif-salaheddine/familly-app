@@ -6,6 +6,7 @@ import type { GoalWithNominator } from "../../../types";
 import AvatarUpload from "../../../components/ui/AvatarUpload";
 import LanguageSelector from "../../../components/ui/LanguageSelector";
 import { getTranslations } from "next-intl/server";
+import { getWeeklyProgressForGoals } from "../../../lib/goals";
 
 const CATEGORY_STYLES: Record<string, { background: string; color: string }> = {
   body:          { background: "#FFE0E0", color: "#C0392B" },
@@ -54,6 +55,8 @@ export default async function ProfilePage() {
   const pausedGoals = goals.filter((g) => g.status === "paused");
   const completedGoals = goals.filter((g) => g.status === "completed");
 
+  const weeklyProgress = await getWeeklyProgressForGoals(activeGoals);
+
   const slot1 = activeGoals.find((g) => g.slot === "self") ?? null;
   const slot2 = activeGoals.find((g) => g.slot === "nominated") ?? null;
 
@@ -76,8 +79,11 @@ export default async function ProfilePage() {
     return tCommon("onceAWeek");
   }
 
-  function GoalCard({ goal }: { goal: GoalWithNominator }) {
+  function GoalCard({ goal, progress }: { goal: GoalWithNominator; progress?: { done: number; required: number } }) {
     const catStyle = CATEGORY_STYLES[goal.category] ?? { background: "#f1efe8", color: "#888" };
+    const pct = progress ? Math.min(1, progress.done / progress.required) : null;
+    const onTrack = progress ? progress.done >= progress.required : false;
+
     return (
       <Link
         href={`/profile/goals/${goal.id}`}
@@ -130,6 +136,36 @@ export default async function ProfilePage() {
           <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "11px", color: "#6c31e3", marginTop: "6px", fontWeight: 700 }}>
             {tGoals("nominatedBy")} {goal.nominator.name}
           </p>
+        )}
+        {/* Weekly progress bar */}
+        {progress && (
+          <div style={{ marginTop: "10px" }}>
+            <div className="flex items-center justify-between" style={{ marginBottom: "4px" }}>
+              <span style={{ fontFamily: "Nunito, sans-serif", fontSize: "11px", fontWeight: 800, color: onTrack ? "#27ae60" : "#e74c3c" }}>
+                {progress.done} / {progress.required} this week
+              </span>
+              {onTrack && <span style={{ fontSize: "12px" }}>✅</span>}
+            </div>
+            <div
+              style={{
+                height: "6px",
+                borderRadius: "100px",
+                background: "#e0e0e0",
+                border: "1.5px solid #1a1a2e",
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  height: "100%",
+                  width: `${(pct ?? 0) * 100}%`,
+                  background: onTrack ? "#27ae60" : "#e74c3c",
+                  borderRadius: "100px",
+                  transition: "width 0.3s",
+                }}
+              />
+            </div>
+          </div>
         )}
       </Link>
     );
@@ -276,7 +312,7 @@ export default async function ProfilePage() {
               {tProfile("slot1Label")}
             </p>
             {slot1 ? (
-              <GoalCard goal={slot1 as GoalWithNominator} />
+              <GoalCard goal={slot1 as GoalWithNominator} progress={weeklyProgress.get(slot1.id)} />
             ) : (
               <EmptySlot slot="self" hasPendingNomination={false} />
             )}
@@ -295,7 +331,7 @@ export default async function ProfilePage() {
               {tProfile("slot2Label")}
             </p>
             {slot2 ? (
-              <GoalCard goal={slot2 as GoalWithNominator} />
+              <GoalCard goal={slot2 as GoalWithNominator} progress={weeklyProgress.get(slot2.id)} />
             ) : (
               <EmptySlot slot="nominated" hasPendingNomination={!!pendingNomination} />
             )}

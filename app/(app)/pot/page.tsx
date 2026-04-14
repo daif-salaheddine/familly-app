@@ -131,6 +131,33 @@ export default async function PotPage() {
         </p>
       </div>
 
+      {/* ── Disclaimer — honor-system ledger ── */}
+      <div
+        style={{
+          background: "#FFF8E0",
+          border: "2px dashed #1a1a2e",
+          borderRadius: "14px",
+          padding: "14px 18px",
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "10px",
+          marginTop: "-16px",
+        }}
+      >
+        <span style={{ fontSize: "18px", flexShrink: 0 }}>ℹ️</span>
+        <p
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 600,
+            color: "#555",
+            lineHeight: 1.5,
+          }}
+        >
+          {t("disclaimer")}
+        </p>
+      </div>
+
       {/* ── Penalty history ── */}
       <section>
         <h2 style={sectionTitle}>💸 {t("recentPenalties")}</h2>

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { prisma } from "./db";
 import type { GoalWithNominator } from "../types";
+import { getCurrentWeekNumber } from "./checkins";
 
 // ─── Zod schemas ────────────────────────────────────────────────────────────
 
@@ -226,6 +227,44 @@ export async function deleteGoal(
 
     await tx.goal.delete({ where: { id: goalId } });
   });
+}
+
+/**
+ * Returns a map of goal_id → { done, required } for the current ISO week.
+ * Pass the IDs of the goals you want to check (typically the active ones).
+ */
+export async function getWeeklyProgressForGoals(
+  goals: Array<{ id: string; frequency: string; frequency_count: number }>
+): Promise<Map<string, { done: number; required: number }>> {
+  const now = new Date();
+  const weekNumber = getCurrentWeekNumber(now);
+  const year = now.getFullYear();
+
+  if (goals.length === 0) return new Map();
+
+  const counts = await prisma.checkin.groupBy({
+    by: ["goal_id"],
+    where: {
+      goal_id: { in: goals.map((g) => g.id) },
+      week_number: weekNumber,
+      year,
+    },
+    _count: { _all: true },
+  });
+
+  const countMap = new Map<string, number>(
+    counts.map((c) => [c.goal_id, c._count._all])
+  );
+
+  const result = new Map<string, { done: number; required: number }>();
+  for (const goal of goals) {
+    const required =
+      goal.frequency === "daily" ? 7 :
+      goal.frequency === "weekly" ? 1 :
+      goal.frequency_count;
+    result.set(goal.id, { done: countMap.get(goal.id) ?? 0, required });
+  }
+  return result;
 }
 
 // ─── Internal ────────────────────────────────────────────────────────────────

@@ -18,8 +18,9 @@ export default async function OnboardingPage() {
   });
   if (user?.has_onboarded) redirect("/profile");
 
-  // OAuth users have no password_hash — skip the password step
-  const isOAuthUser = !user?.password_hash;
+  // Users who already have a password (email-registered) skip the password step.
+  // OAuth users (no password_hash) should see it to optionally add a backup password.
+  const skipPasswordStep = !!user?.password_hash;
 
-  return <OnboardingFlow userName={user?.name ?? ""} isOAuthUser={isOAuthUser} />;
+  return <OnboardingFlow userName={user?.name ?? ""} skipPasswordStep={skipPasswordStep} />;
 }

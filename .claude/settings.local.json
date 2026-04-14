@@ -31,7 +31,11 @@
       "Bash(xxd \"C:/Users/daif4/familly_app/ONBOARDING.md\")",
       "Bash(echo \"EXIT: $?\")",
       "Bash(ls \"C:/Users/daif4/familly_app/.env\"*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(echo \"TSC:$?\")",
+      "Bash(ls c:/Users/daif4/familly_app/app/api/groups/[id]/)",
+      "Bash(DATABASE_URL=\"postgresql://postgres.cycnpvdwdufbcqjejcky:Aiyhs%40Aiyhs@db.cycnpvdwdufbcqjejcky.supabase.co:5432/postgres\" npx prisma db push)",
+      "Bash(DATABASE_URL=\"postgresql://postgres.cycnpvdwdufbcqjejcky:Aiyhs%40Aiyhs@aws-1-eu-central-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1\" npx prisma db push)"
     ]
   }
 }

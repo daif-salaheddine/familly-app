@@ -14,10 +14,17 @@ export async function POST(req: NextRequest) {
 
   try {
     const groups = await prisma.group.findMany({ select: { id: true } });
+    const now = new Date();
 
     const summaries = await Promise.all(
       groups.map((g) => calculatePenalties(g.id))
     );
+
+    // Stamp last_penalty_run_at on every group so admins can detect a missed run
+    await prisma.group.updateMany({
+      where: { id: { in: groups.map((g) => g.id) } },
+      data: { last_penalty_run_at: now },
+    });
 
     const totals = summaries.reduce(
       (acc, s) => ({

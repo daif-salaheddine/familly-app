@@ -118,11 +118,12 @@ model User {
 }
 
 model Group {
-  id          String   @id @default(uuid())
-  name        String
-  created_by  String
-  invite_code String   @unique
-  created_at  DateTime @default(now())
+  id                   String    @id @default(uuid())
+  name                 String
+  created_by           String
+  invite_code          String    @unique
+  last_penalty_run_at  DateTime?
+  created_at           DateTime  @default(now())
 
   creator     User          @relation("GroupCreator", fields: [created_by], references: [id])
   members     GroupMember[]

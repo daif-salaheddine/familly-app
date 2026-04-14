@@ -37,7 +37,14 @@
     "transferWarning": "Vous deviendrez un membre ordinaire.",
     "confirm": "Confirmer",
     "cancel": "Annuler",
-    "notAdmin": "Vous devez être admin pour accéder à cette page."
+    "notAdmin": "Vous devez être admin pour accéder à cette page.",
+    "cronStatus": "Cron hebdomadaire des pénalités",
+    "cronNeverRun": "Le cron de pénalités n'a jamais été exécuté pour ce groupe.",
+    "cronStale": "Avertissement : la dernière exécution remonte à plus de 8 jours.",
+    "cronLastRun": "Dernière exécution :",
+    "runPenalties": "Calculer les pénalités maintenant",
+    "runningPenalties": "En cours…",
+    "penaltiesRan": "Terminé ! Pénalités calculées."
   },
   "groups": {
     "newTitle": "Créer un groupe",
@@ -298,7 +305,8 @@
     "closesIn48h": "ferme dans 48h",
     "voteForLabel": "Pour",
     "voteAgainstLabel": "Contre",
-    "closedStatus": "Fermé"
+    "closedStatus": "Fermé",
+    "disclaimer": "Les pénalités sont suivies ici comme un registre. Votre groupe gère les paiements en dehors de l'appli — ex. Lydia, PayPal ou espèces."
   },
   "leaderboard": {
     "title": "Classement",

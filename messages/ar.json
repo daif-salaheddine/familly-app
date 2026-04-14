@@ -37,7 +37,14 @@
     "transferWarning": "ستصبح عضواً عادياً.",
     "confirm": "تأكيد",
     "cancel": "إلغاء",
-    "notAdmin": "يجب أن تكون مسؤولاً للوصول إلى هذه الصفحة."
+    "notAdmin": "يجب أن تكون مسؤولاً للوصول إلى هذه الصفحة.",
+    "cronStatus": "مهمة الغرامات الأسبوعية",
+    "cronNeverRun": "لم تُنفَّذ مهمة الغرامات لهذه المجموعة بعد.",
+    "cronStale": "تحذير: آخر تنفيذ كان قبل أكثر من 8 أيام.",
+    "cronLastRun": "آخر تنفيذ:",
+    "runPenalties": "احسب الغرامات الآن",
+    "runningPenalties": "جارٍ الحساب…",
+    "penaltiesRan": "تمّ! تم احتساب الغرامات."
   },
   "groups": {
     "newTitle": "إنشاء مجموعة",
@@ -298,7 +305,8 @@
     "closesIn48h": "يُغلق خلال 48 ساعة",
     "voteForLabel": "مع",
     "voteAgainstLabel": "ضد",
-    "closedStatus": "مغلق"
+    "closedStatus": "مغلق",
+    "disclaimer": "تُسجَّل الغرامات هنا كسجل محاسبي. تتولى مجموعتك تسوية المدفوعات خارج التطبيق — مثلاً Lydia أو PayPal أو نقداً."
   },
   "leaderboard": {
     "title": "لوحة المتصدرين",
