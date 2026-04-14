@@ -6,6 +6,7 @@ import { getActiveGroupId } from "../../lib/group";
 import { getUnreadCount } from "../../lib/notifications";
 import Avatar from "../../components/ui/Avatar";
 import GroupSwitcher from "../../components/layout/GroupSwitcher";
+import BottomNav from "../../components/layout/BottomNav";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 
@@ -131,52 +132,16 @@ export default async function AppLayout({
       </main>
 
       {/* Bottom navigation — comic card style */}
-      <nav className="fixed bottom-3 left-3 right-3 z-10">
-        <div
-          className="max-w-2xl mx-auto flex"
-          style={{
-            background: "#ffffff",
-            border: "3px solid #1a1a2e",
-            borderRadius: "20px",
-            boxShadow: "3px 3px 0 #1a1a2e",
-          }}
-        >
-          <NavLink href="/feed"        label={tNav("feed")}        emoji="📰" />
-          <NavLink href="/profile"     label={tNav("profile")}     emoji="👤" />
-          <NavLink href="/nominations" label={tNav("nominate")}    emoji="📬" />
-          <NavLink href="/challenges"  label={tNav("challenges")}  emoji="⚡" />
-          <NavLink href="/pot"         label={tNav("pot")}         emoji="💰" />
-          <NavLink href="/leaderboard" label={tNav("ranks")}       emoji="🏆" />
-          <NavLink href="/members"     label={tNav("members")}     emoji="👥" />
-        </div>
-      </nav>
+      <BottomNav items={[
+        { href: "/feed",        label: tNav("feed"),        emoji: "📰" },
+        { href: "/profile",     label: tNav("profile"),     emoji: "👤" },
+        { href: "/nominations", label: tNav("nominate"),    emoji: "📬" },
+        { href: "/challenges",  label: tNav("challenges"),  emoji: "⚡" },
+        { href: "/pot",         label: tNav("pot"),         emoji: "💰" },
+        { href: "/leaderboard", label: tNav("ranks"),       emoji: "🏆" },
+        { href: "/members",     label: tNav("members"),     emoji: "👥" },
+      ]} />
     </div>
   );
 }
 
-function NavLink({
-  href,
-  label,
-  emoji,
-}: {
-  href: string;
-  label: string;
-  emoji: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex-1 py-2 flex flex-col items-center gap-0.5 transition-colors hover:opacity-80"
-      style={{
-        fontFamily: "Bangers, cursive",
-        fontSize: "10px",
-        letterSpacing: "1px",
-        color: "#888",
-        textTransform: "uppercase",
-      }}
-    >
-      <span className="text-base leading-none">{emoji}</span>
-      <span>{label}</span>
-    </Link>
-  );
-}
