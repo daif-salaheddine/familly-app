@@ -150,7 +150,8 @@ export async function DELETE() {
 
     return NextResponse.json({ data: { ok: true }, error: null });
   } catch (err) {
-    console.error("[user/delete]", err);
-    return NextResponse.json({ data: null, error: "Internal server error" }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[user/delete]", message);
+    return NextResponse.json({ data: null, error: message }, { status: 500 });
   }
 }
