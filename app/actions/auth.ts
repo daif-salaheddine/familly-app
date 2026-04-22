@@ -3,11 +3,15 @@
 import { z } from "zod";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
-import { signIn } from "../../auth";
+import { signIn, signOut } from "../../auth";
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/db";
 import { sendVerificationEmail } from "../../lib/email";
+
+export async function signOutAction() {
+  await signOut({ redirectTo: "/login" });
+}
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),

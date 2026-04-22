@@ -2,14 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-
-function hardSignOut(callbackUrl: string) {
-  // Bypass SessionProvider requirement by hitting NextAuth's signout endpoint directly
-  window.location.href = `/api/auth/signout?callbackUrl=${encodeURIComponent(callbackUrl)}`;
-}
 import { useTranslations } from "next-intl";
 import Avatar from "../ui/Avatar";
 import { setLanguage } from "../../actions/setLanguage";
+import { signOutAction } from "../../app/actions/auth";
 
 const LANGUAGES = [
   { code: "en" as const, label: "EN" },
@@ -31,6 +27,7 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteInput, setDeleteInput] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -62,25 +59,31 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
   async function handleSignOut() {
     setSigningOut(true);
     setOpen(false);
-    hardSignOut("/login");
+    await signOutAction();
   }
 
   function openDeleteModal() {
     setOpen(false);
     setDeleteInput("");
+    setDeleteError(null);
     setShowDeleteModal(true);
   }
 
   async function handleDeleteAccount() {
     if (deleteInput !== "DELETE" || deleting) return;
     setDeleting(true);
+    setDeleteError(null);
     try {
       const res = await fetch("/api/user/delete", { method: "DELETE" });
       if (res.ok) {
-        // Hard redirect to NextAuth signout then /login — no SessionProvider needed
-        hardSignOut("/login");
-        return; // don't run finally setDeleting(false) after redirect
+        // Account deleted — sign out via server action (clears the session cookie)
+        await signOutAction();
+        return;
       }
+      const body = await res.json().catch(() => ({}));
+      setDeleteError(body?.error ?? "Something went wrong. Please try again.");
+    } catch {
+      setDeleteError("Network error. Please try again.");
     } finally {
       setDeleting(false);
     }
@@ -368,10 +371,25 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
                 border: "2px solid #1a1a2e",
                 borderRadius: "10px",
                 background: "#fff",
-                marginBottom: "16px",
+                marginBottom: deleteError ? "8px" : "16px",
                 boxSizing: "border-box",
               }}
             />
+
+            {deleteError && (
+              <p
+                style={{
+                  fontFamily: "Nunito, sans-serif",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "#c0392b",
+                  marginBottom: "12px",
+                  lineHeight: 1.4,
+                }}
+              >
+                ⚠️ {deleteError}
+              </p>
+            )}
 
             <div className="flex gap-3">
               <button
