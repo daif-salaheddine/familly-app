@@ -116,23 +116,24 @@ export async function DELETE() {
         });
         await tx.goal.deleteMany({ where: { user_id: userId } });
         await tx.groupMember.deleteMany({ where: { user_id: userId } });
+
+        // Delete sole-member groups NOW — after groupMember is gone but before
+        // user.delete, so groups.created_by FK doesn't block the user deletion.
+        for (const groupId of groupIdsToDelete) {
+          const pot = await tx.pot.findUnique({ where: { group_id: groupId } });
+          if (pot) {
+            await tx.potVote.deleteMany({ where: { proposal: { pot_id: pot.id } } });
+            await tx.potProposal.deleteMany({ where: { pot_id: pot.id } });
+            await tx.pot.delete({ where: { id: pot.id } });
+          }
+          await tx.group.delete({ where: { id: groupId } });
+        }
+
         await tx.account.deleteMany({ where: { user_id: userId } });
         await tx.user.delete({ where: { id: userId } });
       },
       { timeout: 30000 }
     );
-
-    // ── Step 3: Delete now-empty groups (all their data is already gone) ──
-    for (const groupId of groupIdsToDelete) {
-      const pot = await prisma.pot.findUnique({ where: { group_id: groupId } });
-      if (pot) {
-        // Any remaining pot proposals/votes (shouldn't be any, but clean up)
-        await prisma.potVote.deleteMany({ where: { proposal: { pot_id: pot.id } } });
-        await prisma.potProposal.deleteMany({ where: { pot_id: pot.id } });
-        await prisma.pot.delete({ where: { id: pot.id } });
-      }
-      await prisma.group.delete({ where: { id: groupId } });
-    }
 
     return NextResponse.json({ data: { ok: true }, error: null });
   } catch (err) {
