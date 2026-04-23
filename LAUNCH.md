@@ -400,3 +400,22 @@ Add a simple "Add to home screen" banner for first-time mobile visitors.
 
 All P0 and P1 items are complete except P1-7 which was moved to P2.
 The app is ready for launch. Remaining P2 items are post-launch improvements.
+
+---
+
+## QA Audit Fixes — 15 Apr 2026
+
+Post-launch QA audit identified 10 issues. Fixing in priority order:
+
+| # | Issue | Status |
+|---|-------|--------|
+| 1 | PWA icons missing (`icon-192.png`, `icon-512.png`) | ✅ Done 15 Apr 2026 |
+| 2 | Challenge expiry doesn't reset `consecutive_misses` | ⬜ Pending |
+| 3 | No week reset countdown in UI | ⬜ Pending |
+| 4 | Bell icon tap target too small on mobile | ⬜ Pending |
+| 5 | Freeze limit constant vs UI copy mismatch | ⬜ Pending |
+| 6 | Language selector duplicated (profile page + dropdown) | ⬜ Pending |
+| 7 | Feed doesn't auto-refresh | ⬜ Pending |
+| 8 | /settings and /stats are stub pages | ⬜ Pending |
+| 9 | Missing `apple-touch-icon` for iOS | ⬜ Pending |
+| 10 | Bell + dropdown both link to /notifications | ⬜ Pending |
