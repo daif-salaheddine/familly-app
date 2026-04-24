@@ -18,9 +18,10 @@ interface Props {
   email: string;
   avatarUrl: string | null | undefined;
   currentLanguage: "EN" | "FR" | "AR";
+  activeGroupId: string | null;
 }
 
-export default function ProfileDropdown({ name, email, avatarUrl, currentLanguage }: Props) {
+export default function ProfileDropdown({ name, email, avatarUrl, currentLanguage, activeGroupId }: Props) {
   const t = useTranslations("common.profileMenu");
 
   const [open, setOpen] = useState(false);
@@ -225,6 +226,16 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
             >
               <span>⚙️</span> {t("settings")}
             </Link>
+            {activeGroupId && (
+              <Link
+                href={`/groups/${activeGroupId}/settings`}
+                onClick={() => setOpen(false)}
+                style={menuItemStyle}
+                className="hover:bg-[#f0ebff] block"
+              >
+                <span>👥</span> {t("groupSettings")}
+              </Link>
+            )}
             <Link
               href="/stats"
               onClick={() => setOpen(false)}

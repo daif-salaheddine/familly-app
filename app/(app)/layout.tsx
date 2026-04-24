@@ -92,6 +92,7 @@ export default async function AppLayout({
             email={session.user.email!}
             avatarUrl={currentUser?.avatar_url}
             currentLanguage={currentUser?.language ?? "EN"}
+            activeGroupId={activeGroupId}
           />
         </div>
       </header>
