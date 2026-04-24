@@ -4,12 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-export default function ProposeForm() {
+export default function ProposeForm({ potTotal }: { potTotal: number }) {
   const t = useTranslations("pot");
   const tCommon = useTranslations("common");
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +22,7 @@ export default function ProposeForm() {
       const res = await fetch("/api/pot/proposals", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description }),
+        body: JSON.stringify({ description, amount: Number(amount) }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -29,6 +30,7 @@ export default function ProposeForm() {
         return;
       }
       setDescription("");
+      setAmount("");
       setOpen(false);
       router.refresh();
     } finally {
@@ -60,7 +62,8 @@ export default function ProposeForm() {
     );
   }
 
-  const disabled = description.trim().length === 0 || isPending;
+  const amountNum = Number(amount);
+  const disabled = description.trim().length === 0 || !amount || amountNum <= 0 || amountNum > potTotal || isPending;
 
   return (
     <form
@@ -120,6 +123,55 @@ export default function ProposeForm() {
         {description.length}/500 · {t("closesIn48h")}
       </p>
 
+      {/* Amount field */}
+      <div className="flex flex-col gap-1">
+        <label
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#1a1a2e",
+          }}
+        >
+          {t("amountLabel")}
+        </label>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            min="0.01"
+            max={potTotal}
+            step="0.01"
+            placeholder={t("amountPlaceholder")}
+            required
+            style={{
+              flex: 1,
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "14px",
+              fontWeight: 700,
+              color: "#1a1a2e",
+              background: "#ffffff",
+              border: "2px solid #1a1a2e",
+              borderRadius: "10px",
+              padding: "8px 12px",
+              outline: "none",
+            }}
+          />
+          <span
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "12px",
+              fontWeight: 600,
+              color: "#888",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {t("potBalance", { balance: potTotal.toFixed(2) })}
+          </span>
+        </div>
+      </div>
+
       {error && (
         <p
           style={{
@@ -156,7 +208,7 @@ export default function ProposeForm() {
         </button>
         <button
           type="button"
-          onClick={() => { setOpen(false); setDescription(""); setError(null); }}
+          onClick={() => { setOpen(false); setDescription(""); setAmount(""); setError(null); }}
           style={{
             fontFamily: "Nunito, sans-serif",
             fontWeight: 800,

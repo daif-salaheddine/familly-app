@@ -6,7 +6,12 @@ import FeedItem from "../../../components/feed/FeedItem";
 import { getTranslations } from "next-intl/server";
 import { getCurrentWeekNumber } from "../../../lib/checkins";
 
-export default async function FeedPage() {
+export default async function FeedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ joined?: string }>;
+}) {
+  const { joined } = await searchParams;
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
@@ -65,6 +70,47 @@ export default async function FeedPage() {
           {t("subtitle")}
         </p>
       </div>
+
+      {joined && (
+        <div
+          style={{
+            background: "#E8FFE8",
+            border: "3px solid #1a1a2e",
+            borderRadius: "16px",
+            boxShadow: "3px 3px 0 #1a1a2e",
+            padding: "16px 20px",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+          }}
+        >
+          <span style={{ fontSize: "24px" }}>🎉</span>
+          <div>
+            <p
+              style={{
+                fontFamily: "Bangers, cursive",
+                fontSize: "18px",
+                letterSpacing: "1px",
+                color: "#1a1a2e",
+                lineHeight: 1.2,
+              }}
+            >
+              {t("joinedTitle", { name: joined })}
+            </p>
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "#555",
+                marginTop: "2px",
+              }}
+            >
+              {t("joinedSubtitle")}
+            </p>
+          </div>
+        </div>
+      )}
 
       {items.length === 0 ? (
         <div

@@ -44,7 +44,16 @@
     "cronLastRun": "Dernière exécution :",
     "runPenalties": "Calculer les pénalités maintenant",
     "runningPenalties": "En cours…",
-    "penaltiesRan": "Terminé ! Pénalités calculées."
+    "penaltiesRan": "Terminé ! Pénalités calculées.",
+    "share": "Partager",
+    "joinedDate": "Rejoint le {date}",
+    "dangerZone": "Zone dangereuse",
+    "deleteGroup": "Supprimer le groupe",
+    "deleteGroupWarning": "Action irréversible. Tous les objectifs, pointages, pénalités et données de ce groupe seront supprimés.",
+    "deleteGroupPlaceholder": "Tapez le nom du groupe pour confirmer",
+    "deleteGroupButton": "Supprimer définitivement",
+    "deleting": "Suppression…",
+    "youLabel": "(vous)"
   },
   "groups": {
     "newTitle": "Créer un groupe",
@@ -219,6 +228,7 @@
     "resuming": "Reprise…",
     "completing": "Finalisation…",
     "photoOrVideo": "Photo ou vidéo",
+    "optional": "facultatif",
     "changeFile": "Changer le fichier",
     "chooseMedia": "Choisir une photo ou vidéo",
     "uploading": "Envoi…",
@@ -334,7 +344,9 @@
     "hoursAgo": "h",
     "daysAgo": "j",
     "checkinAlt": "Preuve de validation",
-    "weekLabel": "Semaine {week} · réinitialisation dimanche minuit UTC"
+    "weekLabel": "Semaine {week} · réinitialisation dimanche minuit UTC",
+    "joinedTitle": "Bienvenue dans {name} !",
+    "joinedSubtitle": "Vous faites maintenant partie du groupe. Définissez votre premier objectif pour commencer."
   },
   "pot": {
     "title": "Cagnotte Commune",
@@ -368,7 +380,11 @@
     "voteForLabel": "Pour",
     "voteAgainstLabel": "Contre",
     "closedStatus": "Fermé",
-    "disclaimer": "Les pénalités sont suivies ici comme un registre. Votre groupe gère les paiements en dehors de l'appli — ex. Lydia, PayPal ou espèces."
+    "disclaimer": "Les pénalités sont suivies ici comme un registre. Votre groupe gère les paiements en dehors de l'appli — ex. Lydia, PayPal ou espèces.",
+    "amountLabel": "Montant à dépenser (€)",
+    "amountPlaceholder": "ex. 25.00",
+    "potBalance": "€{balance} disponible",
+    "requestsAmount": "Demande €{amount}"
   },
   "leaderboard": {
     "title": "Classement",

@@ -17,7 +17,7 @@ export default async function GroupSettingsPage({ params }: Props) {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  // Fetch group with all members
+  // Fetch group with all members including joined_at
   const group = await prisma.group.findUnique({
     where: { id: groupId },
     select: {
@@ -42,33 +42,7 @@ export default async function GroupSettingsPage({ params }: Props) {
   );
   if (!callerMembership) redirect("/profile");
 
-  // Only admins can access settings
-  const t = await getTranslations("settings");
-  if (callerMembership.role !== "admin") {
-    return (
-      <div className="flex flex-col gap-4">
-        <h1
-          style={{
-            fontFamily: "Bangers, cursive",
-            fontSize: "28px",
-            letterSpacing: "1px",
-            color: "#1a1a2e",
-          }}
-        >
-          {t("title")}
-        </h1>
-        <p
-          style={{
-            fontFamily: "Nunito, sans-serif",
-            fontSize: "14px",
-            color: "#888",
-          }}
-        >
-          {t("notAdmin")}
-        </p>
-      </div>
-    );
-  }
+  const isAdmin = callerMembership.role === "admin";
 
   // Derive the origin for building the invite URL server-side
   const headersList = await headers();
@@ -76,11 +50,14 @@ export default async function GroupSettingsPage({ params }: Props) {
   const proto = host.startsWith("localhost") ? "http" : "https";
   const origin = `${proto}://${host}`;
 
+  const t = await getTranslations("settings");
+
   const members = group.members.map((m) => ({
     id: m.user.id,
     name: m.user.name,
     avatar_url: m.user.avatar_url,
     role: m.role as "admin" | "member",
+    joined_at: m.joined_at.toISOString(),
   }));
 
   return (
@@ -102,8 +79,9 @@ export default async function GroupSettingsPage({ params }: Props) {
         initialInviteCode={group.invite_code}
         lastPenaltyRunAt={group.last_penalty_run_at?.toISOString() ?? null}
         members={members}
-        currentUserId={session.user.id}
+        currentUserId={session.user.id!}
         origin={origin}
+        isAdmin={isAdmin}
       />
     </div>
   );

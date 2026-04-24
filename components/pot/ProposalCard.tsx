@@ -193,6 +193,20 @@ export default function ProposalCard({
         )}
       </div>
 
+      {/* Amount badge */}
+      {Number(proposal.amount) > 0 && (
+        <p
+          style={{
+            fontFamily: "Bangers, cursive",
+            fontSize: "20px",
+            letterSpacing: "1px",
+            color: "#1a1a2e",
+          }}
+        >
+          €{Number(proposal.amount).toFixed(2)}
+        </p>
+      )}
+
       {/* Proposer + date */}
       <p
         style={{

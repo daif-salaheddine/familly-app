@@ -245,7 +245,7 @@ export default async function PotPage() {
       <section className="flex flex-col gap-3">
         <h2 style={{ ...sectionTitle, marginBottom: "0" }}>🗳️ {t("proposals")}</h2>
 
-        <ProposeForm />
+        <ProposeForm potTotal={Number(pot.total_amount)} />
 
         {openProposals.length > 0 && (
           <div className="flex flex-col gap-3">

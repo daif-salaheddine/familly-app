@@ -50,7 +50,7 @@ export default function JoinGroupCard({
       return;
     }
 
-    router.push("/feed");
+    router.push(`/feed?joined=${encodeURIComponent(json.data.groupName)}`);
   }
 
   // Show only up to 5 member avatars, then "+N more"

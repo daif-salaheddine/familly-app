@@ -162,6 +162,35 @@ export async function sendChallengeEmail(
   await resend.emails.send({ from: FROM, to, subject: "⚡ You have a new challenge!", html });
 }
 
+/** Sent to all non-admin members when an admin deletes the group. */
+export async function sendGroupDeletedEmail(
+  to: string,
+  memberName: string,
+  groupName: string,
+  adminName: string
+): Promise<void> {
+  const html = emailWrap(`
+    <p style="margin:0 0 6px;font-size:20px;font-weight:800;color:#1a1a2e;">
+      👋 Hey ${memberName}
+    </p>
+    <p style="margin:0 0 16px;font-size:15px;color:#555;line-height:1.6;">
+      The group <strong>${groupName}</strong> has been permanently deleted by
+      <strong>${adminName}</strong>. All goals, check-ins, penalties, and pot
+      data have been removed.
+    </p>
+    <p style="margin:0;font-size:14px;color:#888;line-height:1.5;">
+      If you'd like to continue, you can create a new group or ask someone to
+      send you a fresh invite link.
+    </p>
+  `);
+  await resend.emails.send({
+    from: FROM,
+    to,
+    subject: `${groupName} has been deleted`,
+    html,
+  });
+}
+
 /** Weekly digest — sent Monday morning. */
 export interface DigestData {
   userName: string;

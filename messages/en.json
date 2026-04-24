@@ -44,7 +44,16 @@
     "cronLastRun": "Last run:",
     "runPenalties": "Run penalties now",
     "runningPenalties": "Running…",
-    "penaltiesRan": "Done! Penalties calculated."
+    "penaltiesRan": "Done! Penalties calculated.",
+    "share": "Share",
+    "joinedDate": "Joined {date}",
+    "dangerZone": "Danger zone",
+    "deleteGroup": "Delete group",
+    "deleteGroupWarning": "This is permanent. All goals, check-ins, penalties, and pot data for this group will be deleted.",
+    "deleteGroupPlaceholder": "Type group name to confirm",
+    "deleteGroupButton": "Permanently delete",
+    "deleting": "Deleting…",
+    "youLabel": "(you)"
   },
   "groups": {
     "newTitle": "Create a group",
@@ -219,6 +228,7 @@
     "resuming": "Resuming…",
     "completing": "Completing…",
     "photoOrVideo": "Photo or video",
+    "optional": "optional",
     "changeFile": "Change file",
     "chooseMedia": "Choose photo or video",
     "uploading": "Uploading…",
@@ -334,7 +344,9 @@
     "hoursAgo": "h ago",
     "daysAgo": "d ago",
     "checkinAlt": "Check-in proof",
-    "weekLabel": "Week {week} · resets Sunday midnight UTC"
+    "weekLabel": "Week {week} · resets Sunday midnight UTC",
+    "joinedTitle": "Welcome to {name}!",
+    "joinedSubtitle": "You're now part of the group. Set your first goal to get started."
   },
   "pot": {
     "title": "Group Pot",
@@ -368,7 +380,11 @@
     "voteForLabel": "For",
     "voteAgainstLabel": "Against",
     "closedStatus": "Closed",
-    "disclaimer": "Penalties are tracked here as a ledger. Your group handles payment outside the app — e.g. Lydia, PayPal, or cash."
+    "disclaimer": "Penalties are tracked here as a ledger. Your group handles payment outside the app — e.g. Lydia, PayPal, or cash.",
+    "amountLabel": "Amount to spend (€)",
+    "amountPlaceholder": "e.g. 25.00",
+    "potBalance": "€{balance} available",
+    "requestsAmount": "Requests €{amount}"
   },
   "leaderboard": {
     "title": "Leaderboard",

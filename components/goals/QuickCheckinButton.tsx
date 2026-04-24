@@ -15,12 +15,14 @@ export default function QuickCheckinButton({ goalId, done, required, checkedInTo
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [justDone, setJustDone] = useState(false);
+  const [localDone, setLocalDone] = useState(done);
 
-  const isComplete = done >= required;
+  const effectiveDone = justDone ? localDone : done;
+  const isComplete = effectiveDone >= required;
   const isDisabled = isComplete || checkedInToday || loading;
 
   async function handleCheckin(e: React.MouseEvent) {
-    e.preventDefault(); // don't navigate if wrapped in a link area
+    e.preventDefault();
     e.stopPropagation();
     if (isDisabled) return;
 
@@ -34,6 +36,7 @@ export default function QuickCheckinButton({ goalId, done, required, checkedInTo
       });
 
       if (res.ok) {
+        setLocalDone(done + 1);
         setJustDone(true);
         router.refresh();
       }
@@ -44,10 +47,25 @@ export default function QuickCheckinButton({ goalId, done, required, checkedInTo
 
   return (
     <div
-      className="flex gap-2"
+      className="flex flex-col gap-1"
       style={{ marginTop: "6px" }}
       onClick={(e) => e.stopPropagation()}
     >
+      {/* Optimistic progress bar — updates instantly on log */}
+      {justDone && (
+        <div>
+          <div className="flex items-center justify-between" style={{ marginBottom: "3px" }}>
+            <span style={{ fontFamily: "Nunito, sans-serif", fontSize: "11px", fontWeight: 800, color: isComplete ? "#27ae60" : "#e74c3c" }}>
+              {effectiveDone} / {required} this week
+            </span>
+            {isComplete && <span style={{ fontSize: "11px" }}>✅</span>}
+          </div>
+          <div style={{ height: "5px", borderRadius: "100px", background: "#e0e0e0", border: "1.5px solid #1a1a2e", overflow: "hidden" }}>
+            <div style={{ height: "100%", width: `${Math.min(1, effectiveDone / required) * 100}%`, background: isComplete ? "#27ae60" : "#e74c3c", borderRadius: "100px", transition: "width 0.3s" }} />
+          </div>
+        </div>
+      )}
+      <div className="flex gap-2">
       <button
         onClick={handleCheckin}
         disabled={isDisabled}
@@ -90,6 +108,7 @@ export default function QuickCheckinButton({ goalId, done, required, checkedInTo
           📷
         </Link>
       )}
+      </div>
     </div>
   );
 }

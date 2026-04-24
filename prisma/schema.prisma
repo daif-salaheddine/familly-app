@@ -319,6 +319,7 @@ model PotProposal {
   pot_id        String
   proposed_by   String
   description   String
+  amount        Decimal        @default(0)
   votes_for     Int            @default(0)
   votes_against Int            @default(0)
   status        ProposalStatus @default(open)

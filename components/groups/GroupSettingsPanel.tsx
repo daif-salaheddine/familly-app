@@ -10,6 +10,7 @@ interface Member {
   name: string;
   avatar_url: string | null;
   role: "admin" | "member";
+  joined_at: string;
 }
 
 interface GroupSettingsPanelProps {
@@ -20,6 +21,7 @@ interface GroupSettingsPanelProps {
   members: Member[];
   currentUserId: string;
   origin: string;
+  isAdmin: boolean;
 }
 
 const cardStyle: React.CSSProperties = {
@@ -85,6 +87,7 @@ export default function GroupSettingsPanel({
   members,
   currentUserId,
   origin,
+  isAdmin,
 }: GroupSettingsPanelProps) {
   const t = useTranslations("settings");
   const router = useRouter();
@@ -121,6 +124,10 @@ export default function GroupSettingsPanel({
     setTimeout(() => setCopied(false), 2000);
   }
 
+  async function shareLink() {
+    await navigator.share({ title: "Join Family Quest", url: inviteUrl });
+  }
+
   async function regenerateLink() {
     setRegenerating(true);
     setConfirmRegen(false);
@@ -146,7 +153,7 @@ export default function GroupSettingsPanel({
   }
 
   // ── Kick member ─────────────────────────────────────────────────────────────
-  const [kickConfirm, setKickConfirm] = useState<string | null>(null); // userId
+  const [kickConfirm, setKickConfirm] = useState<string | null>(null);
   const [kicking, setKicking] = useState<string | null>(null);
 
   async function kickMember(userId: string) {
@@ -158,7 +165,7 @@ export default function GroupSettingsPanel({
   }
 
   // ── Transfer admin ───────────────────────────────────────────────────────────
-  const [transferConfirm, setTransferConfirm] = useState<string | null>(null); // userId
+  const [transferConfirm, setTransferConfirm] = useState<string | null>(null);
   const [transferring, setTransferring] = useState(false);
 
   async function transferAdmin(newAdminId: string) {
@@ -173,30 +180,57 @@ export default function GroupSettingsPanel({
     router.refresh();
   }
 
+  // ── Delete group ─────────────────────────────────────────────────────────────
+  const [deleteInput, setDeleteInput] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  async function deleteGroup() {
+    if (deleteInput !== name || deleting) return;
+    setDeleting(true);
+    const res = await fetch(`/api/groups/${groupId}`, { method: "DELETE" });
+    if (res.ok) {
+      router.push("/groups/new");
+    } else {
+      const json = await res.json();
+      setDeleteError(json.error ?? "Something went wrong");
+      setDeleting(false);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
 
       {/* ── Group name ──────────────────────────────────────────────────────── */}
-      <div style={cardStyle}>
-        <p style={sectionTitle}>{t("groupNameLabel")}</p>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => { setName(e.target.value); setNameSaved(false); }}
-            maxLength={50}
-            style={inputStyle}
-            onKeyDown={(e) => { if (e.key === "Enter") saveName(); }}
-          />
-          <button
-            onClick={saveName}
-            disabled={nameSaving || !name.trim()}
-            style={pillBtn(nameSaved ? "#22c55e" : "#6c31e3", nameSaving || !name.trim())}
-          >
-            {nameSaving ? t("saving") : nameSaved ? `✓ ${t("saved")}` : t("save")}
-          </button>
+      {isAdmin ? (
+        <div style={cardStyle}>
+          <p style={sectionTitle}>{t("groupNameLabel")}</p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => { setName(e.target.value); setNameSaved(false); }}
+              maxLength={50}
+              style={inputStyle}
+              onKeyDown={(e) => { if (e.key === "Enter") saveName(); }}
+            />
+            <button
+              onClick={saveName}
+              disabled={nameSaving || !name.trim()}
+              style={pillBtn(nameSaved ? "#22c55e" : "#6c31e3", nameSaving || !name.trim())}
+            >
+              {nameSaving ? t("saving") : nameSaved ? `✓ ${t("saved")}` : t("save")}
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div style={cardStyle}>
+          <p style={sectionTitle}>{t("groupNameLabel")}</p>
+          <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "18px", fontWeight: 800, color: "#1a1a2e" }}>
+            {name}
+          </p>
+        </div>
+      )}
 
       {/* ── Invite link ─────────────────────────────────────────────────────── */}
       <div style={cardStyle}>
@@ -205,7 +239,6 @@ export default function GroupSettingsPanel({
           {t("inviteLinkHint")}
         </p>
 
-        {/* URL display */}
         <div
           style={{
             background: "#f8f8f8",
@@ -228,165 +261,248 @@ export default function GroupSettingsPanel({
             {copied ? `✓ ${t("copied")}` : t("copyLink")}
           </button>
 
-          {confirmRegen ? (
-            <div className="flex items-center gap-2">
-              <span style={{ fontFamily: "Nunito, sans-serif", fontSize: "12px", color: "#e74c3c", fontWeight: 700 }}>
-                {t("regenerateWarning")}
-              </span>
-              <button
-                onClick={regenerateLink}
-                disabled={regenerating}
-                style={pillBtn("#e74c3c", regenerating)}
-              >
-                {regenerating ? t("regenerating") : t("confirm")}
-              </button>
-              <button onClick={() => setConfirmRegen(false)} style={ghostBtn}>
-                {t("cancel")}
-              </button>
-            </div>
-          ) : (
-            <button onClick={() => setConfirmRegen(true)} style={pillBtn("#888")}>
-              {t("regenerate")}
+          {typeof navigator !== "undefined" && !!navigator.share && (
+            <button onClick={shareLink} style={pillBtn("#0ea5e9")}>
+              {t("share")}
             </button>
+          )}
+
+          {isAdmin && (
+            confirmRegen ? (
+              <div className="flex items-center gap-2">
+                <span style={{ fontFamily: "Nunito, sans-serif", fontSize: "12px", color: "#e74c3c", fontWeight: 700 }}>
+                  {t("regenerateWarning")}
+                </span>
+                <button
+                  onClick={regenerateLink}
+                  disabled={regenerating}
+                  style={pillBtn("#e74c3c", regenerating)}
+                >
+                  {regenerating ? t("regenerating") : t("confirm")}
+                </button>
+                <button onClick={() => setConfirmRegen(false)} style={ghostBtn}>
+                  {t("cancel")}
+                </button>
+              </div>
+            ) : (
+              <button onClick={() => setConfirmRegen(true)} style={pillBtn("#888")}>
+                {t("regenerate")}
+              </button>
+            )
           )}
         </div>
       </div>
 
-      {/* ── Cron monitoring ─────────────────────────────────────────────────── */}
-      <div
-        style={{
-          ...cardStyle,
-          ...(isStale ? { border: "3px solid #e74c3c", background: "#fff5f5" } : {}),
-        }}
-      >
-        <p style={sectionTitle}>⏱️ {t("cronStatus")}</p>
-
-        {isStale && (
-          <div
-            style={{
-              background: "#ffe0e0",
-              border: "2px solid #e74c3c",
-              borderRadius: "10px",
-              padding: "10px 14px",
-              fontFamily: "Nunito, sans-serif",
-              fontSize: "13px",
-              fontWeight: 700,
-              color: "#c0392b",
-              marginBottom: "12px",
-            }}
-          >
-            ⚠️ {lastRunDate ? t("cronStale") : t("cronNeverRun")}
-          </div>
-        )}
-
-        {lastRunDate && (
-          <p
-            style={{
-              fontFamily: "Nunito, sans-serif",
-              fontSize: "13px",
-              fontWeight: 600,
-              color: "#555",
-              marginBottom: "12px",
-            }}
-          >
-            {t("cronLastRun")} {lastRunDate.toLocaleString()}
-          </p>
-        )}
-
-        <button
-          onClick={runPenalties}
-          disabled={runningPenalties || penaltiesDone}
-          style={pillBtn(penaltiesDone ? "#22c55e" : "#6c31e3", runningPenalties || penaltiesDone)}
+      {/* ── Cron monitoring (admin only) ─────────────────────────────────────── */}
+      {isAdmin && (
+        <div
+          style={{
+            ...cardStyle,
+            ...(isStale ? { border: "3px solid #e74c3c", background: "#fff5f5" } : {}),
+          }}
         >
-          {penaltiesDone ? `✓ ${t("penaltiesRan")}` : runningPenalties ? t("runningPenalties") : t("runPenalties")}
-        </button>
-      </div>
+          <p style={sectionTitle}>⏱️ {t("cronStatus")}</p>
+
+          {isStale && (
+            <div
+              style={{
+                background: "#ffe0e0",
+                border: "2px solid #e74c3c",
+                borderRadius: "10px",
+                padding: "10px 14px",
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "13px",
+                fontWeight: 700,
+                color: "#c0392b",
+                marginBottom: "12px",
+              }}
+            >
+              ⚠️ {lastRunDate ? t("cronStale") : t("cronNeverRun")}
+            </div>
+          )}
+
+          {lastRunDate && (
+            <p
+              style={{
+                fontFamily: "Nunito, sans-serif",
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "#555",
+                marginBottom: "12px",
+              }}
+            >
+              {t("cronLastRun")} {lastRunDate.toLocaleString()}
+            </p>
+          )}
+
+          <button
+            onClick={runPenalties}
+            disabled={runningPenalties || penaltiesDone}
+            style={pillBtn(penaltiesDone ? "#22c55e" : "#6c31e3", runningPenalties || penaltiesDone)}
+          >
+            {penaltiesDone ? `✓ ${t("penaltiesRan")}` : runningPenalties ? t("runningPenalties") : t("runPenalties")}
+          </button>
+        </div>
+      )}
 
       {/* ── Members ─────────────────────────────────────────────────────────── */}
       <div style={cardStyle}>
         <p style={sectionTitle}>{t("members")}</p>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
           {members.map((member) => {
             const isSelf = member.id === currentUserId;
-            const isAdmin = member.role === "admin";
+            const memberIsAdmin = member.role === "admin";
+            const joinedDate = new Date(member.joined_at).toLocaleDateString(undefined, {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            });
 
             return (
-              <div key={member.id} className="flex items-center gap-3">
+              <div key={member.id} className="flex items-start gap-3">
                 <Avatar name={member.name} url={member.avatar_url} size="sm" />
 
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ fontFamily: "Nunito, sans-serif", fontSize: "14px", fontWeight: 700, color: "#1a1a2e" }}>
-                    {member.name}{isSelf ? " (you)" : ""}
-                  </span>
-                </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span style={{ fontFamily: "Nunito, sans-serif", fontSize: "14px", fontWeight: 700, color: "#1a1a2e" }}>
+                      {member.name}{isSelf ? ` ${t("youLabel")}` : ""}
+                    </span>
 
-                {/* Role badge */}
-                <span
-                  style={{
-                    fontFamily: "Nunito, sans-serif",
-                    fontSize: "11px",
-                    fontWeight: 800,
-                    background: isAdmin ? "#f0ebff" : "#f0f0f0",
-                    color: isAdmin ? "#6c31e3" : "#888",
-                    border: `2px solid ${isAdmin ? "#6c31e3" : "#ddd"}`,
-                    borderRadius: "100px",
-                    padding: "2px 10px",
-                  }}
-                >
-                  {isAdmin ? t("roleAdmin") : t("roleMember")}
-                </span>
-
-                {/* Actions — only for non-self, non-admin members */}
-                {!isSelf && !isAdmin && (
-                  <div className="flex items-center gap-1">
-                    {/* Kick */}
-                    {kickConfirm === member.id ? (
-                      <>
-                        <button
-                          onClick={() => kickMember(member.id)}
-                          disabled={kicking === member.id}
-                          style={pillBtn("#e74c3c", kicking === member.id)}
-                        >
-                          {kicking === member.id ? t("kicking") : t("confirm")}
-                        </button>
-                        <button onClick={() => setKickConfirm(null)} style={ghostBtn}>
-                          {t("cancel")}
-                        </button>
-                      </>
-                    ) : (
-                      <button onClick={() => { setKickConfirm(member.id); setTransferConfirm(null); }} style={pillBtn("#e74c3c")}>
-                        {t("kick")}
-                      </button>
-                    )}
-
-                    {/* Transfer admin */}
-                    {transferConfirm === member.id ? (
-                      <>
-                        <button
-                          onClick={() => transferAdmin(member.id)}
-                          disabled={transferring}
-                          style={pillBtn("#f59e0b", transferring)}
-                        >
-                          {transferring ? t("transferring") : t("confirm")}
-                        </button>
-                        <button onClick={() => setTransferConfirm(null)} style={ghostBtn}>
-                          {t("cancel")}
-                        </button>
-                      </>
-                    ) : (
-                      kickConfirm !== member.id && (
-                        <button onClick={() => { setTransferConfirm(member.id); setKickConfirm(null); }} style={pillBtn("#f59e0b")}>
-                          {t("makeAdmin")}
-                        </button>
-                      )
-                    )}
+                    <span
+                      style={{
+                        fontFamily: "Nunito, sans-serif",
+                        fontSize: "11px",
+                        fontWeight: 800,
+                        background: memberIsAdmin ? "#f0ebff" : "#f0f0f0",
+                        color: memberIsAdmin ? "#6c31e3" : "#888",
+                        border: `2px solid ${memberIsAdmin ? "#6c31e3" : "#ddd"}`,
+                        borderRadius: "100px",
+                        padding: "2px 10px",
+                      }}
+                    >
+                      {memberIsAdmin ? t("roleAdmin") : t("roleMember")}
+                    </span>
                   </div>
-                )}
+
+                  <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "12px", color: "#aaa", fontWeight: 600, marginTop: "2px" }}>
+                    {t("joinedDate", { date: joinedDate })}
+                  </p>
+
+                  {/* Admin actions — only for non-self, non-admin members */}
+                  {isAdmin && !isSelf && !memberIsAdmin && (
+                    <div className="flex items-center gap-1 flex-wrap" style={{ marginTop: "6px" }}>
+                      {kickConfirm === member.id ? (
+                        <>
+                          <button
+                            onClick={() => kickMember(member.id)}
+                            disabled={kicking === member.id}
+                            style={pillBtn("#e74c3c", kicking === member.id)}
+                          >
+                            {kicking === member.id ? t("kicking") : t("confirm")}
+                          </button>
+                          <button onClick={() => setKickConfirm(null)} style={ghostBtn}>
+                            {t("cancel")}
+                          </button>
+                        </>
+                      ) : (
+                        <button onClick={() => { setKickConfirm(member.id); setTransferConfirm(null); }} style={pillBtn("#e74c3c")}>
+                          {t("kick")}
+                        </button>
+                      )}
+
+                      {transferConfirm === member.id ? (
+                        <>
+                          <button
+                            onClick={() => transferAdmin(member.id)}
+                            disabled={transferring}
+                            style={pillBtn("#f59e0b", transferring)}
+                          >
+                            {transferring ? t("transferring") : t("confirm")}
+                          </button>
+                          <button onClick={() => setTransferConfirm(null)} style={ghostBtn}>
+                            {t("cancel")}
+                          </button>
+                        </>
+                      ) : (
+                        kickConfirm !== member.id && (
+                          <button onClick={() => { setTransferConfirm(member.id); setKickConfirm(null); }} style={pillBtn("#f59e0b")}>
+                            {t("makeAdmin")}
+                          </button>
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })}
         </div>
       </div>
+
+      {/* ── Danger zone (admin only) ─────────────────────────────────────────── */}
+      {isAdmin && (
+        <div
+          style={{
+            background: "#fff5f5",
+            border: "3px solid #e74c3c",
+            borderRadius: "16px",
+            boxShadow: "3px 3px 0 #1a1a2e",
+            padding: "24px",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Bangers, cursive",
+              fontSize: "18px",
+              letterSpacing: "1px",
+              color: "#e74c3c",
+              marginBottom: "8px",
+            }}
+          >
+            ⚠️ {t("dangerZone")}
+          </p>
+
+          <p
+            style={{
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "13px",
+              fontWeight: 600,
+              color: "#c0392b",
+              lineHeight: 1.5,
+              marginBottom: "16px",
+            }}
+          >
+            {t("deleteGroupWarning")}
+          </p>
+
+          <div className="flex flex-col gap-3">
+            <input
+              type="text"
+              value={deleteInput}
+              onChange={(e) => { setDeleteInput(e.target.value); setDeleteError(null); }}
+              placeholder={t("deleteGroupPlaceholder")}
+              style={{
+                ...inputStyle,
+                border: "2px solid #e74c3c",
+              }}
+            />
+
+            {deleteError && (
+              <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", color: "#e74c3c", fontWeight: 700 }}>
+                {deleteError}
+              </p>
+            )}
+
+            <button
+              onClick={deleteGroup}
+              disabled={deleteInput !== name || deleting}
+              style={pillBtn("#e74c3c", deleteInput !== name || deleting)}
+            >
+              {deleting ? t("deleting") : t("deleteGroupButton")}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

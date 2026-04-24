@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const proposal = await createProposal(groupId, user.id, parsed.data.description);
+    const proposal = await createProposal(groupId, user.id, parsed.data.description, parsed.data.amount);
     return NextResponse.json({ data: proposal, error: null }, { status: 201 });
   } catch (res) {
     if (res instanceof Response) return res;

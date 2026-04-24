@@ -31,6 +31,7 @@ export type PotData = {
 
 export const createProposalSchema = z.object({
   description: z.string().min(1, "Description is required").max(500),
+  amount: z.number().positive("Amount must be greater than 0").max(99999.99),
 });
 
 export const voteSchema = z.object({
@@ -110,9 +111,17 @@ export async function getProposals(groupId: string): Promise<ProposalWithVotes[]
 export async function createProposal(
   groupId: string,
   userId: string,
-  description: string
+  description: string,
+  amount: number
 ): Promise<PotProposal> {
   const pot = await assertPotExists(groupId);
+
+  if (amount > Number(pot.total_amount)) {
+    throw new Response(
+      JSON.stringify({ data: null, error: "Amount exceeds current pot balance" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
   const closesAt = new Date();
   closesAt.setHours(closesAt.getHours() + 48);
@@ -122,6 +131,7 @@ export async function createProposal(
       pot_id: pot.id,
       proposed_by: userId,
       description,
+      amount,
       closes_at: closesAt,
     },
   });
@@ -225,14 +235,24 @@ export async function voteOnProposal(
   ]);
 
   if (voteCount >= memberCount && updatedProposal.status === "open") {
-    await prisma.potProposal.update({
-      where: { id: proposalId },
-      data: {
-        status:
-          updatedProposal.votes_for > updatedProposal.votes_against
-            ? "approved"
-            : "rejected",
-      },
+    const isApproved = updatedProposal.votes_for > updatedProposal.votes_against;
+    await prisma.$transaction(async (tx) => {
+      await tx.potProposal.update({
+        where: { id: proposalId },
+        data: { status: isApproved ? "approved" : "rejected" },
+      });
+      if (isApproved && Number(updatedProposal.amount) > 0) {
+        const pot = await tx.pot.findFirst({
+          where: { group_id: groupId },
+          select: { id: true, total_amount: true },
+        });
+        if (pot) {
+          await tx.pot.update({
+            where: { id: pot.id },
+            data: { total_amount: Math.max(0, Number(pot.total_amount) - Number(updatedProposal.amount)) },
+          });
+        }
+      }
     });
     // Re-fetch with the closed status
     return prisma.potProposal.findUniqueOrThrow({
@@ -263,14 +283,25 @@ export async function closeExpiredProposals(groupId: string): Promise<void> {
     },
   });
 
-  await Promise.all(
-    expired.map((p) =>
-      prisma.potProposal.update({
+  for (const p of expired) {
+    const isApproved = p.votes_for > p.votes_against;
+    await prisma.$transaction(async (tx) => {
+      await tx.potProposal.update({
         where: { id: p.id },
-        data: {
-          status: p.votes_for > p.votes_against ? "approved" : "rejected",
-        },
-      })
-    )
-  );
+        data: { status: isApproved ? "approved" : "rejected" },
+      });
+      if (isApproved && Number(p.amount) > 0) {
+        const currentPot = await tx.pot.findUnique({
+          where: { id: pot.id },
+          select: { total_amount: true },
+        });
+        if (currentPot) {
+          await tx.pot.update({
+            where: { id: pot.id },
+            data: { total_amount: Math.max(0, Number(currentPot.total_amount) - Number(p.amount)) },
+          });
+        }
+      }
+    });
+  }
 }

@@ -44,7 +44,16 @@
     "cronLastRun": "آخر تنفيذ:",
     "runPenalties": "احسب الغرامات الآن",
     "runningPenalties": "جارٍ الحساب…",
-    "penaltiesRan": "تمّ! تم احتساب الغرامات."
+    "penaltiesRan": "تمّ! تم احتساب الغرامات.",
+    "share": "مشاركة",
+    "joinedDate": "انضم في {date}",
+    "dangerZone": "منطقة الخطر",
+    "deleteGroup": "حذف المجموعة",
+    "deleteGroupWarning": "هذا الإجراء دائم. سيتم حذف جميع الأهداف والتسجيلات والغرامات وبيانات الصندوق.",
+    "deleteGroupPlaceholder": "اكتب اسم المجموعة للتأكيد",
+    "deleteGroupButton": "حذف نهائي",
+    "deleting": "جارٍ الحذف…",
+    "youLabel": "(أنت)"
   },
   "groups": {
     "newTitle": "إنشاء مجموعة",
@@ -219,6 +228,7 @@
     "resuming": "جارٍ الاستئناف…",
     "completing": "جارٍ الإنهاء…",
     "photoOrVideo": "صورة أو فيديو",
+    "optional": "اختياري",
     "changeFile": "تغيير الملف",
     "chooseMedia": "اختر صورة أو فيديو",
     "uploading": "جارٍ الرفع…",
@@ -334,7 +344,9 @@
     "hoursAgo": "س",
     "daysAgo": "ي",
     "checkinAlt": "دليل التحقق",
-    "weekLabel": "الأسبوع {week} · إعادة الضبط الأحد منتصف الليل UTC"
+    "weekLabel": "الأسبوع {week} · إعادة الضبط الأحد منتصف الليل UTC",
+    "joinedTitle": "مرحباً بك في {name}!",
+    "joinedSubtitle": "أنت الآن عضو في المجموعة. حدّد هدفك الأول للبدء."
   },
   "pot": {
     "title": "الصندوق المشترك",
@@ -368,7 +380,11 @@
     "voteForLabel": "مع",
     "voteAgainstLabel": "ضد",
     "closedStatus": "مغلق",
-    "disclaimer": "تُسجَّل الغرامات هنا كسجل محاسبي. تتولى مجموعتك تسوية المدفوعات خارج التطبيق — مثلاً Lydia أو PayPal أو نقداً."
+    "disclaimer": "تُسجَّل الغرامات هنا كسجل محاسبي. تتولى مجموعتك تسوية المدفوعات خارج التطبيق — مثلاً Lydia أو PayPal أو نقداً.",
+    "amountLabel": "المبلغ المقترح إنفاقه (€)",
+    "amountPlaceholder": "مثال: 25.00",
+    "potBalance": "€{balance} متاح",
+    "requestsAmount": "يطلب €{amount}"
   },
   "leaderboard": {
     "title": "لوحة المتصدرين",

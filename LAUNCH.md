@@ -419,3 +419,18 @@ Post-launch QA audit identified 10 issues. Fixing in priority order:
 | 8 | /settings and /stats are stub pages | ⬜ Pending |
 | 9 | Missing `apple-touch-icon` for iOS | ⬜ Pending |
 | 10 | Bell + dropdown both link to /notifications | ⬜ Pending |
+
+---
+
+## Game Loop Audit Fixes — 23 Apr 2026
+
+Game design audit identified broken moments in the core loop. Fixing in priority order:
+
+| # | Issue | Status |
+|---|-------|--------|
+| P0-1 | Checkin form requires photo — blocks daily logging | ✅ Done 23 Apr 2026 |
+| P0-2 | Approved pot proposals don't deduct from pot balance | ✅ Done 23 Apr 2026 |
+| P1-1 | Week Freeze API exists but no UI button anywhere | ✅ Done 23 Apr 2026 (already implemented) |
+| P1-2 | Progress bar requires page refresh after "Log it" | ✅ Done 23 Apr 2026 |
+| P2-1 | Proposal expiry is lazy (no proactive cron) | ✅ Done 23 Apr 2026 |
+| P2-2 | No "you joined X group" confirmation banner on invite | ✅ Done 23 Apr 2026 |

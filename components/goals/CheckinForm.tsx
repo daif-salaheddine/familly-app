@@ -50,30 +50,31 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!file) return;
 
     setError(null);
     setIsPending(true);
 
     try {
-      // 1. Upload file
-      const form = new FormData();
-      form.append("file", file);
+      let mediaUrl: string | undefined;
 
-      const uploadRes = await fetch("/api/upload", {
-        method: "POST",
-        body: form,
-      });
-      const uploadJson = await uploadRes.json();
-      if (!uploadRes.ok) {
-        setError(uploadJson.error ?? "Upload failed");
-        return;
+      if (file) {
+        const form = new FormData();
+        form.append("file", file);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: form,
+        });
+        const uploadJson = await uploadRes.json();
+        if (!uploadRes.ok) {
+          setError(uploadJson.error ?? "Upload failed");
+          return;
+        }
+        mediaUrl = uploadJson.data.url as string;
       }
 
-      const mediaUrl: string = uploadJson.data.url;
       const today = new Date().toISOString().slice(0, 10);
 
-      // 2. Create checkin record
       const checkinRes = await fetch(`/api/goals/${goalId}/checkin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -89,7 +90,7 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
         return;
       }
 
-      playUploadProof();
+      if (file) playUploadProof();
       router.push(`/profile/goals/${goalId}`);
       router.refresh();
     } finally {
@@ -109,7 +110,7 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
             color: "#1a1a2e",
           }}
         >
-          {t("photoOrVideo")}
+          {t("photoOrVideo")} <span style={{ fontWeight: 400, color: "#aaa" }}>({t("optional")})</span>
         </label>
 
         {/* Preview */}
@@ -230,19 +231,19 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
 
       <button
         type="submit"
-        disabled={!file || isPending}
+        disabled={isPending}
         style={{
           fontFamily: "Nunito, sans-serif",
           fontWeight: 800,
           fontSize: "15px",
-          background: !file || isPending ? "#a8e6c4" : "#2ecc71",
+          background: isPending ? "#a8e6c4" : "#2ecc71",
           color: "#1a1a2e",
           border: "2px solid #1a1a2e",
           borderRadius: "100px",
           boxShadow: "2px 2px 0 #1a1a2e",
           padding: "10px 24px",
-          cursor: !file || isPending ? "not-allowed" : "pointer",
-          opacity: !file || isPending ? 0.7 : 1,
+          cursor: isPending ? "not-allowed" : "pointer",
+          opacity: isPending ? 0.7 : 1,
         }}
       >
         {isPending ? t("uploading") : t("submitCheckin")}
