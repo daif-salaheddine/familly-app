@@ -1,0 +1,377 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  admin
+  member
+}
+
+enum Category {
+  body
+  mind
+  soul
+  work
+  relationships
+}
+
+enum Slot {
+  self
+  nominated
+}
+
+enum Frequency {
+  daily
+  times_per_week
+  weekly
+}
+
+enum GoalStatus {
+  active
+  paused
+  completed
+}
+
+enum NominationStatus {
+  pending
+  accepted
+  auto_declined
+  declined
+}
+
+enum ChallengeStatus {
+  pending_suggestions
+  pending_choice
+  pending_proof
+  completed
+  expired
+}
+
+enum SuggestionStatus {
+  pending
+  chosen
+  auto_declined
+}
+
+enum ProposalStatus {
+  open
+  approved
+  rejected
+}
+
+enum VoteDirection {
+  for
+  against
+}
+
+enum NotificationType {
+  goal_missed
+  nomination_received
+  challenge_triggered
+  challenge_suggestion
+  reaction_received
+  pot_updated
+  proposal_created
+}
+
+enum Language {
+  EN
+  FR
+  AR
+}
+
+model User {
+  id                String    @id @default(uuid())
+  name              String
+  email             String    @unique
+  password_hash     String?
+  email_verified    Boolean   @default(false)
+  avatar_url        String?
+  language          Language  @default(EN)
+  has_onboarded     Boolean   @default(false)
+  reset_token          String?
+  reset_expires_at     DateTime?
+  verification_token   String?
+  created_at           DateTime  @default(now())
+
+  createdGroups        Group[]               @relation("GroupCreator")
+  groupMemberships     GroupMember[]
+  accounts             Account[]
+  goals                Goal[]                @relation("GoalOwner")
+  nominatedGoals       Goal[]                @relation("GoalNominator")
+  sentNominations      Nomination[]          @relation("NominationSender")
+  receivedNominations  Nomination[]          @relation("NominationReceiver")
+  checkins             Checkin[]
+  reactions            Reaction[]
+  challenges           Challenge[]
+  challengeSuggestions ChallengeSuggestion[]
+  penalties            Penalty[]
+  weekFreezes          WeekFreeze[]
+  potProposals         PotProposal[]
+  potVotes             PotVote[]
+  notifications        Notification[]
+
+  @@map("users")
+}
+
+model Group {
+  id                   String    @id @default(uuid())
+  name                 String
+  created_by           String
+  invite_code          String    @unique
+  last_penalty_run_at  DateTime?
+  created_at           DateTime  @default(now())
+
+  creator     User          @relation("GroupCreator", fields: [created_by], references: [id])
+  members     GroupMember[]
+  goals       Goal[]
+  nominations Nomination[]
+  challenges  Challenge[]
+  penalties   Penalty[]
+  weekFreezes WeekFreeze[]
+  pot         Pot?
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id        String   @id @default(uuid())
+  group_id  String
+  user_id   String
+  role      Role     @default(member)
+  joined_at DateTime @default(now())
+
+  group Group @relation(fields: [group_id], references: [id])
+  user  User  @relation(fields: [user_id], references: [id])
+
+  @@map("group_members")
+}
+
+model Account {
+  id                  String   @id @default(uuid())
+  user_id             String
+  provider            String
+  provider_account_id String
+  created_at          DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([provider, provider_account_id])
+  @@map("accounts")
+}
+
+model Goal {
+  id                 String     @id @default(uuid())
+  user_id            String
+  group_id           String
+  nominated_by       String?
+  title              String
+  category           Category
+  slot               Slot
+  frequency          Frequency
+  frequency_count    Int
+  penalty_amount     Decimal
+  status             GoalStatus @default(active)
+  consecutive_misses Int        @default(0)
+  created_at         DateTime   @default(now())
+  paused_at          DateTime?
+
+  user       User        @relation("GoalOwner", fields: [user_id], references: [id])
+  group      Group       @relation(fields: [group_id], references: [id])
+  nominator  User?       @relation("GoalNominator", fields: [nominated_by], references: [id])
+  checkins   Checkin[]
+  challenges Challenge[]
+  penalties  Penalty[]
+
+  @@map("goals")
+}
+
+model Nomination {
+  id              String           @id @default(uuid())
+  from_user_id    String
+  to_user_id      String
+  group_id        String
+  title           String
+  category        Category
+  frequency       Frequency
+  frequency_count Int
+  penalty_amount  Decimal
+  message         String?
+  status          NominationStatus @default(pending)
+  chosen_reason   String?
+  created_at      DateTime         @default(now())
+  responded_at    DateTime?
+
+  fromUser User  @relation("NominationSender", fields: [from_user_id], references: [id])
+  toUser   User  @relation("NominationReceiver", fields: [to_user_id], references: [id])
+  group    Group @relation(fields: [group_id], references: [id])
+
+  @@map("nominations")
+}
+
+model Checkin {
+  id           String   @id @default(uuid())
+  goal_id      String
+  user_id      String
+  media_url    String?
+  caption      String?
+  checkin_date DateTime @db.Date
+  week_number  Int
+  year         Int
+  created_at   DateTime @default(now())
+
+  goal      Goal       @relation(fields: [goal_id], references: [id])
+  user      User       @relation(fields: [user_id], references: [id])
+  reactions Reaction[]
+
+  @@map("checkins")
+}
+
+model Reaction {
+  id         String   @id @default(uuid())
+  checkin_id String
+  user_id    String
+  emoji      String
+  created_at DateTime @default(now())
+
+  checkin Checkin @relation(fields: [checkin_id], references: [id])
+  user    User    @relation(fields: [user_id], references: [id])
+
+  @@map("reactions")
+}
+
+model Challenge {
+  id                   String          @id @default(uuid())
+  user_id              String
+  goal_id              String
+  group_id             String
+  chosen_suggestion_id String?  @unique
+  proof_url            String?
+  proof_caption        String?
+  status               ChallengeStatus @default(pending_suggestions)
+  deadline             DateTime?
+  created_at           DateTime        @default(now())
+  completed_at         DateTime?
+
+  user             User                  @relation(fields: [user_id], references: [id])
+  goal             Goal                  @relation(fields: [goal_id], references: [id])
+  group            Group                 @relation(fields: [group_id], references: [id])
+  chosenSuggestion ChallengeSuggestion?  @relation("ChosenSuggestion", fields: [chosen_suggestion_id], references: [id])
+  suggestions      ChallengeSuggestion[] @relation("ChallengeSuggestions")
+
+  @@map("challenges")
+}
+
+model ChallengeSuggestion {
+  id           String           @id @default(uuid())
+  challenge_id String
+  from_user_id String
+  description  String
+  status       SuggestionStatus @default(pending)
+  created_at   DateTime         @default(now())
+
+  challenge         Challenge  @relation("ChallengeSuggestions", fields: [challenge_id], references: [id])
+  fromUser          User       @relation(fields: [from_user_id], references: [id])
+  chosenByChallenge Challenge? @relation("ChosenSuggestion")
+
+  @@map("challenge_suggestions")
+}
+
+model Penalty {
+  id           String   @id @default(uuid())
+  user_id      String
+  goal_id      String
+  group_id     String
+  amount       Decimal
+  period_start DateTime @db.Date
+  period_end   DateTime @db.Date
+  created_at   DateTime @default(now())
+
+  user  User  @relation(fields: [user_id], references: [id])
+  goal  Goal  @relation(fields: [goal_id], references: [id])
+  group Group @relation(fields: [group_id], references: [id])
+
+  @@map("penalties")
+}
+
+model Pot {
+  id           String   @id @default(uuid())
+  group_id     String   @unique
+  total_amount Decimal  @default(0)
+  updated_at   DateTime @updatedAt
+
+  group     Group         @relation(fields: [group_id], references: [id])
+  proposals PotProposal[]
+
+  @@map("pots")
+}
+
+model PotProposal {
+  id            String         @id @default(uuid())
+  pot_id        String
+  proposed_by   String
+  description   String
+  amount        Decimal        @default(0)
+  votes_for     Int            @default(0)
+  votes_against Int            @default(0)
+  status        ProposalStatus @default(open)
+  closes_at     DateTime
+  created_at    DateTime       @default(now())
+
+  pot      Pot       @relation(fields: [pot_id], references: [id])
+  proposer User      @relation(fields: [proposed_by], references: [id])
+  votes    PotVote[]
+
+  @@map("pot_proposals")
+}
+
+model PotVote {
+  id          String        @id @default(uuid())
+  proposal_id String
+  user_id     String
+  vote        VoteDirection
+  created_at  DateTime      @default(now())
+
+  proposal PotProposal @relation(fields: [proposal_id], references: [id])
+  user     User        @relation(fields: [user_id], references: [id])
+
+  @@unique([proposal_id, user_id])
+  @@map("pot_votes")
+}
+
+model Notification {
+  id           String           @id @default(uuid())
+  user_id      String
+  type         NotificationType
+  reference_id String           @db.Uuid
+  is_read      Boolean          @default(false)
+  created_at   DateTime         @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("notifications")
+}
+
+model WeekFreeze {
+  id          String   @id @default(uuid())
+  user_id     String
+  group_id    String
+  week_number Int
+  year        Int
+  reason      String?
+  created_at  DateTime @default(now())
+
+  user  User  @relation(fields: [user_id], references: [id])
+  group Group @relation(fields: [group_id], references: [id])
+
+  @@unique([user_id, group_id, week_number, year])
+  @@map("week_freezes")
+}

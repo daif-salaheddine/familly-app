@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_Supabase__list_projects",
+      "mcp__claude_ai_Supabase__get_project_url",
+      "mcp__claude_ai_Supabase__get_publishable_keys",
+      "Bash(node:*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:familly_App@db.cycnpvdwdufbcqjejcky.supabase.co:5432/postgres\" npx prisma db pull)",
+      "Bash(DATABASE_URL=\"postgresql://postgres.cycnpvdwdufbcqjejcky:familly_App@aws-0-eu-central-1.pooler.supabase.com:5432/postgres\" npx prisma db pull)",
+      "Bash(DATABASE_URL=\"postgresql://postgres.cycnpvdwdufbcqjejcky:familly_App@aws-0-eu-central-1.pooler.supabase.com:6543/postgres\" npx prisma db pull)",
+      "Bash(npx prisma:*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:Aiyhs%40Aiyhs@db.cycnpvdwdufbcqjejcky.supabase.co:5432/postgres\" npx prisma db pull)",
+      "Bash(DATABASE_URL=\"postgresql://postgres.cycnpvdwdufbcqjejcky:Aiyhs%40Aiyhs@aws-0-eu-central-1.pooler.supabase.com:6543/postgres\" npx prisma db pull)",
+      "mcp__claude_ai_Supabase__get_project",
+      "mcp__claude_ai_Supabase__search_docs",
+      "Bash(DATABASE_URL=\"postgres://postgres.cycnpvdwdufbcqjejcky:Aiyhs%40Aiyhs@aws-0-eu-central-1.pooler.supabase.com:5432/postgres\" npx prisma db pull)",
+      "Bash(powershell:*)",
+      "Bash(python3 -c ':*)",
+      "Bash(python -c ':*)",
+      "mcp__claude_ai_Supabase__apply_migration",
+      "mcp__claude_ai_Supabase__execute_sql",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(git commit -m 'feat: goals feature — lib/goals.ts, API routes, profile page, create form, goal detail:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run:*)",
+      "Bash(npx next:*)",
+      "Bash(xxd \"C:/Users/daif4/familly_app/ONBOARDING.md\")",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(ls \"C:/Users/daif4/familly_app/.env\"*)",
+      "Bash(find:*)",
+      "Bash(echo \"TSC:$?\")",
+      "Bash(ls c:/Users/daif4/familly_app/app/api/groups/[id]/)",
+      "Bash(DATABASE_URL=\"postgresql://postgres.cycnpvdwdufbcqjejcky:Aiyhs%40Aiyhs@db.cycnpvdwdufbcqjejcky.supabase.co:5432/postgres\" npx prisma db push)",
+      "Bash(DATABASE_URL=\"postgresql://postgres.cycnpvdwdufbcqjejcky:Aiyhs%40Aiyhs@aws-1-eu-central-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1\" npx prisma db push)",
+      "Bash(git init *)"
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #fffbf0;
+  --color-primary: #6c31e3;
+  --color-success: #2ecc71;
+  --color-danger: #e74c3c;
+  --color-warning: #f1c40f;
+  --color-dark: #1a1a2e;
+  --color-surface: #ffffff;
+  --color-muted: #f1efe8;
+}
+
+body {
+  background: #fffbf0;
+  color: #1a1a2e;
+  font-family: "Nunito", system-ui, sans-serif;
+}
+
+/* Arabic: fall back to system fonts that support Arabic script */
+:lang(ar) {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}

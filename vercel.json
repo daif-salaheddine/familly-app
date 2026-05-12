@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/penalties/weekly",
+      "schedule": "0 23 * * 0"
+    },
+    {
+      "path": "/api/digest",
+      "schedule": "0 8 * * 1"
+    },
+    {
+      "path": "/api/pot/proposals/expire",
+      "schedule": "0 * * * *"
+    }
+  ]
+}
