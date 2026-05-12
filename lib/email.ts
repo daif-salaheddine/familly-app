@@ -63,6 +63,60 @@ function ctaButton(href: string, label: string): string {
   </table>`;
 }
 
+// ─── Shared email translations ────────────────────────────────────────────────
+
+const ET = {
+  nomination: {
+    EN: {
+      title:    (n: string) => `📬 New nomination, ${n}!`,
+      body:     (from: string) => `<strong>${from}</strong> just nominated a goal for you:`,
+      penalty:  (amt: string) => `€${amt} / week penalty`,
+      cta:      "Review nomination →",
+      subject:  (from: string) => `${from} nominated a goal for you`,
+      action:   "Head to the app to accept or decline. If you accept, it becomes your Slot 2 goal.",
+    },
+    FR: {
+      title:    (n: string) => `📬 Nouvelle nomination, ${n} !`,
+      body:     (from: string) => `<strong>${from}</strong> vient de te nommer un objectif :`,
+      penalty:  (amt: string) => `€${amt} / semaine de pénalité`,
+      cta:      "Voir la nomination →",
+      subject:  (from: string) => `${from} t'a nominé un objectif`,
+      action:   "Accède à l'appli pour accepter ou refuser. Si tu acceptes, ça devient ton objectif Slot 2.",
+    },
+    AR: {
+      title:    (n: string) => `📬 ترشيح جديد، ${n}!`,
+      body:     (from: string) => `قام <strong>${from}</strong> بترشيح هدف لك:`,
+      penalty:  (amt: string) => `€${amt} غرامة / أسبوع`,
+      cta:      "مراجعة الترشيح ←",
+      subject:  (from: string) => `${from} رشّحك لهدف`,
+      action:   "افتح التطبيق للقبول أو الرفض. إذا قبلت، يصبح هدفك في الخانة الثانية.",
+    },
+  },
+  challenge: {
+    EN: {
+      title:    (n: string) => `⚡ Challenge time, ${n}!`,
+      missed:   "You've missed <strong>2 weeks in a row</strong> on:",
+      body:     "Your family is now suggesting challenge actions. Pick one, complete it, and upload your proof to get back on track. You have <strong>7 days</strong>.",
+      cta:      "See my challenge →",
+      subject:  "⚡ You have a new challenge!",
+    },
+    FR: {
+      title:    (n: string) => `⚡ Défi en cours, ${n} !`,
+      missed:   "Tu as raté <strong>2 semaines de suite</strong> sur :",
+      body:     "Ta famille suggère des actions de défi. Choisis-en une, complète-la et télécharge ta preuve pour te remettre sur les rails. Tu as <strong>7 jours</strong>.",
+      cta:      "Voir mon défi →",
+      subject:  "⚡ Tu as un nouveau défi !",
+    },
+    AR: {
+      title:    (n: string) => `⚡ وقت التحدي، ${n}!`,
+      missed:   "لقد فاتك <strong>أسبوعان متتاليان</strong> على:",
+      body:     "عائلتك الآن تقترح تحديات. اختر واحدة، أتمّها، وارفع دليلك للعودة إلى المسار. لديك <strong>7 أيام</strong>.",
+      cta:      "رؤية تحديي ←",
+      subject:  "⚡ لديك تحدٍّ جديد!",
+    },
+  },
+} as const;
+
 /** Sends a password-reset email. `token` is the RAW token — not stored in DB. */
 export async function sendPasswordReset(
   to: string,
@@ -114,52 +168,55 @@ export async function sendNominationEmail(
   recipientName: string,
   nominatorName: string,
   goalTitle: string,
-  penaltyAmount: number
+  penaltyAmount: number,
+  language: "EN" | "FR" | "AR" = "EN"
 ): Promise<void> {
+  const nt = ET.nomination[language] ?? ET.nomination.EN;
   const url = `${BASE_URL()}/nominations`;
   const html = emailWrap(`
     <p style="margin:0 0 6px;font-size:20px;font-weight:800;color:#1a1a2e;">
-      📬 New nomination, ${recipientName}!
+      ${nt.title(recipientName)}
     </p>
     <p style="margin:0 0 16px;font-size:15px;color:#555;line-height:1.6;">
-      <strong>${nominatorName}</strong> just nominated a goal for you:
+      ${nt.body(nominatorName)}
     </p>
     <div style="background:#FFFBF0;border:2px solid #1a1a2e;border-radius:12px;padding:14px 18px;margin:0 0 16px;">
       <p style="margin:0;font-size:16px;font-weight:800;color:#1a1a2e;">${goalTitle}</p>
-      <p style="margin:4px 0 0;font-size:13px;color:#888;">€${penaltyAmount.toFixed(2)} / week penalty</p>
+      <p style="margin:4px 0 0;font-size:13px;color:#888;">${nt.penalty(penaltyAmount.toFixed(2))}</p>
     </div>
     <p style="margin:0 0 4px;font-size:14px;color:#555;line-height:1.5;">
-      Head to the app to accept or decline. If you accept, it becomes your Slot 2 goal.
+      ${nt.action}
     </p>
-    ${ctaButton(url, "Review nomination →")}
+    ${ctaButton(url, nt.cta)}
   `);
-  await resend.emails.send({ from: FROM, to, subject: `${nominatorName} nominated a goal for you`, html });
+  await resend.emails.send({ from: FROM, to, subject: nt.subject(nominatorName), html });
 }
 
 /** Sent when a challenge is triggered after 2 consecutive missed weeks. */
 export async function sendChallengeEmail(
   to: string,
   userName: string,
-  goalTitle: string
+  goalTitle: string,
+  language: "EN" | "FR" | "AR" = "EN"
 ): Promise<void> {
+  const ct = ET.challenge[language] ?? ET.challenge.EN;
   const url = `${BASE_URL()}/challenges`;
   const html = emailWrap(`
     <p style="margin:0 0 6px;font-size:20px;font-weight:800;color:#1a1a2e;">
-      ⚡ Challenge time, ${userName}!
+      ${ct.title(userName)}
     </p>
     <p style="margin:0 0 16px;font-size:15px;color:#555;line-height:1.6;">
-      You've missed <strong>2 weeks in a row</strong> on:
+      ${ct.missed}
     </p>
     <div style="background:#fff8e1;border:2px solid #f59e0b;border-radius:12px;padding:14px 18px;margin:0 0 16px;">
       <p style="margin:0;font-size:16px;font-weight:800;color:#1a1a2e;">${goalTitle}</p>
     </div>
     <p style="margin:0 0 4px;font-size:14px;color:#555;line-height:1.5;">
-      Your family is now suggesting challenge actions. Pick one, complete it,
-      and upload your proof to get back on track. You have <strong>7 days</strong>.
+      ${ct.body}
     </p>
-    ${ctaButton(url, "See my challenge →")}
+    ${ctaButton(url, ct.cta)}
   `);
-  await resend.emails.send({ from: FROM, to, subject: "⚡ You have a new challenge!", html });
+  await resend.emails.send({ from: FROM, to, subject: ct.subject, html });
 }
 
 /** Sent to all non-admin members when an admin deletes the group. */
@@ -199,18 +256,65 @@ export interface DigestData {
   pendingNominations: number;
   activeChallenges: number;
   potTotal: number;
+  language: "EN" | "FR" | "AR";
 }
 
+const DT = {
+  EN: {
+    greeting:         (n: string) => `Good morning, ${n}! ☀️`,
+    weekIn:           (g: string) => `Here's your week in <strong>${g}</strong>.`,
+    goalsHeader:      "⚔️ Your goals this week",
+    noGoals:          "No active goals yet.",
+    daily:            "Every day",
+    weekly:           "Once a week",
+    timesPerWeek:     (n: number) => `${n}× per week`,
+    nominationsAlert: (n: number) => `📬 You have <strong>${n}</strong> pending nomination${n > 1 ? "s" : ""} to review.`,
+    challengeAlert:   "⚡ You have an active challenge — don't let it expire!",
+    potLabel:         "💰 Group pot:",
+    cta:              "Open Family Quest →",
+    subject:          (g: string) => `☀️ Your Family Quest week starts now — ${g}`,
+  },
+  FR: {
+    greeting:         (n: string) => `Bonjour, ${n} ! ☀️`,
+    weekIn:           (g: string) => `Voici ta semaine dans <strong>${g}</strong>.`,
+    goalsHeader:      "⚔️ Tes objectifs cette semaine",
+    noGoals:          "Aucun objectif actif pour l'instant.",
+    daily:            "Tous les jours",
+    weekly:           "Une fois par semaine",
+    timesPerWeek:     (n: number) => `${n}× par semaine`,
+    nominationsAlert: (n: number) => `📬 Tu as <strong>${n}</strong> nomination${n > 1 ? "s" : ""} en attente.`,
+    challengeAlert:   "⚡ Tu as un défi actif — ne le laisse pas expirer !",
+    potLabel:         "💰 Cagnotte du groupe :",
+    cta:              "Ouvrir Family Quest →",
+    subject:          (g: string) => `☀️ Ta semaine Family Quest commence — ${g}`,
+  },
+  AR: {
+    greeting:         (n: string) => `صباح الخير، ${n}! ☀️`,
+    weekIn:           (g: string) => `إليك ملخص أسبوعك في <strong>${g}</strong>.`,
+    goalsHeader:      "⚔️ أهدافك هذا الأسبوع",
+    noGoals:          "لا توجد أهداف نشطة حتى الآن.",
+    daily:            "كل يوم",
+    weekly:           "مرة في الأسبوع",
+    timesPerWeek:     (n: number) => `${n}× في الأسبوع`,
+    nominationsAlert: (n: number) => `📬 لديك <strong>${n}</strong> ترشيح معلق للمراجعة.`,
+    challengeAlert:   "⚡ لديك تحدٍّ نشط — لا تدعه ينتهي!",
+    potLabel:         "💰 صندوق المجموعة:",
+    cta:              "افتح Family Quest ←",
+    subject:          (g: string) => `☀️ أسبوعك في Family Quest يبدأ الآن — ${g}`,
+  },
+} as const;
+
 export async function sendDigestEmail(to: string, data: DigestData): Promise<void> {
-  const { userName, groupName, goals, pendingNominations, activeChallenges, potTotal } = data;
+  const { userName, groupName, goals, pendingNominations, activeChallenges, potTotal, language } = data;
+  const t = DT[language] ?? DT.EN;
   const url = BASE_URL();
 
   const goalRows = goals.length > 0
     ? goals.map((g) => {
         const freq =
-          g.frequency === "daily" ? "Every day" :
-          g.frequency === "weekly" ? "Once a week" :
-          `${g.frequency_count}× per week`;
+          g.frequency === "daily" ? t.daily :
+          g.frequency === "weekly" ? t.weekly :
+          t.timesPerWeek(g.frequency_count);
         return `
           <tr>
             <td style="padding:8px 0;border-bottom:1px solid #f1efe8;">
@@ -219,45 +323,45 @@ export async function sendDigestEmail(to: string, data: DigestData): Promise<voi
             </td>
           </tr>`;
       }).join("")
-    : `<tr><td style="padding:8px 0;font-size:14px;color:#aaa;">No active goals yet.</td></tr>`;
+    : `<tr><td style="padding:8px 0;font-size:14px;color:#aaa;">${t.noGoals}</td></tr>`;
 
   const alerts = [
     pendingNominations > 0
-      ? `<p style="margin:0 0 8px;font-size:14px;color:#b36200;">📬 You have <strong>${pendingNominations}</strong> pending nomination${pendingNominations > 1 ? "s" : ""} to review.</p>`
+      ? `<p style="margin:0 0 8px;font-size:14px;color:#b36200;">${t.nominationsAlert(pendingNominations)}</p>`
       : "",
     activeChallenges > 0
-      ? `<p style="margin:0 0 8px;font-size:14px;color:#c0392b;">⚡ You have an active challenge — don't let it expire!</p>`
+      ? `<p style="margin:0 0 8px;font-size:14px;color:#c0392b;">${t.challengeAlert}</p>`
       : "",
   ].filter(Boolean).join("");
 
   const html = emailWrap(`
     <p style="margin:0 0 4px;font-size:20px;font-weight:800;color:#1a1a2e;">
-      Good morning, ${userName}! ☀️
+      ${t.greeting(userName)}
     </p>
-    <p style="margin:0 0 20px;font-size:14px;color:#888;">Here's your week in <strong>${groupName}</strong>.</p>
+    <p style="margin:0 0 20px;font-size:14px;color:#888;">${t.weekIn(groupName)}</p>
 
     ${alerts ? `<div style="background:#fff8e1;border:2px solid #f59e0b;border-radius:10px;padding:12px 16px;margin:0 0 20px;">${alerts}</div>` : ""}
 
     <p style="margin:0 0 8px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#888;">
-      ⚔️ Your goals this week
+      ${t.goalsHeader}
     </p>
     <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
       ${goalRows}
     </table>
 
-    <div style="background:#f8f5ff;border:2px solid #6c31e3;border-radius:10px;padding:12px 16px;margin:0 0 20px;display:flex;align-items:center;gap:8px;">
+    <div style="background:#f8f5ff;border:2px solid #6c31e3;border-radius:10px;padding:12px 16px;margin:0 0 20px;">
       <p style="margin:0;font-size:13px;font-weight:800;color:#6c31e3;">
-        💰 Group pot: <span style="font-size:18px;">€${potTotal.toFixed(2)}</span>
+        ${t.potLabel} <span style="font-size:18px;">€${potTotal.toFixed(2)}</span>
       </p>
     </div>
 
-    ${ctaButton(url, "Open Family Quest →")}
+    ${ctaButton(url, t.cta)}
   `);
 
   await resend.emails.send({
     from: FROM,
     to,
-    subject: `☀️ Your Family Quest week starts now — ${groupName}`,
+    subject: t.subject(groupName),
     html,
   });
 }

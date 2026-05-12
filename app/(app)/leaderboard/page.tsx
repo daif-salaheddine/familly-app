@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "../../../auth";
 import { prisma } from "../../../lib/db";
+import { getActiveGroupId } from "../../../lib/group";
 import Avatar from "../../../components/ui/Avatar";
 import { getTranslations } from "next-intl/server";
 
@@ -65,16 +66,11 @@ export default async function LeaderboardPage() {
 
   const userId = session.user.id;
 
-  const [membership, t] = await Promise.all([
-    prisma.groupMember.findFirst({
-      where: { user_id: userId },
-      select: { group_id: true },
-    }),
+  const [groupId, t] = await Promise.all([
+    getActiveGroupId(userId).catch(() => null),
     getTranslations("leaderboard"),
   ]);
-  if (!membership) redirect("/login");
-
-  const groupId = membership.group_id;
+  if (!groupId) redirect("/groups/new");
 
   const [members, allGoals, allPenalties] = await Promise.all([
     prisma.groupMember.findMany({

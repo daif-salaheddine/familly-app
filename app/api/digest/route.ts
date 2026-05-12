@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
         members: {
           select: {
             user: {
-              select: { id: true, name: true, email: true },
+              select: { id: true, name: true, email: true, language: true },
             },
           },
         },
@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
             pendingNominations,
             activeChallenges,
             potTotal,
+            language: user.language,
           });
 
           emailsSent++;

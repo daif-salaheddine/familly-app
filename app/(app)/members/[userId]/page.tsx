@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "../../../../auth";
 import { prisma } from "../../../../lib/db";
+import { getActiveGroupId } from "../../../../lib/group";
 import type { GoalWithNominator } from "../../../../types";
 import Avatar from "../../../../components/ui/Avatar";
 import { getTranslations } from "next-intl/server";
@@ -25,18 +26,13 @@ export default async function MemberPage({
   const { userId } = await params;
   const currentUserId = session.user.id;
 
-  const [membership, t, tGoals, tCommon] = await Promise.all([
-    prisma.groupMember.findFirst({
-      where: { user_id: currentUserId },
-      select: { group_id: true },
-    }),
+  const [groupId, t, tGoals, tCommon] = await Promise.all([
+    getActiveGroupId(currentUserId).catch(() => null),
     getTranslations("members"),
     getTranslations("goals"),
     getTranslations("common"),
   ]);
-  if (!membership) redirect("/login");
-
-  const groupId = membership.group_id;
+  if (!groupId) redirect("/groups/new");
 
   const [targetUser, activeGoals, pendingNomination, activeChallenge] =
     await Promise.all([

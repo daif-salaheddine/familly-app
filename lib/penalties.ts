@@ -137,9 +137,10 @@ export async function calculatePenalties(
     } else {
       // Missed week — penalty + increment misses + update pot (atomic)
       const newMisses = goal.consecutive_misses + 1;
+      let createdPenaltyId: string | undefined;
 
       await prisma.$transaction(async (tx) => {
-        await tx.penalty.create({
+        const penalty = await tx.penalty.create({
           data: {
             user_id: goal.user_id,
             goal_id: goal.id,
@@ -149,6 +150,7 @@ export async function calculatePenalties(
             period_end: periodEnd,
           },
         });
+        createdPenaltyId = penalty.id;
 
         await tx.goal.update({
           where: { id: goal.id },
@@ -166,6 +168,10 @@ export async function calculatePenalties(
       });
 
       penaltiesCreated++;
+
+      if (createdPenaltyId) {
+        void createNotification(goal.user_id, "goal_missed", createdPenaltyId);
+      }
 
       // Trigger challenge on exactly 2 consecutive misses
       if (newMisses === 2) {

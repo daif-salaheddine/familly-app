@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { Notification, NotificationType } from "../../app/generated/prisma/client";
+import { playNominationReceived, playChallengeTriggered, playPenaltyAdded } from "../../lib/sounds";
 
 const TYPE_META: Record<
   NotificationType,
@@ -38,6 +39,9 @@ export default function NotificationList({
   async function handleClick(notification: Notification) {
     const config = TYPE_META[notification.type];
     if (!notification.is_read) {
+      if (notification.type === "nomination_received") playNominationReceived();
+      if (notification.type === "challenge_triggered") playChallengeTriggered();
+      if (notification.type === "goal_missed")         playPenaltyAdded();
       void fetch(`/api/notifications/${notification.id}/read`, { method: "POST" });
     }
     router.push(config.href);

@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { auth } from "../../../../../auth";
 import { prisma } from "../../../../../lib/db";
+import { getActiveGroupId } from "../../../../../lib/group";
 import SuggestForm from "../../../../../components/challenges/SuggestForm";
 import { getTranslations } from "next-intl/server";
 
@@ -17,14 +18,11 @@ export default async function SuggestPage({
 
   if (userId === currentUserId) notFound();
 
-  const [membership, t] = await Promise.all([
-    prisma.groupMember.findFirst({
-      where: { user_id: currentUserId },
-      select: { group_id: true },
-    }),
+  const [groupId, t] = await Promise.all([
+    getActiveGroupId(currentUserId).catch(() => null),
     getTranslations("challenges"),
   ]);
-  if (!membership) redirect("/login");
+  if (!groupId) redirect("/groups/new");
 
   const [targetUser, activeChallenge] = await Promise.all([
     prisma.user.findUnique({
@@ -34,7 +32,7 @@ export default async function SuggestPage({
     prisma.challenge.findFirst({
       where: {
         user_id: userId,
-        group_id: membership.group_id,
+        group_id: groupId,
         status: { in: ["pending_suggestions", "pending_choice"] },
       },
       include: {

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import Avatar from "../ui/Avatar";
+import { playPenaltyAdded } from "../../lib/sounds";
 
 interface Member {
   id: string;
@@ -146,9 +147,11 @@ export default function GroupSettingsPanel({
 
   async function runPenalties() {
     setRunningPenalties(true);
-    await fetch(`/api/groups/${groupId}/run-penalties`, { method: "POST" });
+    const res = await fetch(`/api/groups/${groupId}/run-penalties`, { method: "POST" });
+    const json = await res.json().catch(() => ({}));
     setRunningPenalties(false);
     setPenaltiesDone(true);
+    if ((json.data?.penaltiesCreated ?? 0) > 0) playPenaltyAdded();
     setTimeout(() => { setPenaltiesDone(false); router.refresh(); }, 2000);
   }
 

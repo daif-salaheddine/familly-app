@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "../../../auth";
-import { prisma } from "../../../lib/db";
 import { getGroupFeed } from "../../../lib/feed";
+import { getActiveGroupId } from "../../../lib/group";
 import FeedItem from "../../../components/feed/FeedItem";
 import { getTranslations } from "next-intl/server";
 import { getCurrentWeekNumber } from "../../../lib/checkins";
@@ -15,16 +15,13 @@ export default async function FeedPage({
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const [membership, t] = await Promise.all([
-    prisma.groupMember.findFirst({
-      where: { user_id: session.user.id },
-      select: { group_id: true },
-    }),
+  const [groupId, t] = await Promise.all([
+    getActiveGroupId(session.user.id).catch(() => null),
     getTranslations("feed"),
   ]);
-  if (!membership) redirect("/login");
+  if (!groupId) redirect("/groups/new");
 
-  const items = await getGroupFeed(membership.group_id);
+  const items = await getGroupFeed(groupId);
   const weekNumber = getCurrentWeekNumber();
 
   return (

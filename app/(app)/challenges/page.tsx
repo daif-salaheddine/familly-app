@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "../../../auth";
-import { prisma } from "../../../lib/db";
 import { getGroupChallenges } from "../../../lib/challenges";
+import { getActiveGroupId } from "../../../lib/group";
 import MyChallengeCard from "../../../components/challenges/MyChallengeCard";
 import OtherChallengeCard from "../../../components/challenges/OtherChallengeCard";
 import { getTranslations } from "next-intl/server";
@@ -12,16 +12,13 @@ export default async function ChallengesPage() {
 
   const userId = session.user.id;
 
-  const [membership, t] = await Promise.all([
-    prisma.groupMember.findFirst({
-      where: { user_id: userId },
-      select: { group_id: true },
-    }),
+  const [groupId, t] = await Promise.all([
+    getActiveGroupId(userId).catch(() => null),
     getTranslations("challenges"),
   ]);
-  if (!membership) redirect("/login");
+  if (!groupId) redirect("/groups/new");
 
-  const challenges = await getGroupChallenges(membership.group_id);
+  const challenges = await getGroupChallenges(groupId);
 
   const myChallenge = challenges.find((c) => c.user_id === userId) ?? null;
   const otherChallenges = challenges.filter((c) => c.user_id !== userId);

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "../../../../../auth";
 import { prisma } from "../../../../../lib/db";
+import { getActiveGroupId } from "../../../../../lib/group";
 import CreateGoalForm from "../../../../../components/goals/CreateGoalForm";
 import { getTranslations } from "next-intl/server";
 
@@ -18,19 +19,16 @@ export default async function NewGoalPage({
   const slot: "self" | "nominated" =
     rawSlot === "nominated" ? "nominated" : "self";
 
-  const [membership, t] = await Promise.all([
-    prisma.groupMember.findFirst({
-      where: { user_id: session.user.id },
-      select: { group_id: true },
-    }),
+  const [groupId, t] = await Promise.all([
+    getActiveGroupId(session.user.id).catch(() => null),
     getTranslations("goals"),
   ]);
-  if (!membership) redirect("/profile");
+  if (!groupId) redirect("/groups/new");
 
   const existing = await prisma.goal.findFirst({
     where: {
       user_id: session.user.id,
-      group_id: membership.group_id,
+      group_id: groupId,
       slot,
       status: "active",
     },

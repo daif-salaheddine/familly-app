@@ -96,7 +96,15 @@ export function playClick() {
   void play((ac) => n(ac, "sine", 600, 0.07, 0, 0.045));
 }
 
-// 8. Goal completed — C5 E5 G5 E5 G5 C6 (last note held)
+// 8. Penalty / coin drop — G3 E3 C3 (descending sawtooth)
+export function playPenaltyAdded() {
+  void play((ac) => {
+    [[196, 0], [165, 0.18], [131, 0.36]].forEach(([hz, at]) =>
+      n(ac, "sawtooth", hz, 0.18, at, 0.28));
+  });
+}
+
+// 9. Goal completed — C5 E5 G5 E5 G5 C6 (last note held)
 export function playGoalCompleted() {
   void play((ac) => {
     [[523, 0], [659, 0.14], [784, 0.28], [659, 0.42], [784, 0.56], [1047, 0.70]].forEach(

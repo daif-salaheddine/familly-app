@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth } from "../../../auth";
 import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/db";
+import { getActiveGroupId } from "../../../lib/group";
 import type { GoalWithNominator } from "../../../types";
 import AvatarUpload from "../../../components/ui/AvatarUpload";
 import LanguageSelector from "../../../components/ui/LanguageSelector";
@@ -25,18 +26,13 @@ export default async function ProfilePage() {
 
   const userId = session.user.id;
 
-  const [membership, tProfile, tGoals, tCommon] = await Promise.all([
-    prisma.groupMember.findFirst({
-      where: { user_id: userId },
-      select: { group_id: true },
-    }),
+  const [groupId, tProfile, tGoals, tCommon] = await Promise.all([
+    getActiveGroupId(userId).catch(() => null),
     getTranslations("profile"),
     getTranslations("goals"),
     getTranslations("common"),
   ]);
-  if (!membership) redirect("/login");
-
-  const groupId = membership.group_id;
+  if (!groupId) redirect("/groups/new");
 
   const { weekNumber, year } = getCurrentWeekPeriod();
   const monthStart = new Date(Date.UTC(year, new Date().getUTCMonth(), 1));

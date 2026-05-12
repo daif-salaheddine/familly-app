@@ -50,7 +50,7 @@ async function sendNominationTransactional(
 ): Promise<void> {
   try {
     const [recipient, nomination] = await Promise.all([
-      prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true } }),
+      prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true, language: true } }),
       prisma.nomination.findUnique({
         where: { id: nominationId },
         select: {
@@ -66,7 +66,8 @@ async function sendNominationTransactional(
       recipient.name,
       nomination.fromUser.name,
       nomination.title,
-      Number(nomination.penalty_amount)
+      Number(nomination.penalty_amount),
+      recipient.language
     );
   } catch (err) {
     console.error("[notifications] nomination email failed:", err);
@@ -79,14 +80,14 @@ async function sendChallengeTransactional(
 ): Promise<void> {
   try {
     const [user, challenge] = await Promise.all([
-      prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true } }),
+      prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true, language: true } }),
       prisma.challenge.findUnique({
         where: { id: challengeId },
         select: { goal: { select: { title: true } } },
       }),
     ]);
     if (!user || !challenge) return;
-    await sendChallengeEmail(user.email, user.name, challenge.goal.title);
+    await sendChallengeEmail(user.email, user.name, challenge.goal.title, user.language);
   } catch (err) {
     console.error("[notifications] challenge email failed:", err);
   }

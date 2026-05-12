@@ -1,7 +1,7 @@
 import { auth } from "../../../auth";
 import { redirect } from "next/navigation";
-import { prisma } from "../../../lib/db";
 import { getNominationsForUser } from "../../../lib/nominations";
+import { getActiveGroupId } from "../../../lib/group";
 import NominationCard from "../../../components/nominations/NominationCard";
 import { getTranslations } from "next-intl/server";
 
@@ -11,16 +11,13 @@ export default async function NominationsPage() {
 
   const userId = session.user.id;
 
-  const [membership, t] = await Promise.all([
-    prisma.groupMember.findFirst({
-      where: { user_id: userId },
-      select: { group_id: true },
-    }),
+  const [groupId, t] = await Promise.all([
+    getActiveGroupId(userId).catch(() => null),
     getTranslations("nominations"),
   ]);
-  if (!membership) redirect("/login");
+  if (!groupId) redirect("/groups/new");
 
-  const nominations = await getNominationsForUser(userId, membership.group_id);
+  const nominations = await getNominationsForUser(userId, groupId);
 
   return (
     <div className="flex flex-col gap-6">

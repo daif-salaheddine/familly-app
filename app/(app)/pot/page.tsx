@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "../../../auth";
-import { prisma } from "../../../lib/db";
 import { getPot, getProposals } from "../../../lib/pot";
+import { getActiveGroupId } from "../../../lib/group";
 import ProposalCard from "../../../components/pot/ProposalCard";
 import ProposeForm from "../../../components/pot/ProposeForm";
 import { getTranslations } from "next-intl/server";
@@ -12,16 +12,11 @@ export default async function PotPage() {
 
   const userId = session.user.id;
 
-  const [membership, t] = await Promise.all([
-    prisma.groupMember.findFirst({
-      where: { user_id: userId },
-      select: { group_id: true },
-    }),
+  const [groupId, t] = await Promise.all([
+    getActiveGroupId(userId).catch(() => null),
     getTranslations("pot"),
   ]);
-  if (!membership) redirect("/login");
-
-  const groupId = membership.group_id;
+  if (!groupId) redirect("/groups/new");
 
   const [{ pot, penalties }, proposals] = await Promise.all([
     getPot(groupId),
