@@ -8,7 +8,7 @@ import { getCurrentWeekNumber } from "./checkins";
 export const createGoalSchema = z.object({
   title: z.string().min(1, "Title is required").max(100),
   category: z.enum(["body", "mind", "soul", "work", "relationships"]),
-  slot: z.enum(["self", "nominated"]),
+  slot: z.literal("self"),
   frequency: z.enum(["daily", "times_per_week", "weekly"]),
   frequency_count: z.number().int().min(1).max(7),
   penalty_amount: z.number().positive("Penalty must be greater than 0"),

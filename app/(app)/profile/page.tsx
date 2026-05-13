@@ -250,14 +250,14 @@ export default async function ProfilePage() {
       );
     }
     return (
-      <Link href="/profile/goals/new?slot=nominated" style={baseStyle} className="hover:opacity-80 transition-opacity">
+      <div style={baseStyle}>
         <p style={{ fontFamily: "Nunito, sans-serif", fontWeight: 700, fontSize: "13px", color: "#888" }}>
           {tGoals("slot2Empty")}
         </p>
         <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "11px", color: "#aaa", marginTop: "4px" }}>
-          {tGoals("fillYourself")}
+          {tGoals("slot2WaitingNomination")}
         </p>
-      </Link>
+      </div>
     );
   }
 

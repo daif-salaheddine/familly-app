@@ -16,8 +16,9 @@ export default async function NewGoalPage({
   if (!session?.user?.id) redirect("/login");
 
   const { slot: rawSlot } = await searchParams;
-  const slot: "self" | "nominated" =
-    rawSlot === "nominated" ? "nominated" : "self";
+  if (rawSlot === "nominated") redirect("/profile");
+
+  const slot: "self" = "self";
 
   const [groupId, t] = await Promise.all([
     getActiveGroupId(session.user.id).catch(() => null),
