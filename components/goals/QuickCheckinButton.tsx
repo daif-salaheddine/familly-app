@@ -32,7 +32,7 @@ export default function QuickCheckinButton({ goalId, done, required, checkedInTo
       const res = await fetch(`/api/goals/${goalId}/checkin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ checkin_date: today }),
+        body: JSON.stringify({ checkin_date: today, count: 1 }),
       });
 
       if (res.ok) {

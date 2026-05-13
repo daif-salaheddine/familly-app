@@ -47,15 +47,17 @@ export function getCurrentWeekPeriod(date: Date = new Date()): WeekPeriod {
   };
 }
 
-/** How many checkins exist for a goal in a given week. */
+/** Total checkin units for a goal in a given week (sum of count field). */
 export async function getWeeklyCheckinCount(
   goalId: string,
   weekNumber: number,
   year: number
 ): Promise<number> {
-  return prisma.checkin.count({
+  const result = await prisma.checkin.aggregate({
     where: { goal_id: goalId, week_number: weekNumber, year },
+    _sum: { count: true },
   });
+  return result._sum.count ?? 0;
 }
 
 /** True if a penalty was already recorded for this goal+week — prevents duplicates. */

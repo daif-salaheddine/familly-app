@@ -249,11 +249,11 @@ export async function getWeeklyProgressForGoals(
       week_number: weekNumber,
       year,
     },
-    _count: { _all: true },
+    _sum: { count: true },
   });
 
   const countMap = new Map<string, number>(
-    counts.map((c) => [c.goal_id, c._count._all])
+    counts.map((c) => [c.goal_id, c._sum.count ?? 0])
   );
 
   const result = new Map<string, { done: number; required: number }>();

@@ -71,7 +71,7 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
   }
 
   async function handleDeleteAccount() {
-    if (deleteInput !== "DELETE" || deleting) return;
+    if (deleteInput !== t("deleteConfirmWord") || deleting) return;
     setDeleting(true);
     setDeleteError(null);
     try {
@@ -423,7 +423,7 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
               </button>
               <button
                 onClick={handleDeleteAccount}
-                disabled={deleteInput !== "DELETE" || deleting}
+                disabled={deleteInput !== t("deleteConfirmWord") || deleting}
                 style={{
                   flex: 1,
                   padding: "10px",
@@ -432,10 +432,10 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
                   fontSize: "14px",
                   border: "2px solid #1a1a2e",
                   borderRadius: "100px",
-                  background: deleteInput === "DELETE" && !deleting ? "#c0392b" : "#e0e0e0",
-                  color: deleteInput === "DELETE" && !deleting ? "#ffffff" : "#999",
-                  cursor: deleteInput === "DELETE" && !deleting ? "pointer" : "default",
-                  boxShadow: deleteInput === "DELETE" && !deleting ? "2px 2px 0 #1a1a2e" : "none",
+                  background: deleteInput === t("deleteConfirmWord") && !deleting ? "#c0392b" : "#e0e0e0",
+                  color: deleteInput === t("deleteConfirmWord") && !deleting ? "#ffffff" : "#999",
+                  cursor: deleteInput === t("deleteConfirmWord") && !deleting ? "pointer" : "default",
+                  boxShadow: deleteInput === t("deleteConfirmWord") && !deleting ? "2px 2px 0 #1a1a2e" : "none",
                   transition: "background 0.15s",
                 }}
               >

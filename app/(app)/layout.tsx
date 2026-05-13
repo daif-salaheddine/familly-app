@@ -37,6 +37,10 @@ export default async function AppLayout({
     redirect("/onboarding");
   }
 
+  if (!currentUser?.email_verified) {
+    redirect("/verify-email");
+  }
+
   // Logged in + onboarded but not in any group → send to group creation.
   // Read the injected header (set by middleware) to avoid redirecting
   // /groups/new itself into an infinite loop.

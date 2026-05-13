@@ -20,6 +20,7 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [count, setCount] = useState(1);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isVideo, setIsVideo] = useState(false);
@@ -79,6 +80,7 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          count,
           media_url: mediaUrl,
           caption: caption || undefined,
           checkin_date: today,
@@ -100,6 +102,39 @@ export default function CheckinForm({ goalId }: { goalId: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      {/* Session count */}
+      <div className="flex flex-col gap-1">
+        <label
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#1a1a2e",
+          }}
+        >
+          {t("sessionsToday")}
+        </label>
+        <input
+          type="number"
+          min={1}
+          max={20}
+          value={count}
+          onChange={(e) => setCount(Math.max(1, Math.min(20, Number(e.target.value))))}
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#1a1a2e",
+            background: "#ffffff",
+            border: "2px solid #1a1a2e",
+            borderRadius: "10px",
+            padding: "8px 12px",
+            outline: "none",
+            width: "100%",
+          }}
+        />
+      </div>
+
       {/* File picker */}
       <div className="flex flex-col gap-2">
         <label

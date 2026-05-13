@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { prisma } from "./db";
 import type { NominationWithUsers } from "../types";
+import { getCurrentWeekPeriod } from "./penalties";
 
 // ─── Zod schemas ────────────────────────────────────────────────────────────
 
@@ -61,19 +62,20 @@ export async function createNomination(
   groupId: string,
   data: CreateNominationInput
 ): Promise<NominationWithUsers> {
-  // Block if nominator already has a pending nomination to the same target
-  const existing = await prisma.nomination.findFirst({
+  // Block if nominator already sent a nomination to the same target this week
+  const { periodStart, periodEnd } = getCurrentWeekPeriod();
+  const existingThisWeek = await prisma.nomination.findFirst({
     where: {
       from_user_id: fromUserId,
       to_user_id: data.to_user_id,
-      status: "pending",
+      created_at: { gte: periodStart, lte: periodEnd },
     },
   });
-  if (existing) {
+  if (existingThisWeek) {
     throw new Response(
       JSON.stringify({
         data: null,
-        error: "You already have a pending nomination to this person",
+        error: "You already nominated this person this week",
       }),
       { status: 409, headers: { "Content-Type": "application/json" } }
     );
