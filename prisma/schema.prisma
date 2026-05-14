@@ -97,6 +97,7 @@ model User {
   avatar_url        String?
   language          Language  @default(EN)
   has_onboarded     Boolean   @default(false)
+  digest_enabled       Boolean   @default(true)
   reset_token          String?
   reset_expires_at     DateTime?
   verification_token   String?

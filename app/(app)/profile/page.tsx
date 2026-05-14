@@ -4,8 +4,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/db";
 import { getActiveGroupId } from "../../../lib/group";
 import type { GoalWithNominator } from "../../../types";
-import AvatarUpload from "../../../components/ui/AvatarUpload";
-import LanguageSelector from "../../../components/ui/LanguageSelector";
+import Avatar from "../../../components/ui/Avatar";
 import FreezeWeekButton from "../../../components/profile/FreezeWeekButton";
 import QuickCheckinButton from "../../../components/goals/QuickCheckinButton";
 import { getTranslations } from "next-intl/server";
@@ -274,9 +273,10 @@ export default async function ProfilePage() {
         }}
       >
         <div className="flex items-center gap-4">
-          <AvatarUpload
+          <Avatar
             name={session.user.name!}
-            initialUrl={currentUser?.avatar_url ?? null}
+            url={currentUser?.avatar_url ?? null}
+            size="lg"
           />
           <div className="flex-1 min-w-0">
             <h1
@@ -313,9 +313,6 @@ export default async function ProfilePage() {
           )}
         </div>
       </div>
-
-      {/* Language selector */}
-      <LanguageSelector current={currentUser?.language ?? "EN"} />
 
       {/* Active slots */}
       <div>

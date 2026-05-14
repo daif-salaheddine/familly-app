@@ -25,10 +25,6 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
   const t = useTranslations("common.profileMenu");
 
   const [open, setOpen] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteInput, setDeleteInput] = useState("");
-  const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -48,10 +44,7 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
   // Close on Escape
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        setOpen(false);
-        setShowDeleteModal(false);
-      }
+      if (e.key === "Escape") setOpen(false);
     }
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
@@ -61,33 +54,6 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
     setSigningOut(true);
     setOpen(false);
     await signOutAction();
-  }
-
-  function openDeleteModal() {
-    setOpen(false);
-    setDeleteInput("");
-    setDeleteError(null);
-    setShowDeleteModal(true);
-  }
-
-  async function handleDeleteAccount() {
-    if (deleteInput !== t("deleteConfirmWord") || deleting) return;
-    setDeleting(true);
-    setDeleteError(null);
-    try {
-      const res = await fetch("/api/user/delete", { method: "DELETE" });
-      if (res.ok) {
-        // Account deleted — sign out via server action (clears the session cookie)
-        await signOutAction();
-        return;
-      }
-      const body = await res.json().catch(() => ({}));
-      setDeleteError(body?.error ?? "Something went wrong. Please try again.");
-    } catch {
-      setDeleteError("Network error. Please try again.");
-    } finally {
-      setDeleting(false);
-    }
   }
 
   const menuItemStyle: React.CSSProperties = {
@@ -294,157 +260,14 @@ export default function ProfileDropdown({ name, email, avatarUrl, currentLanguag
           <button
             onClick={handleSignOut}
             disabled={signingOut}
-            style={{ ...menuItemStyle, width: "100%" }}
+            style={{ ...menuItemStyle, width: "100%", paddingBottom: "14px" }}
             className="hover:bg-[#f0ebff]"
           >
             <span>🚪</span> {signingOut ? "…" : t("signOut")}
           </button>
-
-          {/* Delete account */}
-          <button
-            onClick={openDeleteModal}
-            style={{
-              ...menuItemStyle,
-              width: "100%",
-              color: "#c0392b",
-              paddingBottom: "14px",
-            }}
-            className="hover:bg-red-50"
-          >
-            <span>🗑️</span> {t("deleteAccount")}
-          </button>
         </div>
       </div>
 
-      {/* Delete account modal */}
-      {showDeleteModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(26,26,46,0.6)",
-            zIndex: 200,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "16px",
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowDeleteModal(false);
-          }}
-        >
-          <div
-            style={{
-              background: "#FFFBF0",
-              border: "3px solid #1a1a2e",
-              borderRadius: "20px",
-              boxShadow: "5px 5px 0 #1a1a2e",
-              padding: "24px",
-              width: "100%",
-              maxWidth: "380px",
-            }}
-          >
-            <p
-              style={{
-                fontFamily: "Bangers, cursive",
-                fontSize: "22px",
-                letterSpacing: "1px",
-                color: "#c0392b",
-                marginBottom: "12px",
-              }}
-            >
-              🗑️ {t("deleteTitle")}
-            </p>
-            <p
-              style={{
-                fontFamily: "Nunito, sans-serif",
-                fontSize: "14px",
-                color: "#555",
-                lineHeight: 1.6,
-                marginBottom: "20px",
-              }}
-            >
-              {t("deleteWarning")}
-            </p>
-
-            <input
-              type="text"
-              value={deleteInput}
-              onChange={(e) => setDeleteInput(e.target.value)}
-              placeholder={t("deleteConfirmPlaceholder")}
-              autoFocus
-              style={{
-                width: "100%",
-                padding: "10px 14px",
-                fontFamily: "Nunito, sans-serif",
-                fontWeight: 700,
-                fontSize: "14px",
-                border: "2px solid #1a1a2e",
-                borderRadius: "10px",
-                background: "#fff",
-                marginBottom: deleteError ? "8px" : "16px",
-                boxSizing: "border-box",
-              }}
-            />
-
-            {deleteError && (
-              <p
-                style={{
-                  fontFamily: "Nunito, sans-serif",
-                  fontSize: "13px",
-                  fontWeight: 700,
-                  color: "#c0392b",
-                  marginBottom: "12px",
-                  lineHeight: 1.4,
-                }}
-              >
-                ⚠️ {deleteError}
-              </p>
-            )}
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  fontFamily: "Nunito, sans-serif",
-                  fontWeight: 800,
-                  fontSize: "14px",
-                  border: "2px solid #1a1a2e",
-                  borderRadius: "100px",
-                  background: "#ffffff",
-                  color: "#1a1a2e",
-                  cursor: "pointer",
-                  boxShadow: "2px 2px 0 #1a1a2e",
-                }}
-              >
-                {t("deleteCancel")}
-              </button>
-              <button
-                onClick={handleDeleteAccount}
-                disabled={deleteInput !== t("deleteConfirmWord") || deleting}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  fontFamily: "Nunito, sans-serif",
-                  fontWeight: 800,
-                  fontSize: "14px",
-                  border: "2px solid #1a1a2e",
-                  borderRadius: "100px",
-                  background: deleteInput === t("deleteConfirmWord") && !deleting ? "#c0392b" : "#e0e0e0",
-                  color: deleteInput === t("deleteConfirmWord") && !deleting ? "#ffffff" : "#999",
-                  cursor: deleteInput === t("deleteConfirmWord") && !deleting ? "pointer" : "default",
-                  boxShadow: deleteInput === t("deleteConfirmWord") && !deleting ? "2px 2px 0 #1a1a2e" : "none",
-                  transition: "background 0.15s",
-                }}
-              >
-                {deleting ? "…" : t("deleteConfirmButton")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

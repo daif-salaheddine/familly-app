@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
         members: {
           select: {
             user: {
-              select: { id: true, name: true, email: true, language: true },
+              select: { id: true, name: true, email: true, language: true, digest_enabled: true },
             },
           },
         },
@@ -49,6 +49,8 @@ export async function POST(req: NextRequest) {
               },
             }),
           ]);
+
+          if (user.digest_enabled === false) continue;
 
           await sendDigestEmail(user.email, {
             userName: user.name,
