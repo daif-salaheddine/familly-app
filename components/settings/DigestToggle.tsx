@@ -34,27 +34,43 @@ export default function DigestToggle({ initialEnabled }: { initialEnabled: boole
           {t("digestHint")}
         </p>
       </div>
+
+      {/* Toggle switch */}
       <button
+        role="switch"
+        aria-checked={enabled}
         onClick={handleToggle}
         disabled={saving}
         style={{
           flexShrink: 0,
-          fontFamily: "Nunito, sans-serif",
-          fontWeight: 800,
-          fontSize: "13px",
-          padding: "8px 18px",
+          position: "relative",
+          width: "52px",
+          height: "28px",
           borderRadius: "100px",
           border: "2px solid #1a1a2e",
           boxShadow: "2px 2px 0 #1a1a2e",
-          background: enabled ? "#2ecc71" : "#ffffff",
-          color: enabled ? "#1a1a2e" : "#888",
+          background: enabled ? "#2ecc71" : "#d0cdc6",
           cursor: saving ? "default" : "pointer",
-          transition: "background 0.15s, color 0.15s",
-          whiteSpace: "nowrap",
-          opacity: saving ? 0.6 : 1,
+          transition: "background 0.2s",
+          padding: 0,
+          opacity: saving ? 0.7 : 1,
         }}
       >
-        {enabled ? t("digestEnabled") : t("digestDisabled")}
+        {/* Knob */}
+        <span
+          style={{
+            position: "absolute",
+            top: "3px",
+            left: enabled ? "calc(100% - 22px)" : "3px",
+            width: "18px",
+            height: "18px",
+            borderRadius: "50%",
+            background: "#ffffff",
+            border: "2px solid #1a1a2e",
+            transition: "left 0.2s",
+            display: "block",
+          }}
+        />
       </button>
     </div>
   );
