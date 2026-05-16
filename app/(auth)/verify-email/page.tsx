@@ -1,8 +1,20 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { auth } from "../../../auth";
+import { prisma } from "../../../lib/db";
 
 export default async function VerifyEmailPage() {
   const t = await getTranslations("emailVerification");
+
+  const session = await auth();
+  let userEmail: string | null = null;
+  if (session?.user?.id) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { email: true },
+    });
+    userEmail = user?.email ?? null;
+  }
 
   return (
     <div
@@ -55,6 +67,19 @@ export default async function VerifyEmailPage() {
             >
               {t("sentBody")}
             </p>
+            {userEmail && (
+              <p
+                style={{
+                  fontFamily: "Nunito, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: 800,
+                  color: "#6c31e3",
+                  wordBreak: "break-all",
+                }}
+              >
+                {userEmail}
+              </p>
+            )}
             <Link
               href="/login"
               style={{

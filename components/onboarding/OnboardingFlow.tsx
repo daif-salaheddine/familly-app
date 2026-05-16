@@ -315,6 +315,7 @@ export default function OnboardingFlow({
           {step === "verify" && (
             <VerifyEmailStep
               onVerified={() => { playAcceptNomination(); setStep(4); }}
+              userEmail={userEmail}
               copy={copy}
             />
           )}
@@ -580,9 +581,11 @@ function AvatarStep({
 
 function VerifyEmailStep({
   onVerified,
+  userEmail,
   copy,
 }: {
   onVerified: () => void;
+  userEmail: string;
   copy: (typeof COPY)["EN"];
 }) {
   const [checking, setChecking] = useState(false);
@@ -635,6 +638,18 @@ function VerifyEmailStep({
         <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 600, color: "#888", marginTop: "6px", lineHeight: 1.5 }}>
           {copy.verifySub}
         </p>
+        {userEmail && (
+          <p style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "14px",
+            fontWeight: 800,
+            color: "#6c31e3",
+            marginTop: "8px",
+            wordBreak: "break-all",
+          }}>
+            {userEmail}
+          </p>
+        )}
       </div>
 
       {error && (
