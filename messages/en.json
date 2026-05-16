@@ -127,7 +127,16 @@
     "sentBody": "We sent a verification link to your email address. Click it to activate your account.",
     "backToLogin": "← Back to sign in",
     "banner": "📩 Please verify your email address — check your inbox for the link.",
-    "successBanner": "✅ Email verified! You can now sign in."
+    "successBanner": "✅ Email verified! You can now sign in.",
+    "resend": "Resend email",
+    "resent": "Email sent! Check your inbox.",
+    "changeEmail": "Change email",
+    "newEmailPlaceholder": "New email address",
+    "updateEmail": "Update & resend →",
+    "back": "← Back",
+    "saving": "Saving…",
+    "errorInUse": "This email is already in use.",
+    "errorGeneric": "Something went wrong. Please try again."
   },
   "register": {
     "title": "Family Quest",

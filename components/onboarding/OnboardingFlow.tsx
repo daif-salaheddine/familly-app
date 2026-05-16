@@ -38,6 +38,9 @@ const COPY: Record<
     verifyResent: string;
     verifyNotYet: string;
     verifyAlreadyDone: string;
+    verifyChangeEmail: string;
+    verifyNewEmailPlaceholder: string;
+    verifyUpdateEmail: string;
     // Story + Rules
     storyScreens: { hook?: string; body: string }[];
     ruleScreens: { emoji: string; title: string; body: string }[];
@@ -71,6 +74,9 @@ const COPY: Record<
     verifyResent: "Email sent! Check your inbox.",
     verifyNotYet: "Not verified yet. Click the link in the email we sent you, then try again.",
     verifyAlreadyDone: "Already verified!",
+    verifyChangeEmail: "Change email",
+    verifyNewEmailPlaceholder: "New email address",
+    verifyUpdateEmail: "Update & resend →",
     storyScreens: [
       { body: "You love the people around you. But life pulled you all in different directions." },
       { body: "Different cities. Different schedules. Different worlds." },
@@ -116,6 +122,9 @@ const COPY: Record<
     verifyResent: "Email envoyé ! Vérifie ta boîte.",
     verifyNotYet: "Pas encore vérifié. Clique sur le lien dans l'email qu'on t'a envoyé, puis réessaie.",
     verifyAlreadyDone: "Déjà vérifié !",
+    verifyChangeEmail: "Changer d'email",
+    verifyNewEmailPlaceholder: "Nouvelle adresse email",
+    verifyUpdateEmail: "Mettre à jour et renvoyer →",
     storyScreens: [
       { body: "Tu aimes les gens qui t'entourent. Mais la vie vous a tous éloignés." },
       { body: "Villes différentes. Horaires différents. Mondes différents." },
@@ -161,6 +170,9 @@ const COPY: Record<
     verifyResent: "تم الإرسال! تحقق من بريدك.",
     verifyNotYet: "لم يتم التحقق بعد. انقر على الرابط في البريد الذي أرسلناه، ثم حاول مجدداً.",
     verifyAlreadyDone: "تم التحقق مسبقاً!",
+    verifyChangeEmail: "تغيير البريد",
+    verifyNewEmailPlaceholder: "عنوان البريد الجديد",
+    verifyUpdateEmail: "تحديث وإعادة الإرسال →",
     storyScreens: [
       { body: "أنت تحب من حولك. لكن الحياة سحبتكم جميعاً في اتجاهات مختلفة." },
       { body: "مدن مختلفة. جداول مختلفة. عوالم مختلفة." },
@@ -591,11 +603,19 @@ function VerifyEmailStep({
   const [checking, setChecking] = useState(false);
   const [resending, setResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [resentMsg, setResentMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [showChangeEmail, setShowChangeEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [changingEmail, setChangingEmail] = useState(false);
+  const [currentEmail, setCurrentEmail] = useState(userEmail);
+
+  function clearMessages() {
+    setError(null);
+    setSuccessMsg(null);
+  }
 
   async function handleVerified() {
-    setError(null);
-    setResentMsg(null);
+    clearMessages();
     setChecking(true);
     try {
       const res = await fetch("/api/user/verify-status");
@@ -613,12 +633,11 @@ function VerifyEmailStep({
   }
 
   async function handleResend() {
-    setError(null);
-    setResentMsg(null);
+    clearMessages();
     setResending(true);
     try {
       await fetch("/api/auth/resend-verification", { method: "POST" });
-      setResentMsg(copy.verifyResent);
+      setSuccessMsg(copy.verifyResent);
     } catch {
       // silently ignore
     } finally {
@@ -626,9 +645,34 @@ function VerifyEmailStep({
     }
   }
 
+  async function handleChangeEmail(e: React.FormEvent) {
+    e.preventDefault();
+    clearMessages();
+    setChangingEmail(true);
+    try {
+      const res = await fetch("/api/user/email", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newEmail }),
+      });
+      const json = await res.json();
+      if (!res.ok || json.error) {
+        setError(json.error ?? "Something went wrong.");
+      } else {
+        setCurrentEmail(newEmail);
+        setNewEmail("");
+        setShowChangeEmail(false);
+        setSuccessMsg(copy.verifyResent);
+      }
+    } catch {
+      setError("Something went wrong.");
+    } finally {
+      setChangingEmail(false);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-5">
-      {/* Icon */}
       <div style={{ textAlign: "center", fontSize: "48px", lineHeight: 1 }}>📧</div>
 
       <div>
@@ -638,16 +682,9 @@ function VerifyEmailStep({
         <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 600, color: "#888", marginTop: "6px", lineHeight: 1.5 }}>
           {copy.verifySub}
         </p>
-        {userEmail && (
-          <p style={{
-            fontFamily: "Nunito, sans-serif",
-            fontSize: "14px",
-            fontWeight: 800,
-            color: "#6c31e3",
-            marginTop: "8px",
-            wordBreak: "break-all",
-          }}>
-            {userEmail}
+        {currentEmail && (
+          <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "14px", fontWeight: 800, color: "#6c31e3", marginTop: "8px", wordBreak: "break-all" }}>
+            {currentEmail}
           </p>
         )}
       </div>
@@ -655,8 +692,8 @@ function VerifyEmailStep({
       {error && (
         <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 700, color: "#e74c3c" }}>{error}</p>
       )}
-      {resentMsg && (
-        <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 700, color: "#2ecc71" }}>{resentMsg}</p>
+      {successMsg && (
+        <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 700, color: "#2ecc71" }}>{successMsg}</p>
       )}
 
       <button
@@ -674,18 +711,77 @@ function VerifyEmailStep({
         {checking ? copy.saving : copy.verifyButton}
       </button>
 
-      <button
-        onClick={handleResend}
-        disabled={resending}
-        style={{
-          fontFamily: "Nunito, sans-serif", fontWeight: 700, fontSize: "13px",
-          background: "transparent", color: "#888", border: "none",
-          padding: "4px", cursor: resending ? "not-allowed" : "pointer",
-          alignSelf: "center", opacity: resending ? 0.5 : 1,
-        }}
-      >
-        {resending ? copy.saving : copy.verifyResend}
-      </button>
+      {/* Resend + Change email links */}
+      <div style={{ display: "flex", justifyContent: "center", gap: "16px" }}>
+        <button
+          onClick={handleResend}
+          disabled={resending}
+          style={{
+            fontFamily: "Nunito, sans-serif", fontWeight: 700, fontSize: "13px",
+            background: "transparent", color: "#888", border: "none",
+            padding: "4px", cursor: resending ? "not-allowed" : "pointer",
+            opacity: resending ? 0.5 : 1, textDecoration: "underline",
+          }}
+        >
+          {resending ? copy.saving : copy.verifyResend}
+        </button>
+        <button
+          onClick={() => { clearMessages(); setShowChangeEmail((v) => !v); }}
+          style={{
+            fontFamily: "Nunito, sans-serif", fontWeight: 700, fontSize: "13px",
+            background: "transparent", color: "#888", border: "none",
+            padding: "4px", cursor: "pointer", textDecoration: "underline",
+          }}
+        >
+          {copy.verifyChangeEmail}
+        </button>
+      </div>
+
+      {/* Change email inline form */}
+      {showChangeEmail && (
+        <form onSubmit={handleChangeEmail} className="flex flex-col gap-3">
+          <input
+            type="email"
+            required
+            value={newEmail}
+            onChange={(e) => setNewEmail(e.target.value)}
+            placeholder={copy.verifyNewEmailPlaceholder}
+            style={{
+              fontFamily: "Nunito, sans-serif", fontSize: "14px", fontWeight: 600,
+              color: "#1a1a2e", background: "#ffffff", border: "2px solid #1a1a2e",
+              borderRadius: "10px", padding: "10px 14px", outline: "none", width: "100%",
+            }}
+          />
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => { setShowChangeEmail(false); setNewEmail(""); }}
+              style={{
+                fontFamily: "Nunito, sans-serif", fontWeight: 700, fontSize: "13px",
+                background: "#ffffff", color: "#1a1a2e", border: "2px solid #1a1a2e",
+                borderRadius: "100px", boxShadow: "2px 2px 0 #1a1a2e",
+                padding: "8px 16px", cursor: "pointer",
+              }}
+            >
+              {copy.back}
+            </button>
+            <button
+              type="submit"
+              disabled={changingEmail}
+              style={{
+                fontFamily: "Nunito, sans-serif", fontWeight: 800, fontSize: "14px",
+                background: changingEmail ? "#9b7fd4" : "#6c31e3", color: "#ffffff",
+                border: "2px solid #1a1a2e", borderRadius: "100px",
+                boxShadow: changingEmail ? "none" : "2px 2px 0 #1a1a2e",
+                padding: "8px 20px", cursor: changingEmail ? "not-allowed" : "pointer",
+                flex: 1, opacity: changingEmail ? 0.7 : 1,
+              }}
+            >
+              {changingEmail ? copy.saving : copy.verifyUpdateEmail}
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

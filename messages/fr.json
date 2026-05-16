@@ -127,7 +127,16 @@
     "sentBody": "Nous avons envoyé un lien de vérification à votre adresse e-mail. Cliquez dessus pour activer votre compte.",
     "backToLogin": "← Retour à la connexion",
     "banner": "📩 Veuillez vérifier votre adresse e-mail — consultez votre boîte de réception.",
-    "successBanner": "✅ E-mail vérifié ! Vous pouvez maintenant vous connecter."
+    "successBanner": "✅ E-mail vérifié ! Vous pouvez maintenant vous connecter.",
+    "resend": "Renvoyer l'email",
+    "resent": "Email envoyé ! Vérifie ta boîte.",
+    "changeEmail": "Changer d'email",
+    "newEmailPlaceholder": "Nouvelle adresse email",
+    "updateEmail": "Mettre à jour et renvoyer →",
+    "back": "← Retour",
+    "saving": "Enregistrement…",
+    "errorInUse": "Cette adresse email est déjà utilisée.",
+    "errorGeneric": "Une erreur s'est produite. Réessaie."
   },
   "register": {
     "title": "Family Quest",
