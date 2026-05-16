@@ -845,20 +845,22 @@ function StoryAndRulesFlow({
   async function finish() {
     if (completing) return;
     setCompleting(true);
-    let finalHasGroup = hasGroup;
+    let finalHasGroup = hasGroup ?? false;
 
-    if (skipPasswordStep) {
-      try {
-        const res = await fetch("/api/user/onboard", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ language: lang }),
-        });
-        const json = await res.json();
-        finalHasGroup = json.data?.hasGroup ?? false;
-      } catch {
-        finalHasGroup = false;
-      }
+    // Always call onboard API to guarantee has_onboarded = true.
+    // Email users: sets language + has_onboarded (password was set at registration).
+    // OAuth users who set a password in step 2: idempotent re-call, fetches hasGroup.
+    // OAuth users who skipped step 2: only call here — this is what marks them as onboarded.
+    try {
+      const res = await fetch("/api/user/onboard", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language: lang }),
+      });
+      const json = await res.json();
+      finalHasGroup = json.data?.hasGroup ?? false;
+    } catch {
+      // keep finalHasGroup as-is
     }
 
     router.push(finalHasGroup ? "/profile" : "/groups/new");

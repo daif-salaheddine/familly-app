@@ -479,7 +479,12 @@
     "digestDisabled": "Désactivé",
     "dangerZone": "Zone dangereuse",
     "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
-    "saving": "Enregistrement…"
+    "saving": "Enregistrement…",
+    "googleSection": "Compte Google",
+    "googleConnected": "Google",
+    "googleLinked": "Connecté",
+    "googleConnectHint": "Associe ton compte Google pour te connecter avec Google en plus de ton mot de passe.",
+    "googleConnect": "Connecter le compte Google"
   },
   "stats": {
     "title": "Mes Stats",

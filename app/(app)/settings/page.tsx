@@ -8,6 +8,7 @@ import DisplayNameForm from "../../../components/settings/DisplayNameForm";
 import PasswordChangeForm from "../../../components/settings/PasswordChangeForm";
 import DigestToggle from "../../../components/settings/DigestToggle";
 import DeleteAccountSection from "../../../components/settings/DeleteAccountSection";
+import GoogleConnectButton from "../../../components/settings/GoogleConnectButton";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -86,6 +87,12 @@ export default async function SettingsPage() {
           <PasswordChangeForm />
         </div>
       )}
+
+      {/* Google account */}
+      <div style={cardStyle}>
+        <p style={sectionTitle}>🔗 {t("googleSection")}</p>
+        <GoogleConnectButton connected={isGoogleUser} />
+      </div>
 
       {/* Email digest */}
       <div style={cardStyle}>

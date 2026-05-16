@@ -479,7 +479,12 @@
     "digestDisabled": "Off",
     "dangerZone": "Danger zone",
     "errorGeneric": "Something went wrong. Please try again.",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "googleSection": "Google account",
+    "googleConnected": "Google",
+    "googleLinked": "Connected",
+    "googleConnectHint": "Link your Google account to sign in with Google in addition to your password.",
+    "googleConnect": "Connect Google account"
   },
   "stats": {
     "title": "My Stats",

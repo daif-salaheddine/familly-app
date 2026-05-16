@@ -479,7 +479,12 @@
     "digestDisabled": "معطّل",
     "dangerZone": "منطقة الخطر",
     "errorGeneric": "حدث خطأ ما. يرجى المحاولة مجدداً.",
-    "saving": "جارٍ الحفظ…"
+    "saving": "جارٍ الحفظ…",
+    "googleSection": "حساب Google",
+    "googleConnected": "Google",
+    "googleLinked": "مرتبط",
+    "googleConnectHint": "اربط حساب Google الخاص بك لتتمكن من تسجيل الدخول بـ Google بالإضافة إلى كلمة مرورك.",
+    "googleConnect": "ربط حساب Google"
   },
   "stats": {
     "title": "إحصائياتي",
