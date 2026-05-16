@@ -35,18 +35,32 @@ export default function RegisterForm() {
   return (
     <div className="flex flex-col gap-4">
       <form action={formAction} className="flex flex-col gap-4">
-        {/* Name */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="name" style={labelStyle}>{t("name")}</label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            required
-            autoComplete="name"
-            placeholder={t("namePlaceholder")}
-            style={inputStyle}
-          />
+        {/* First name + Last name */}
+        <div className="flex gap-3">
+          <div className="flex flex-col gap-1 flex-1">
+            <label htmlFor="firstName" style={labelStyle}>{t("firstName")}</label>
+            <input
+              id="firstName"
+              name="firstName"
+              type="text"
+              required
+              autoComplete="given-name"
+              placeholder={t("firstNamePlaceholder")}
+              style={inputStyle}
+            />
+          </div>
+          <div className="flex flex-col gap-1 flex-1">
+            <label htmlFor="lastName" style={labelStyle}>{t("lastName")}</label>
+            <input
+              id="lastName"
+              name="lastName"
+              type="text"
+              required
+              autoComplete="family-name"
+              placeholder={t("lastNamePlaceholder")}
+              style={inputStyle}
+            />
+          </div>
         </div>
 
         {/* Email */}

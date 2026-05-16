@@ -132,8 +132,6 @@
   "register": {
     "title": "Family Quest",
     "subtitle": "أنشئ حسابك",
-    "name": "اسمك",
-    "namePlaceholder": "مثال: سارة",
     "email": "البريد الإلكتروني",
     "emailPlaceholder": "you@example.com",
     "password": "كلمة المرور",
@@ -143,7 +141,11 @@
     "orDivider": "أو",
     "signUpWithGoogle": "التسجيل بـ Google",
     "alreadyHaveAccount": "لديك حساب بالفعل؟",
-    "signInLink": "تسجيل الدخول"
+    "signInLink": "تسجيل الدخول",
+    "firstName": "الاسم الأول",
+    "firstNamePlaceholder": "مثال: سارة",
+    "lastName": "اسم العائلة",
+    "lastNamePlaceholder": "مثال: أحمد"
   },
   "profile": {
     "activeGoals": "الأهداف النشطة",
@@ -236,7 +238,6 @@
     "uploading": "جارٍ الرفع…",
     "fileTypeError": "نوع الملف غير مسموح. استخدم صورًا أو فيديو.",
     "fileSizeError": "حجم الملف يتجاوز 50 ميغابايت",
-    "editGoal": "تعديل الهدف",
     "editCancel": "إلغاء",
     "editSave": "حفظ التغييرات",
     "editSaving": "جارٍ الحفظ…",
@@ -435,7 +436,13 @@
     "step2bLabel": "أرِنا وجهك!",
     "step2bSub": "أضف صورة ملفك الشخصي حتى تتعرف عليك عائلتك.",
     "step2bSkip": "تخطَّ الآن",
-    "step3Label": "جولة في التطبيق"
+    "step3Label": "جولة في التطبيق",
+    "verifyTitle": "تحقق من بريدك",
+    "verifySub": "أرسلنا لك رابط التحقق على بريدك الإلكتروني. انقر عليه قبل المتابعة.",
+    "verifyButton": "تحققت من بريدي →",
+    "verifyResend": "إعادة إرسال البريد",
+    "verifyResent": "تم الإرسال! تحقق من بريدك.",
+    "verifyNotYet": "لم يتم التحقق بعد. انقر على الرابط في البريد الذي أرسلناه، ثم حاول مجدداً."
   },
   "userSettings": {
     "title": "الإعدادات",

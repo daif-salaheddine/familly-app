@@ -30,6 +30,15 @@ const COPY: Record<
     passwordTooShort: string;
     saving: string;
     continue: string;
+    // Email verification step
+    verifyTitle: string;
+    verifySub: string;
+    verifyButton: string;
+    verifyResend: string;
+    verifyResent: string;
+    verifyNotYet: string;
+    verifyAlreadyDone: string;
+    // Story + Rules
     storyScreens: { hook?: string; body: string }[];
     ruleScreens: { emoji: string; title: string; body: string }[];
     tapToContinue: string;
@@ -41,37 +50,44 @@ const COPY: Record<
 > = {
   EN: {
     dir: "ltr",
-    welcomeTitle: "Welcome to the family!",
-    welcomeSub: "Let's get you set up in 3 quick steps.",
+    welcomeTitle: "Welcome!",
+    welcomeSub: "Let's get you set up in a few quick steps.",
     step1Title: "Pick your language",
-    step1Sub: "You can change this any time in your profile.",
+    step1Sub: "You can change this any time in Settings.",
     step2Title: "Add a backup password",
     step2Sub: "Optional — lets you sign in without Google. Skip if you prefer.",
     step2bTitle: "Show your face!",
-    step2bSub: "Add a profile photo so your family recognizes you.",
+    step2bSub: "Add a profile photo so the people you love recognize you.",
     newPassword: "New password",
     confirmPassword: "Confirm password",
     passwordMismatch: "Passwords don't match.",
     passwordTooShort: "Password must be at least 8 characters.",
     saving: "Saving…",
     continue: "Continue →",
+    verifyTitle: "Check your inbox",
+    verifySub: "We sent a verification link to your email. Click it before continuing — it only takes a second.",
+    verifyButton: "I've verified →",
+    verifyResend: "Resend email",
+    verifyResent: "Email sent! Check your inbox.",
+    verifyNotYet: "Not verified yet. Click the link in the email we sent you, then try again.",
+    verifyAlreadyDone: "Already verified!",
     storyScreens: [
-      { body: "You love your family. But life pulled you in different directions." },
+      { body: "You love the people around you. But life pulled you all in different directions." },
       { body: "Different cities. Different schedules. Different worlds." },
       { body: "The calls became shorter. The 'I'll start Monday' became a habit. And somewhere along the way, you stopped growing — together." },
-      { hook: "Family Quest changes that.", body: "One goal. One week. Real money on the line. And your family watching." },
-      { hook: "Because nothing pushes you harder than the people who know exactly what you're capable of.", body: "Welcome to the pact. Don't let your family down." },
+      { hook: "This changes today.", body: "One goal. One week. Real money on the line. And the people who love you watching." },
+      { hook: "Nothing pushes you harder than the people who know exactly what you're capable of.", body: "Welcome to the pact. Don't let them down." },
     ],
     ruleScreens: [
-      { emoji: "⚔️", title: "Goals", body: "You get 2 goal slots. Slot 1 is yours to choose. Slot 2 comes from your family — they nominate, you decide." },
+      { emoji: "⚔️", title: "Goals", body: "You get 2 goal slots. Slot 1 is yours to choose. Slot 2 is nominated by the people around you — you decide which one to accept." },
       { emoji: "📅", title: "Weekly Cycle", body: "Every week runs Monday to Sunday. Check in with proof to show you showed up." },
-      { emoji: "💸", title: "Penalties", body: "Miss a week? Money goes straight to the family pot. No excuses." },
-      { emoji: "⚡", title: "Consecutive Misses", body: "Miss 2 weeks in a row and your family assigns you a real-life challenge. Complete it or face another penalty." },
-      { emoji: "💰", title: "The Pot", body: "Every penalty feeds the pot. When it grows big enough, the family votes together on how to spend it." },
+      { emoji: "💸", title: "Penalties", body: "Miss a week? Money goes straight to the shared pot. No excuses." },
+      { emoji: "⚡", title: "Consecutive Misses", body: "Miss 2 weeks in a row and the group assigns you a real-life challenge. Complete it or face another penalty." },
+      { emoji: "💰", title: "The Pot", body: "Every penalty feeds the pot. When it grows big enough, everyone votes together on how to spend it." },
       { emoji: "📬", title: "Nominations", body: "See someone slacking? Nominate a goal for them. One nomination per person at a time." },
-      { emoji: "🚀", title: "Ready?", body: "The pact starts now. Set your first goal. Your family is watching." },
+      { emoji: "🚀", title: "Ready?", body: "The pact starts now. Set your first goal. The people you love are watching." },
     ],
-    tapToContinue: "Tap to continue",
+    tapToContinue: "Tap anywhere to continue",
     letsGo: "Let's go →",
     next: "Next →",
     back: "← Back",
@@ -79,37 +95,44 @@ const COPY: Record<
   },
   FR: {
     dir: "ltr",
-    welcomeTitle: "Bienvenue dans la famille !",
-    welcomeSub: "Configurons ton compte en 3 étapes rapides.",
+    welcomeTitle: "Bienvenue !",
+    welcomeSub: "Configurons ton compte en quelques étapes rapides.",
     step1Title: "Choisis ta langue",
-    step1Sub: "Tu peux la changer à tout moment dans ton profil.",
+    step1Sub: "Tu peux la changer à tout moment dans les paramètres.",
     step2Title: "Ajoute un mot de passe de secours",
     step2Sub: "Optionnel — pour te connecter sans Google. Tu peux passer.",
     step2bTitle: "Montre ton visage !",
-    step2bSub: "Ajoute une photo de profil pour que ta famille te reconnaisse.",
+    step2bSub: "Ajoute une photo de profil pour que les gens que tu aimes te reconnaissent.",
     newPassword: "Nouveau mot de passe",
     confirmPassword: "Confirmer le mot de passe",
     passwordMismatch: "Les mots de passe ne correspondent pas.",
     passwordTooShort: "Le mot de passe doit comporter au moins 8 caractères.",
     saving: "Enregistrement…",
     continue: "Continuer →",
+    verifyTitle: "Vérifie ta boîte mail",
+    verifySub: "Nous t'avons envoyé un lien de vérification. Clique dessus avant de continuer — ça ne prend qu'une seconde.",
+    verifyButton: "J'ai vérifié →",
+    verifyResend: "Renvoyer l'email",
+    verifyResent: "Email envoyé ! Vérifie ta boîte.",
+    verifyNotYet: "Pas encore vérifié. Clique sur le lien dans l'email qu'on t'a envoyé, puis réessaie.",
+    verifyAlreadyDone: "Déjà vérifié !",
     storyScreens: [
-      { body: "Tu aimes ta famille. Mais la vie vous a éloignés les uns des autres." },
+      { body: "Tu aimes les gens qui t'entourent. Mais la vie vous a tous éloignés." },
       { body: "Villes différentes. Horaires différents. Mondes différents." },
       { body: "Les appels sont devenus plus courts. Le 'Je commence lundi' est devenu une habitude. Et quelque part en chemin, vous avez cessé de grandir — ensemble." },
-      { hook: "Family Quest change ça.", body: "Un objectif. Une semaine. De l'argent en jeu. Et ta famille qui regarde." },
-      { hook: "Parce que rien ne te pousse plus fort que les gens qui savent exactement ce dont tu es capable.", body: "Bienvenue dans le pacte. Ne déçois pas ta famille." },
+      { hook: "Ça change aujourd'hui.", body: "Un objectif. Une semaine. De l'argent en jeu. Et ceux qui t'aiment qui regardent." },
+      { hook: "Rien ne te pousse plus fort que ceux qui savent exactement ce dont tu es capable.", body: "Bienvenue dans le pacte. Ne les déçois pas." },
     ],
     ruleScreens: [
-      { emoji: "⚔️", title: "Objectifs", body: "Tu as 2 emplacements d'objectifs. L'emplacement 1 est le tien. L'emplacement 2 vient de ta famille — ils nomment, tu décides." },
+      { emoji: "⚔️", title: "Objectifs", body: "Tu as 2 emplacements d'objectifs. L'emplacement 1 est le tien. L'emplacement 2 est proposé par ceux qui t'entourent — tu décides lequel accepter." },
       { emoji: "📅", title: "Cycle Hebdomadaire", body: "Chaque semaine va du lundi au dimanche. Enregistre-toi avec une preuve pour montrer que tu t'es présenté." },
-      { emoji: "💸", title: "Pénalités", body: "Tu rates une semaine ? L'argent va directement dans la cagnotte familiale. Pas d'excuses." },
-      { emoji: "⚡", title: "Ratages Consécutifs", body: "Tu rates 2 semaines de suite et ta famille te confie un défi réel. Accomplis-le ou fais face à une autre pénalité." },
-      { emoji: "💰", title: "La Cagnotte", body: "Chaque pénalité alimente la cagnotte. Quand elle grossit assez, la famille vote ensemble sur la façon de la dépenser." },
+      { emoji: "💸", title: "Pénalités", body: "Tu rates une semaine ? L'argent va directement dans la cagnotte commune. Pas d'excuses." },
+      { emoji: "⚡", title: "Ratages Consécutifs", body: "Tu rates 2 semaines de suite et le groupe te confie un défi réel. Accomplis-le ou fais face à une autre pénalité." },
+      { emoji: "💰", title: "La Cagnotte", body: "Chaque pénalité alimente la cagnotte. Quand elle grossit assez, tout le monde vote ensemble sur la façon de la dépenser." },
       { emoji: "📬", title: "Nominations", body: "Tu vois quelqu'un se relâcher ? Nommine-lui un objectif. Une nomination par personne à la fois." },
-      { emoji: "🚀", title: "Prêt ?", body: "Le pacte commence maintenant. Fixe ton premier objectif. Ta famille regarde." },
+      { emoji: "🚀", title: "Prêt ?", body: "Le pacte commence maintenant. Fixe ton premier objectif. Ceux que tu aimes regardent." },
     ],
-    tapToContinue: "Appuie pour continuer",
+    tapToContinue: "Appuie n'importe où pour continuer",
     letsGo: "C'est parti →",
     next: "Suivant →",
     back: "← Retour",
@@ -117,37 +140,44 @@ const COPY: Record<
   },
   AR: {
     dir: "rtl",
-    welcomeTitle: "أهلاً بك في العائلة!",
-    welcomeSub: "لنُعِدَّ حسابك في 3 خطوات سريعة.",
+    welcomeTitle: "أهلاً بك!",
+    welcomeSub: "لنُعِدَّ حسابك في بضع خطوات سريعة.",
     step1Title: "اختر لغتك",
-    step1Sub: "يمكنك تغييرها في أي وقت من ملفك الشخصي.",
+    step1Sub: "يمكنك تغييرها في أي وقت من الإعدادات.",
     step2Title: "أضف كلمة مرور احتياطية",
     step2Sub: "اختياري — للدخول بدون Google. يمكنك تخطّي هذه الخطوة.",
     step2bTitle: "أرِنا وجهك!",
-    step2bSub: "أضف صورة ملفك الشخصي حتى تتعرف عليك عائلتك.",
+    step2bSub: "أضف صورة ملفك الشخصي حتى يتعرف عليك من تحبهم.",
     newPassword: "كلمة مرور جديدة",
     confirmPassword: "تأكيد كلمة المرور",
     passwordMismatch: "كلمتا المرور غير متطابقتين.",
     passwordTooShort: "يجب أن تكون كلمة المرور 8 أحرف على الأقل.",
     saving: "جارٍ الحفظ…",
     continue: "متابعة →",
+    verifyTitle: "تحقق من بريدك",
+    verifySub: "أرسلنا لك رابط التحقق على بريدك الإلكتروني. انقر عليه قبل المتابعة — لن يأخذ سوى ثانية.",
+    verifyButton: "تحققت من بريدي →",
+    verifyResend: "إعادة إرسال البريد",
+    verifyResent: "تم الإرسال! تحقق من بريدك.",
+    verifyNotYet: "لم يتم التحقق بعد. انقر على الرابط في البريد الذي أرسلناه، ثم حاول مجدداً.",
+    verifyAlreadyDone: "تم التحقق مسبقاً!",
     storyScreens: [
-      { body: "أنت تحب عائلتك. لكن الحياة سحبتكم في اتجاهات مختلفة." },
+      { body: "أنت تحب من حولك. لكن الحياة سحبتكم جميعاً في اتجاهات مختلفة." },
       { body: "مدن مختلفة. جداول مختلفة. عوالم مختلفة." },
       { body: "أصبحت المكالمات أقصر. وأصبح 'سأبدأ يوم الاثنين' عادة. وفي مكان ما على الطريق، توقفتم عن النمو — معاً." },
-      { hook: "Family Quest يغيّر ذلك.", body: "هدف واحد. أسبوع واحد. مال حقيقي على المحك. وعائلتك تراقب." },
-      { hook: "لأنه لا شيء يدفعك أكثر من الأشخاص الذين يعرفون تماماً ما أنت قادر عليه.", body: "مرحباً بك في الميثاق. لا تخذل عائلتك." },
+      { hook: "هذا يتغير اليوم.", body: "هدف واحد. أسبوع واحد. مال حقيقي على المحك. ومن تحبهم يراقبون." },
+      { hook: "لا شيء يدفعك أكثر ممن يعرفون تماماً ما أنت قادر عليه.", body: "مرحباً بك في الميثاق. لا تخذلهم." },
     ],
     ruleScreens: [
-      { emoji: "⚔️", title: "الأهداف", body: "لديك خانتان للأهداف. الخانة 1 تختارها أنت. الخانة 2 تأتي من عائلتك — هم يرشحون، وأنت تقرر." },
+      { emoji: "⚔️", title: "الأهداف", body: "لديك خانتان للأهداف. الخانة 1 تختارها أنت. الخانة 2 يُرشِّحها من حولك — وأنت تقرر أيّها تقبل." },
       { emoji: "📅", title: "الدورة الأسبوعية", body: "كل أسبوع يمتد من الاثنين إلى الأحد. سجّل حضورك بدليل لتُثبت أنك التزمت." },
-      { emoji: "💸", title: "الغرامات", body: "فاتك أسبوع؟ المال يذهب مباشرة إلى صندوق العائلة. لا عذر." },
-      { emoji: "⚡", title: "الأخطاء المتتالية", body: "فاتك أسبوعان متتاليان وعائلتك ستكلّفك بتحدٍّ حقيقي. أكمله أو واجه غرامة أخرى." },
-      { emoji: "💰", title: "الصندوق", body: "كل غرامة تُغذّي الصندوق. عندما يكبر بما يكفي، تصوّت العائلة معاً على كيفية إنفاقه." },
+      { emoji: "💸", title: "الغرامات", body: "فاتك أسبوع؟ المال يذهب مباشرة إلى الصندوق المشترك. لا عذر." },
+      { emoji: "⚡", title: "الأخطاء المتتالية", body: "فاتك أسبوعان متتاليان والمجموعة ستكلّفك بتحدٍّ حقيقي. أكمله أو واجه غرامة أخرى." },
+      { emoji: "💰", title: "الصندوق", body: "كل غرامة تُغذّي الصندوق. عندما يكبر بما يكفي، يُصوِّت الجميع معاً على كيفية إنفاقه." },
       { emoji: "📬", title: "الترشيحات", body: "ترى أحداً يتهاون؟ رشّح له هدفاً. ترشيح واحد لكل شخص في كل مرة." },
-      { emoji: "🚀", title: "هل أنت مستعد؟", body: "الميثاق يبدأ الآن. ضع هدفك الأول. عائلتك تراقب." },
+      { emoji: "🚀", title: "هل أنت مستعد؟", body: "الميثاق يبدأ الآن. ضع هدفك الأول. من تحبهم يراقبون." },
     ],
-    tapToContinue: "اضغط للمتابعة",
+    tapToContinue: "اضغط في أي مكان للمتابعة",
     letsGo: "هيا نبدأ →",
     next: "التالي →",
     back: "→ رجوع",
@@ -165,15 +195,42 @@ const LANG_OPTIONS: { code: Lang; flag: string; label: string }[] = [
 // Root component
 // ---------------------------------------------------------------------------
 
-export default function OnboardingFlow({ userName, skipPasswordStep }: { userName: string; skipPasswordStep: boolean }) {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+type Step = 1 | 2 | 3 | "verify" | 4;
+
+export default function OnboardingFlow({
+  userName,
+  userEmail,
+  skipPasswordStep,
+  emailVerified,
+}: {
+  userName: string;
+  userEmail: string;
+  skipPasswordStep: boolean;
+  emailVerified: boolean;
+}) {
+  const [step, setStep] = useState<Step>(1);
   const [lang, setLang] = useState<Lang>("EN");
   const [hasGroup, setHasGroup] = useState<boolean | null>(null);
 
   const copy = COPY[lang];
 
-  const visibleSteps = skipPasswordStep ? ([1, 3, 4] as const) : ([1, 2, 3, 4] as const);
-  const visualStep = visibleSteps.indexOf(step as never) + 1;
+  // Build the visual step sequence (for progress dots on steps 1-3)
+  // verify and 4 get their own full-screen UI, so not included in dots
+  const dotSteps: Step[] = skipPasswordStep ? [1, 3] : [1, 2, 3];
+  if (!emailVerified) dotSteps.push("verify");
+  const visualStep = dotSteps.indexOf(step) + 1;
+
+  const showDots = step !== 4;
+  const showCard = step !== 4;
+
+  function nextAfterAvatar() {
+    playClick();
+    if (!emailVerified) {
+      setStep("verify");
+    } else {
+      setStep(4);
+    }
+  }
 
   return (
     <div
@@ -181,14 +238,14 @@ export default function OnboardingFlow({ userName, skipPasswordStep }: { userNam
       dir={copy.dir}
       style={{ background: "#FFFBF0" }}
     >
-      {/* Progress dots — hidden when on story/rules (step 4) since overlay covers them */}
-      {step !== 4 && (
+      {/* Progress dots — steps 1 through verify */}
+      {showDots && (
         <div className="flex gap-2 mb-8">
-          {visibleSteps.map((_, i) => {
+          {dotSteps.map((_, i) => {
             const dotNumber = i + 1;
             return (
               <div
-                key={dotNumber}
+                key={i}
                 style={{
                   width: dotNumber === visualStep ? "28px" : "10px",
                   height: "10px",
@@ -203,35 +260,20 @@ export default function OnboardingFlow({ userName, skipPasswordStep }: { userNam
         </div>
       )}
 
-      {/* Welcome line (shown on step 1 only) */}
+      {/* Welcome line (step 1 only) */}
       {step === 1 && (
         <div className="text-center mb-6">
-          <p
-            style={{
-              fontFamily: "Nunito, sans-serif",
-              fontSize: "15px",
-              fontWeight: 700,
-              color: "#888",
-            }}
-          >
-            {copy.welcomeSub.replace("3", String(visibleSteps.length))}
+          <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "15px", fontWeight: 700, color: "#888" }}>
+            {copy.welcomeSub}
           </p>
-          <h1
-            style={{
-              fontFamily: "Bangers, cursive",
-              fontSize: "30px",
-              letterSpacing: "1.5px",
-              color: "#1a1a2e",
-              marginTop: "4px",
-            }}
-          >
-            {userName ? `${copy.welcomeTitle.split("!")[0]}, ${userName}!` : copy.welcomeTitle}
+          <h1 style={{ fontFamily: "Bangers, cursive", fontSize: "30px", letterSpacing: "1.5px", color: "#1a1a2e", marginTop: "4px" }}>
+            {userName ? `${copy.welcomeTitle.replace("!", "")}, ${userName}!` : copy.welcomeTitle}
           </h1>
         </div>
       )}
 
-      {/* Card wrapper */}
-      {step !== 4 && (
+      {/* Card wrapper for steps 1–3 and verify */}
+      {showCard && (
         <div
           className="w-full max-w-sm"
           style={{
@@ -266,13 +308,20 @@ export default function OnboardingFlow({ userName, skipPasswordStep }: { userNam
           {step === 3 && (
             <AvatarStep
               userName={userName}
-              onAdvance={() => { playClick(); setStep(4); }}
+              onAdvance={nextAfterAvatar}
+              copy={copy}
+            />
+          )}
+          {step === "verify" && (
+            <VerifyEmailStep
+              onVerified={() => { playAcceptNomination(); setStep(4); }}
               copy={copy}
             />
           )}
         </div>
       )}
 
+      {/* Story + Rules — full-screen overlay */}
       {step === 4 && (
         <StoryAndRulesFlow
           copy={copy}
@@ -303,25 +352,10 @@ function LanguageStep({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2
-          style={{
-            fontFamily: "Bangers, cursive",
-            fontSize: "22px",
-            letterSpacing: "1px",
-            color: "#1a1a2e",
-          }}
-        >
+        <h2 style={{ fontFamily: "Bangers, cursive", fontSize: "22px", letterSpacing: "1px", color: "#1a1a2e" }}>
           {copy.step1Title}
         </h2>
-        <p
-          style={{
-            fontFamily: "Nunito, sans-serif",
-            fontSize: "13px",
-            fontWeight: 600,
-            color: "#888",
-            marginTop: "4px",
-          }}
-        >
+        <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 600, color: "#888", marginTop: "4px" }}>
           {copy.step1Sub}
         </p>
       </div>
@@ -352,9 +386,7 @@ function LanguageStep({
           >
             <span style={{ fontSize: "24px" }}>{flag}</span>
             <span>{label}</span>
-            {lang === code && (
-              <span style={{ marginInlineStart: "auto", fontSize: "18px" }}>✓</span>
-            )}
+            {lang === code && <span style={{ marginInlineStart: "auto", fontSize: "18px" }}>✓</span>}
           </button>
         ))}
       </div>
@@ -382,7 +414,7 @@ function LanguageStep({
 }
 
 // ---------------------------------------------------------------------------
-// Step 2 — Set password
+// Step 2 — Set password (OAuth users only)
 // ---------------------------------------------------------------------------
 
 function PasswordStep({
@@ -406,15 +438,8 @@ function PasswordStep({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-
-    if (newPassword.length < 8) {
-      setError(copy.passwordTooShort);
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setError(copy.passwordMismatch);
-      return;
-    }
+    if (newPassword.length < 8) { setError(copy.passwordTooShort); return; }
+    if (newPassword !== confirmPassword) { setError(copy.passwordMismatch); return; }
 
     setLoading(true);
     try {
@@ -452,142 +477,58 @@ function PasswordStep({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div>
-        <h2
-          style={{
-            fontFamily: "Bangers, cursive",
-            fontSize: "22px",
-            letterSpacing: "1px",
-            color: "#1a1a2e",
-          }}
-        >
+        <h2 style={{ fontFamily: "Bangers, cursive", fontSize: "22px", letterSpacing: "1px", color: "#1a1a2e" }}>
           {copy.step2Title}
         </h2>
-        <p
-          style={{
-            fontFamily: "Nunito, sans-serif",
-            fontSize: "13px",
-            fontWeight: 600,
-            color: "#888",
-            marginTop: "4px",
-          }}
-        >
+        <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 600, color: "#888", marginTop: "4px" }}>
           {copy.step2Sub}
         </p>
       </div>
 
       <div className="flex flex-col gap-1">
-        <label
-          style={{
-            fontFamily: "Nunito, sans-serif",
-            fontSize: "13px",
-            fontWeight: 700,
-            color: "#1a1a2e",
-          }}
-        >
+        <label style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 700, color: "#1a1a2e" }}>
           {copy.newPassword}
         </label>
-        <input
-          type="password"
-          required
-          autoComplete="new-password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          style={inputStyle}
-        />
+        <input type="password" required autoComplete="new-password" value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)} style={inputStyle} />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label
-          style={{
-            fontFamily: "Nunito, sans-serif",
-            fontSize: "13px",
-            fontWeight: 700,
-            color: "#1a1a2e",
-          }}
-        >
+        <label style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 700, color: "#1a1a2e" }}>
           {copy.confirmPassword}
         </label>
-        <input
-          type="password"
-          required
-          autoComplete="new-password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          style={inputStyle}
-        />
+        <input type="password" required autoComplete="new-password" value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)} style={inputStyle} />
       </div>
 
       {error && (
-        <p
-          style={{
-            fontFamily: "Nunito, sans-serif",
-            fontSize: "13px",
-            fontWeight: 700,
-            color: "#e74c3c",
-          }}
-        >
-          {error}
-        </p>
+        <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 700, color: "#e74c3c" }}>{error}</p>
       )}
 
       <div className="flex gap-3">
-        <button
-          type="button"
-          onClick={onBack}
-          style={{
-            fontFamily: "Nunito, sans-serif",
-            fontWeight: 800,
-            fontSize: "14px",
-            background: "#ffffff",
-            color: "#1a1a2e",
-            border: "2px solid #1a1a2e",
-            borderRadius: "100px",
-            boxShadow: "2px 2px 0 #1a1a2e",
-            padding: "10px 18px",
-            cursor: "pointer",
-          }}
-        >
+        <button type="button" onClick={onBack} style={{
+          fontFamily: "Nunito, sans-serif", fontWeight: 800, fontSize: "14px",
+          background: "#ffffff", color: "#1a1a2e", border: "2px solid #1a1a2e",
+          borderRadius: "100px", boxShadow: "2px 2px 0 #1a1a2e", padding: "10px 18px", cursor: "pointer",
+        }}>
           {copy.back}
         </button>
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            fontFamily: "Nunito, sans-serif",
-            fontWeight: 800,
-            fontSize: "15px",
-            background: loading ? "#9b7fd4" : "#6c31e3",
-            color: "#ffffff",
-            border: "2px solid #1a1a2e",
-            borderRadius: "100px",
-            boxShadow: "2px 2px 0 #1a1a2e",
-            padding: "10px 24px",
-            cursor: loading ? "not-allowed" : "pointer",
-            opacity: loading ? 0.7 : 1,
-            flex: 1,
-          }}
-        >
+        <button type="submit" disabled={loading} style={{
+          fontFamily: "Nunito, sans-serif", fontWeight: 800, fontSize: "15px",
+          background: loading ? "#9b7fd4" : "#6c31e3", color: "#ffffff",
+          border: "2px solid #1a1a2e", borderRadius: "100px", boxShadow: "2px 2px 0 #1a1a2e",
+          padding: "10px 24px", cursor: loading ? "not-allowed" : "pointer",
+          opacity: loading ? 0.7 : 1, flex: 1,
+        }}>
           {loading ? copy.saving : copy.continue}
         </button>
       </div>
 
-      <button
-        type="button"
-        onClick={onSkip}
-        disabled={loading}
-        style={{
-          fontFamily: "Nunito, sans-serif",
-          fontWeight: 700,
-          fontSize: "13px",
-          background: "transparent",
-          color: "#888",
-          border: "none",
-          padding: "4px",
-          cursor: loading ? "not-allowed" : "pointer",
-          alignSelf: "center",
-          opacity: loading ? 0.5 : 1,
-        }}
-      >
+      <button type="button" onClick={onSkip} disabled={loading} style={{
+        fontFamily: "Nunito, sans-serif", fontWeight: 700, fontSize: "13px",
+        background: "transparent", color: "#888", border: "none", padding: "4px",
+        cursor: loading ? "not-allowed" : "pointer", alignSelf: "center", opacity: loading ? 0.5 : 1,
+      }}>
         {copy.skipForNow}
       </button>
     </form>
@@ -610,25 +551,10 @@ function AvatarStep({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2
-          style={{
-            fontFamily: "Bangers, cursive",
-            fontSize: "22px",
-            letterSpacing: "1px",
-            color: "#1a1a2e",
-          }}
-        >
+        <h2 style={{ fontFamily: "Bangers, cursive", fontSize: "22px", letterSpacing: "1px", color: "#1a1a2e" }}>
           {copy.step2bTitle}
         </h2>
-        <p
-          style={{
-            fontFamily: "Nunito, sans-serif",
-            fontSize: "13px",
-            fontWeight: 600,
-            color: "#888",
-            marginTop: "4px",
-          }}
-        >
+        <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 600, color: "#888", marginTop: "4px" }}>
           {copy.step2bSub}
         </p>
       </div>
@@ -637,22 +563,113 @@ function AvatarStep({
         <AvatarUpload name={userName} initialUrl={null} onUpload={onAdvance} />
       </div>
 
+      <button type="button" onClick={onAdvance} style={{
+        fontFamily: "Nunito, sans-serif", fontWeight: 700, fontSize: "14px",
+        background: "transparent", color: "#888", border: "none",
+        padding: "8px 20px", cursor: "pointer", alignSelf: "center",
+      }}>
+        {copy.skipForNow}
+      </button>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Step "verify" — Email verification gate
+// ---------------------------------------------------------------------------
+
+function VerifyEmailStep({
+  onVerified,
+  copy,
+}: {
+  onVerified: () => void;
+  copy: (typeof COPY)["EN"];
+}) {
+  const [checking, setChecking] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [resentMsg, setResentMsg] = useState<string | null>(null);
+
+  async function handleVerified() {
+    setError(null);
+    setResentMsg(null);
+    setChecking(true);
+    try {
+      const res = await fetch("/api/user/verify-status");
+      const json = await res.json();
+      if (json.data?.email_verified) {
+        onVerified();
+      } else {
+        setError(copy.verifyNotYet);
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setChecking(false);
+    }
+  }
+
+  async function handleResend() {
+    setError(null);
+    setResentMsg(null);
+    setResending(true);
+    try {
+      await fetch("/api/auth/resend-verification", { method: "POST" });
+      setResentMsg(copy.verifyResent);
+    } catch {
+      // silently ignore
+    } finally {
+      setResending(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-5">
+      {/* Icon */}
+      <div style={{ textAlign: "center", fontSize: "48px", lineHeight: 1 }}>📧</div>
+
+      <div>
+        <h2 style={{ fontFamily: "Bangers, cursive", fontSize: "22px", letterSpacing: "1px", color: "#1a1a2e" }}>
+          {copy.verifyTitle}
+        </h2>
+        <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 600, color: "#888", marginTop: "6px", lineHeight: 1.5 }}>
+          {copy.verifySub}
+        </p>
+      </div>
+
+      {error && (
+        <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 700, color: "#e74c3c" }}>{error}</p>
+      )}
+      {resentMsg && (
+        <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "13px", fontWeight: 700, color: "#2ecc71" }}>{resentMsg}</p>
+      )}
+
       <button
-        type="button"
-        onClick={onAdvance}
+        onClick={handleVerified}
+        disabled={checking}
         style={{
-          fontFamily: "Nunito, sans-serif",
-          fontWeight: 700,
-          fontSize: "14px",
-          background: "transparent",
-          color: "#888",
-          border: "none",
-          padding: "8px 20px",
-          cursor: "pointer",
-          alignSelf: "center",
+          fontFamily: "Nunito, sans-serif", fontWeight: 800, fontSize: "15px",
+          background: checking ? "#9b7fd4" : "#6c31e3", color: "#ffffff",
+          border: "2px solid #1a1a2e", borderRadius: "100px",
+          boxShadow: checking ? "none" : "2px 2px 0 #1a1a2e",
+          padding: "12px 24px", cursor: checking ? "not-allowed" : "pointer",
+          opacity: checking ? 0.7 : 1,
         }}
       >
-        {copy.skipForNow}
+        {checking ? copy.saving : copy.verifyButton}
+      </button>
+
+      <button
+        onClick={handleResend}
+        disabled={resending}
+        style={{
+          fontFamily: "Nunito, sans-serif", fontWeight: 700, fontSize: "13px",
+          background: "transparent", color: "#888", border: "none",
+          padding: "4px", cursor: resending ? "not-allowed" : "pointer",
+          alignSelf: "center", opacity: resending ? 0.5 : 1,
+        }}
+      >
+        {resending ? copy.saving : copy.verifyResend}
       </button>
     </div>
   );
@@ -680,7 +697,7 @@ function StoryAndRulesFlow({
   const router = useRouter();
   const [screen, setScreen] = useState(0);
   const [contentOpacity, setContentOpacity] = useState(1);
-  const [bgColor, setBgColor] = useState("#1a1a2e");
+  const [bgColor, setBgColor] = useState("#0d0d20");
   const [transitioning, setTransitioning] = useState(false);
   const [completing, setCompleting] = useState(false);
 
@@ -695,7 +712,6 @@ function StoryAndRulesFlow({
     setContentOpacity(0);
 
     if (crossingBoundary) {
-      // Start bg color transition immediately while story fades out
       setBgColor("#FFFBF0");
       setTimeout(() => {
         setScreen(nextScreen);
@@ -703,7 +719,7 @@ function StoryAndRulesFlow({
           setContentOpacity(1);
           setTransitioning(false);
         }, 50);
-      }, 380);
+      }, 400);
     } else {
       setTimeout(() => {
         setScreen(nextScreen);
@@ -711,7 +727,7 @@ function StoryAndRulesFlow({
           setContentOpacity(1);
           setTransitioning(false);
         }, 40);
-      }, 240);
+      }, 220);
     }
   }
 
@@ -737,7 +753,6 @@ function StoryAndRulesFlow({
     router.push(finalHasGroup ? "/profile" : "/groups/new");
   }
 
-  // Shared container style — background transitions between dark and light
   const containerStyle: React.CSSProperties = {
     position: "fixed",
     inset: 0,
@@ -748,30 +763,37 @@ function StoryAndRulesFlow({
     alignItems: "center",
     justifyContent: "center",
     padding: "48px 24px",
-    transition: "background 0.5s ease",
+    transition: "background 0.55s ease",
     overflowY: "auto",
   };
 
   // ---- Story screens ----
   if (isStory) {
     const story = copy.storyScreens[screen];
+    // Screens with a hook are "turning point" screens — bigger hook, smaller body
+    const isTurningPoint = !!story.hook;
+
     return (
       <div
-        style={containerStyle}
+        style={{
+          ...containerStyle,
+          background: `radial-gradient(ellipse at center, #1a1a2e 0%, #0d0d1a 100%)`,
+          cursor: transitioning ? "default" : "pointer",
+        }}
         dir={copy.dir}
         onClick={() => { if (!transitioning) { playClick(); advanceTo(screen + 1); } }}
       >
-        {/* 5 story dots */}
+        {/* 5 story progress dots */}
         <div style={{ position: "absolute", top: "52px", display: "flex", gap: "8px", pointerEvents: "none" }}>
           {Array.from({ length: STORY_COUNT }).map((_, i) => (
             <div
               key={i}
               style={{
-                width: i === screen ? "24px" : "8px",
+                width: i === screen ? "28px" : "8px",
                 height: "8px",
                 borderRadius: "100px",
-                background: i <= screen ? "#ffffff" : "rgba(255,255,255,0.25)",
-                transition: "all 0.3s",
+                background: i <= screen ? "#ffffff" : "rgba(255,255,255,0.2)",
+                transition: "all 0.35s",
               }}
             />
           ))}
@@ -783,7 +805,7 @@ function StoryAndRulesFlow({
             textAlign: "center",
             maxWidth: "300px",
             opacity: contentOpacity,
-            transition: "opacity 0.24s ease",
+            transition: "opacity 0.22s ease",
             pointerEvents: "none",
           }}
         >
@@ -791,11 +813,11 @@ function StoryAndRulesFlow({
             <p
               style={{
                 fontFamily: "Bangers, cursive",
-                fontSize: "30px",
-                letterSpacing: "1.5px",
+                fontSize: "34px",
+                letterSpacing: "2px",
                 color: "#ffffff",
-                marginBottom: "16px",
-                lineHeight: 1.2,
+                marginBottom: "20px",
+                lineHeight: 1.15,
               }}
             >
               {story.hook}
@@ -804,27 +826,30 @@ function StoryAndRulesFlow({
           <p
             style={{
               fontFamily: "Nunito, sans-serif",
-              fontSize: "19px",
-              fontWeight: 700,
-              color: "rgba(255,255,255,0.85)",
-              lineHeight: 1.65,
+              fontSize: isTurningPoint ? "17px" : "21px",
+              fontWeight: isTurningPoint ? 600 : 700,
+              color: isTurningPoint ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.9)",
+              lineHeight: 1.7,
+              letterSpacing: isTurningPoint ? "0" : "0.2px",
             }}
           >
             {story.body}
           </p>
         </div>
 
-        {/* Tap hint */}
+        {/* Tap hint — pulses */}
         <p
           style={{
             position: "absolute",
             bottom: "52px",
             fontFamily: "Nunito, sans-serif",
-            fontSize: "13px",
+            fontSize: "12px",
             fontWeight: 600,
-            color: "rgba(255,255,255,0.35)",
-            letterSpacing: "0.5px",
+            color: "rgba(255,255,255,0.4)",
+            letterSpacing: "0.8px",
+            textTransform: "uppercase",
             pointerEvents: "none",
+            animation: "tapPulse 2.5s ease-in-out infinite",
           }}
         >
           {copy.tapToContinue}
@@ -840,38 +865,21 @@ function StoryAndRulesFlow({
   return (
     <div style={containerStyle} dir={copy.dir}>
       <div style={{ width: "100%", maxWidth: "360px", display: "flex", flexDirection: "column" }}>
-        {/* Progress bar */}
+        {/* Progress bar — shows overall 1/12 … 12/12 */}
         <div style={{ marginBottom: "24px" }}>
           <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "6px" }}>
-            <span
-              style={{
-                fontFamily: "Nunito, sans-serif",
-                fontSize: "12px",
-                fontWeight: 700,
-                color: "#888",
-              }}
-            >
+            <span style={{ fontFamily: "Nunito, sans-serif", fontSize: "12px", fontWeight: 700, color: "#888" }}>
               {screen + 1} / {TOTAL_SCREENS}
             </span>
           </div>
-          <div
-            style={{
-              background: "#e0ddd6",
+          <div style={{ background: "#e0ddd6", borderRadius: "100px", height: "6px", border: "1.5px solid #1a1a2e", overflow: "hidden" }}>
+            <div style={{
+              width: `${((screen + 1) / TOTAL_SCREENS) * 100}%`,
+              height: "100%",
+              background: "#6c31e3",
               borderRadius: "100px",
-              height: "6px",
-              border: "1.5px solid #1a1a2e",
-              overflow: "hidden",
-            }}
-          >
-            <div
-              style={{
-                width: `${((screen + 1) / TOTAL_SCREENS) * 100}%`,
-                height: "100%",
-                background: "#6c31e3",
-                borderRadius: "100px",
-                transition: "width 0.3s ease",
-              }}
-            />
+              transition: "width 0.3s ease",
+            }} />
           </div>
         </div>
 
@@ -889,29 +897,14 @@ function StoryAndRulesFlow({
             textAlign: "center",
             gap: "16px",
             opacity: contentOpacity,
-            transition: "opacity 0.24s ease",
+            transition: "opacity 0.22s ease",
           }}
         >
           <span style={{ fontSize: "48px", lineHeight: 1 }}>{rule.emoji}</span>
-          <h3
-            style={{
-              fontFamily: "Bangers, cursive",
-              fontSize: "28px",
-              letterSpacing: "1.5px",
-              color: "#1a1a2e",
-            }}
-          >
+          <h3 style={{ fontFamily: "Bangers, cursive", fontSize: "28px", letterSpacing: "1.5px", color: "#1a1a2e" }}>
             {rule.title}
           </h3>
-          <p
-            style={{
-              fontFamily: "Nunito, sans-serif",
-              fontSize: "15px",
-              fontWeight: 600,
-              color: "#444",
-              lineHeight: 1.6,
-            }}
-          >
+          <p style={{ fontFamily: "Nunito, sans-serif", fontSize: "15px", fontWeight: 600, color: "#444", lineHeight: 1.6 }}>
             {rule.body}
           </p>
         </div>
@@ -921,16 +914,10 @@ function StoryAndRulesFlow({
           <button
             onClick={() => { playClick(); advanceTo(screen - 1); }}
             style={{
-              fontFamily: "Nunito, sans-serif",
-              fontWeight: 800,
-              fontSize: "14px",
-              background: "#ffffff",
-              color: "#1a1a2e",
-              border: "2px solid #1a1a2e",
-              borderRadius: "100px",
-              boxShadow: "2px 2px 0 #1a1a2e",
-              padding: "10px 18px",
-              cursor: "pointer",
+              fontFamily: "Nunito, sans-serif", fontWeight: 800, fontSize: "14px",
+              background: "#ffffff", color: "#1a1a2e", border: "2px solid #1a1a2e",
+              borderRadius: "100px", boxShadow: "2px 2px 0 #1a1a2e",
+              padding: "10px 18px", cursor: "pointer",
             }}
           >
             {copy.back}
@@ -940,18 +927,12 @@ function StoryAndRulesFlow({
               onClick={() => { playLoginSuccess(); finish(); }}
               disabled={completing}
               style={{
-                fontFamily: "Nunito, sans-serif",
-                fontWeight: 800,
-                fontSize: "15px",
-                background: completing ? "#9b7fd4" : "#6c31e3",
-                color: "#ffffff",
-                border: "2px solid #1a1a2e",
-                borderRadius: "100px",
+                fontFamily: "Nunito, sans-serif", fontWeight: 800, fontSize: "15px",
+                background: completing ? "#9b7fd4" : "#6c31e3", color: "#ffffff",
+                border: "2px solid #1a1a2e", borderRadius: "100px",
                 boxShadow: completing ? "none" : "2px 2px 0 #1a1a2e",
-                padding: "10px 24px",
-                cursor: completing ? "not-allowed" : "pointer",
-                flex: 1,
-                opacity: completing ? 0.7 : 1,
+                padding: "10px 24px", cursor: completing ? "not-allowed" : "pointer",
+                flex: 1, opacity: completing ? 0.7 : 1,
               }}
             >
               {completing ? copy.saving : copy.letsGo}
@@ -960,17 +941,10 @@ function StoryAndRulesFlow({
             <button
               onClick={() => { playClick(); advanceTo(screen + 1); }}
               style={{
-                fontFamily: "Nunito, sans-serif",
-                fontWeight: 800,
-                fontSize: "15px",
-                background: "#6c31e3",
-                color: "#ffffff",
-                border: "2px solid #1a1a2e",
-                borderRadius: "100px",
-                boxShadow: "2px 2px 0 #1a1a2e",
-                padding: "10px 24px",
-                cursor: "pointer",
-                flex: 1,
+                fontFamily: "Nunito, sans-serif", fontWeight: 800, fontSize: "15px",
+                background: "#6c31e3", color: "#ffffff", border: "2px solid #1a1a2e",
+                borderRadius: "100px", boxShadow: "2px 2px 0 #1a1a2e",
+                padding: "10px 24px", cursor: "pointer", flex: 1,
               }}
             >
               {copy.next}

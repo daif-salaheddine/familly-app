@@ -52,7 +52,8 @@ export async function loginAction(
 }
 
 const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
@@ -63,7 +64,8 @@ export async function registerAction(
   formData: FormData
 ): Promise<{ error: string | null }> {
   const parsed = registerSchema.safeParse({
-    name: formData.get("name"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
     email: formData.get("email"),
     password: formData.get("password"),
     confirmPassword: formData.get("confirmPassword"),
@@ -73,7 +75,8 @@ export async function registerAction(
     return { error: parsed.error.issues[0].message };
   }
 
-  const { name, email, password, confirmPassword } = parsed.data;
+  const { firstName, lastName, email, password, confirmPassword } = parsed.data;
+  const name = `${firstName.trim()} ${lastName.trim()}`;
 
   if (password !== confirmPassword) {
     return { error: "Passwords don't match" };

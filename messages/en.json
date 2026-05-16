@@ -132,8 +132,6 @@
   "register": {
     "title": "Family Quest",
     "subtitle": "Create your account",
-    "name": "Your name",
-    "namePlaceholder": "e.g. Sara",
     "email": "Email",
     "emailPlaceholder": "you@example.com",
     "password": "Password",
@@ -143,7 +141,11 @@
     "orDivider": "or",
     "signUpWithGoogle": "Sign up with Google",
     "alreadyHaveAccount": "Already have an account?",
-    "signInLink": "Sign in"
+    "signInLink": "Sign in",
+    "firstName": "First name",
+    "firstNamePlaceholder": "e.g. Sara",
+    "lastName": "Last name",
+    "lastNamePlaceholder": "e.g. Johnson"
   },
   "profile": {
     "activeGoals": "Active goals",
@@ -236,7 +238,6 @@
     "uploading": "Uploading…",
     "fileTypeError": "File type not allowed. Use images or video.",
     "fileSizeError": "File exceeds 50 MB",
-    "editGoal": "Edit goal",
     "editCancel": "Cancel",
     "editSave": "Save changes",
     "editSaving": "Saving…",
@@ -435,7 +436,13 @@
     "step2bLabel": "Show your face!",
     "step2bSub": "Add a profile photo so your family recognizes you.",
     "step2bSkip": "Skip for now",
-    "step3Label": "App walkthrough"
+    "step3Label": "App walkthrough",
+    "verifyTitle": "Check your inbox",
+    "verifySub": "We sent a verification link to your email address. Click it before continuing.",
+    "verifyButton": "I've verified →",
+    "verifyResend": "Resend email",
+    "verifyResent": "Email sent! Check your inbox.",
+    "verifyNotYet": "Not verified yet. Click the link in the email we sent, then try again."
   },
   "userSettings": {
     "title": "Settings",

@@ -14,7 +14,7 @@ export default async function OnboardingPage() {
   // If already onboarded, skip straight to the app
   const user = await prisma.user.findUnique({
     where: { id: session.user.id! },
-    select: { has_onboarded: true, name: true, password_hash: true },
+    select: { has_onboarded: true, name: true, password_hash: true, email_verified: true, email: true },
   });
   if (user?.has_onboarded) redirect("/profile");
 
@@ -22,5 +22,12 @@ export default async function OnboardingPage() {
   // OAuth users (no password_hash) should see it to optionally add a backup password.
   const skipPasswordStep = !!user?.password_hash;
 
-  return <OnboardingFlow userName={user?.name ?? ""} skipPasswordStep={skipPasswordStep} />;
+  return (
+    <OnboardingFlow
+      userName={user?.name ?? ""}
+      userEmail={user?.email ?? ""}
+      skipPasswordStep={skipPasswordStep}
+      emailVerified={user?.email_verified ?? false}
+    />
+  );
 }

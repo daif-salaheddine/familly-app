@@ -132,8 +132,6 @@
   "register": {
     "title": "Family Quest",
     "subtitle": "Créez votre compte",
-    "name": "Votre prénom",
-    "namePlaceholder": "ex. Sara",
     "email": "E-mail",
     "emailPlaceholder": "vous@exemple.com",
     "password": "Mot de passe",
@@ -143,7 +141,11 @@
     "orDivider": "ou",
     "signUpWithGoogle": "S'inscrire avec Google",
     "alreadyHaveAccount": "Déjà un compte ?",
-    "signInLink": "Se connecter"
+    "signInLink": "Se connecter",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "ex. Sara",
+    "lastName": "Nom de famille",
+    "lastNamePlaceholder": "ex. Dupont"
   },
   "profile": {
     "activeGoals": "Objectifs actifs",
@@ -236,7 +238,6 @@
     "uploading": "Envoi…",
     "fileTypeError": "Type de fichier non autorisé. Utilisez des images ou une vidéo.",
     "fileSizeError": "Le fichier dépasse 50 Mo",
-    "editGoal": "Modifier l'objectif",
     "editCancel": "Annuler",
     "editSave": "Enregistrer les modifications",
     "editSaving": "Enregistrement…",
@@ -435,7 +436,13 @@
     "step2bLabel": "Montre ton visage !",
     "step2bSub": "Ajoute une photo de profil pour que ta famille te reconnaisse.",
     "step2bSkip": "Passer pour l'instant",
-    "step3Label": "Visite guidée de l'appli"
+    "step3Label": "Visite guidée de l'appli",
+    "verifyTitle": "Vérifie ta boîte mail",
+    "verifySub": "Nous t'avons envoyé un lien de vérification. Clique dessus avant de continuer.",
+    "verifyButton": "J'ai vérifié →",
+    "verifyResend": "Renvoyer l'email",
+    "verifyResent": "Email envoyé ! Vérifie ta boîte.",
+    "verifyNotYet": "Pas encore vérifié. Clique sur le lien dans l'email, puis réessaie."
   },
   "userSettings": {
     "title": "Paramètres",

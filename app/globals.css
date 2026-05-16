@@ -21,3 +21,8 @@ body {
 :lang(ar) {
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
+
+@keyframes tapPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.65; }
+}
